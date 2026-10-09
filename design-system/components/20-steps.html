@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<!--
+  Steps · 流程图标 / 步骤条 / 流程图
+  来源：Figma 「流程图标 (52)」+「流程Icon (23)」+「流程组件 (9)」共 84 次实例抽取
+  用途：购车 / 贷款 / 注册 / 上架等多步骤流程的视觉化
+  共 3 个 view：横排步骤条（已与 18-progress 部分重叠，本组件聚焦流程语义）、竖排时间线、流程图节点
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Steps Component · UI Design System</title>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+:root {
+  --yellow-50: #FFFAED;
+  --yellow-500: #FFCF20;
+  --yellow-600: #E0A504;
+  --blue-500: #0056FA;
+  --green-500: #7CB305;
+  --red-500: #A8071A;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-700: #555555;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+  --shadow-card: 0 4px 16px rgba(10,25,41,0.06);
+  --font-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--grey-50);
+  color: var(--grey-900);
+  padding: 32px 16px;
+  line-height: 1.5;
+}
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  background: var(--white);
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.lead {
+  color: var(--grey-600);
+  font-size: 14px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--grey-100);
+}
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 32px 0 16px;
+}
+.demo-box {
+  background: var(--grey-50);
+  padding: 24px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+.section-desc {
+  color: var(--grey-600);
+  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--yellow-50);
+  border-left: 3px solid var(--yellow-500);
+  border-radius: 4px;
+}
+
+/* ========================================================
+   ① Horizontal Steps · 横排步骤条
+   ======================================================== */
+.steps-h {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0;
+}
+.step-h {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+  text-align: center;
+}
+.step-h-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--grey-100);
+  color: var(--grey-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  border: 2px solid var(--grey-100);
+  z-index: 1;
+  transition: all 0.3s;
+}
+.step-h.done .step-h-icon {
+  background: var(--yellow-500);
+  color: var(--grey-900);
+  border-color: var(--yellow-500);
+}
+.step-h.active .step-h-icon {
+  background: var(--white);
+  color: var(--yellow-500);
+  border-color: var(--yellow-500);
+  box-shadow: 0 0 0 4px var(--yellow-50);
+}
+.step-h-label {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--grey-600);
+}
+.step-h.done .step-h-label,
+.step-h.active .step-h-label {
+  color: var(--grey-900);
+}
+.step-h-desc {
+  font-size: 11px;
+  color: var(--grey-400);
+  margin-top: 2px;
+}
+.step-h.done .step-h-desc { color: var(--grey-600); }
+.step-h:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: calc(50% + 24px);
+  right: calc(-50% + 24px);
+  height: 2px;
+  background: var(--grey-100);
+}
+.step-h.done:not(:last-child)::after { background: var(--yellow-500); }
+
+/* ========================================================
+   ② Vertical Timeline · 竖排时间线
+   ======================================================== */
+.timeline {
+  position: relative;
+  padding-left: 24px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--grey-100);
+}
+.tl-item {
+  position: relative;
+  padding-bottom: 24px;
+}
+.tl-item:last-child { padding-bottom: 0; }
+.tl-dot {
+  position: absolute;
+  left: -24px;
+  top: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--white);
+  border: 3px solid var(--grey-200);
+  z-index: 1;
+}
+.tl-item.done .tl-dot {
+  border-color: var(--yellow-500);
+  background: var(--yellow-500);
+}
+.tl-item.active .tl-dot {
+  border-color: var(--yellow-500);
+  background: var(--white);
+  box-shadow: 0 0 0 4px var(--yellow-50);
+}
+.tl-content {
+  background: var(--white);
+  border: 1px solid var(--grey-100);
+  border-radius: var(--radius-md);
+  padding: 12px 16px;
+}
+.tl-item.active .tl-content {
+  border-color: var(--yellow-500);
+  background: var(--yellow-50);
+}
+.tl-time {
+  font-size: 11px;
+  color: var(--grey-400);
+  margin-bottom: 4px;
+}
+.tl-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--grey-900);
+  margin-bottom: 4px;
+}
+.tl-desc {
+  font-size: 13px;
+  color: var(--grey-600);
+}
+
+/* ========================================================
+   ③ Process Flow · 流程图节点（图形化）
+   ======================================================== */
+.flow-graph {
+  display: grid;
+  grid-template-columns: 1fr 60px 1fr 60px 1fr;
+  gap: 0;
+  align-items: center;
+  background: var(--white);
+  padding: 24px;
+  border: 1px solid var(--grey-100);
+  border-radius: var(--radius-lg);
+}
+.flow-node {
+  background: var(--grey-50);
+  border: 2px solid var(--grey-200);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  text-align: center;
+  position: relative;
+}
+.flow-node.start-node {
+  background: var(--yellow-50);
+  border-color: var(--yellow-500);
+}
+.flow-node.end-node {
+  background: var(--green-500);
+  border-color: var(--green-500);
+  color: var(--white);
+}
+.flow-node-icon {
+  width: 32px;
+  height: 32px;
+  margin: 0 auto 8px;
+  background: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  border: 1px solid var(--grey-200);
+}
+.flow-node.start-node .flow-node-icon {
+  background: var(--yellow-500);
+  border-color: var(--yellow-500);
+  color: var(--grey-900);
+}
+.flow-node-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--grey-900);
+}
+.flow-node.end-node .flow-node-title { color: var(--white); }
+.flow-node-desc {
+  font-size: 11px;
+  color: var(--grey-400);
+  margin-top: 2px;
+}
+.flow-node.end-node .flow-node-desc { color: rgba(255,255,255,0.85); }
+
+.flow-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--grey-300);
+  position: relative;
+}
+.flow-arrow::before {
+  content: '';
+  position: absolute;
+  inset: 50% 8px auto 8px;
+  height: 2px;
+  background: var(--grey-200);
+  transform: translateY(-1px);
+}
+
+/* 决策菱形 */
+.flow-decision {
+  background: var(--white);
+  border: 2px solid var(--yellow-500);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+  position: relative;
+}
+.flow-decision::before {
+  content: '';
+  position: absolute;
+  inset: -2px -8px -4px -8px;
+  border-top: 1px dashed var(--grey-200);
+}
+.flow-decision-q {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--grey-900);
+  margin-bottom: 6px;
+}
+.flow-decision-opts {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+.flow-opt {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--yellow-500);
+  color: var(--grey-900);
+  font-weight: 600;
+}
+.flow-opt.alt { background: var(--grey-200); color: var(--grey-700); }
+
+table.variants {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+table.variants th, table.variants td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-100);
+  text-align: left;
+}
+table.variants th {
+  background: var(--grey-50);
+  color: var(--grey-600);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔀 Steps · 流程图标 / 步骤条</h1>
+  <p class="lead">
+    来源：Figma 「流程图标 (52)」+「流程Icon (23)」+「流程组件 (9)」共 84 次实例抽取<br>
+    3 个 view · ① 横排步骤条 ② 竖排时间线 ③ 流程图节点<br>
+    适用：购车 / 贷款 / 注册 / 上架 / 订单状态 / 审批等线性流程
+  </p>
+
+  <h2>① Horizontal · 横排步骤条</h2>
+  <p class="section-desc">顶部步骤条，节点 40px / 连线 2px / 间距 8px。完成态=黄底+深字；当前态=白底+黄边+外发光。</p>
+  <div class="demo-box">
+    <div class="steps-h">
+      <div class="step-h done">
+        <div class="step-h-icon">✓</div>
+        <div class="step-h-label">选车型</div>
+        <div class="step-h-desc">浏览车系</div>
+      </div>
+      <div class="step-h done">
+        <div class="step-h-icon">✓</div>
+        <div class="step-h-label">贷款预审</div>
+        <div class="step-h-desc">填表</div>
+      </div>
+      <div class="step-h active">
+        <div class="step-h-icon">3</div>
+        <div class="step-h-label">信用评估</div>
+        <div class="step-h-desc">1-2 天</div>
+      </div>
+      <div class="step-h">
+        <div class="step-h-icon">4</div>
+        <div class="step-h-label">合同签署</div>
+        <div class="step-h-desc">数字签名</div>
+      </div>
+      <div class="step-h">
+        <div class="step-h-icon">5</div>
+        <div class="step-h-label">提车</div>
+        <div class="step-h-desc">3 天</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>紧凑型 · 6 步</h3>
+  <div class="demo-box">
+    <div class="steps-h">
+      <div class="step-h done"><div class="step-h-icon">✓</div><div class="step-h-label">注册</div></div>
+      <div class="step-h done"><div class="step-h-icon">✓</div><div class="step-h-label">实名</div></div>
+      <div class="step-h done"><div class="step-h-icon">✓</div><div class="step-h-label">绑定</div></div>
+      <div class="step-h active"><div class="step-h-icon">4</div><div class="step-h-label">预审</div></div>
+      <div class="step-h"><div class="step-h-icon">5</div><div class="step-h-label">放款</div></div>
+      <div class="step-h"><div class="step-h-icon">6</div><div class="step-h-label">完成</div></div>
+    </div>
+  </div>
+
+  <h2>② Vertical Timeline · 竖排时间线</h2>
+  <p class="section-desc">订单 / 审批 / 物流等"有明确时间点"的流程。每个节点 18px，连线 2px 居左。</p>
+  <div class="demo-box">
+    <div class="timeline">
+      <div class="tl-item done">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-time">2026-09-25 10:30</div>
+          <div class="tl-title">✓ 已提交贷款申请</div>
+          <div class="tl-desc">您的资料已收到</div>
+        </div>
+      </div>
+      <div class="tl-item done">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-time">2026-09-25 14:20</div>
+          <div class="tl-title">✓ 人工审核完成</div>
+          <div class="tl-desc">审核员 Maria 已通过基础资料审核</div>
+        </div>
+      </div>
+      <div class="tl-item active">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-time">2026-09-26 09:00</div>
+          <div class="tl-title">⏳ 信用评估中</div>
+          <div class="tl-desc">预计 1-2 天完成</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-time">—</div>
+          <div class="tl-title">合同签署</div>
+          <div class="tl-desc">待信用评估通过</div>
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-content">
+          <div class="tl-time">—</div>
+          <div class="tl-title">放款 / 提车</div>
+          <div class="tl-desc">最终环节</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>③ Process Flow · 流程图节点</h2>
+  <p class="section-desc">复杂流程的图形化展示（开始 → 决策 → 分支 → 结束），适合 PM 评审和用户引导。</p>
+
+  <h3>A. 简单线性流程</h3>
+  <div class="demo-box">
+    <div class="flow-graph">
+      <div class="flow-node start-node">
+        <div class="flow-node-icon">▶</div>
+        <div class="flow-node-title">选车型</div>
+        <div class="flow-node-desc">浏览 21 款车</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="flow-node-icon"><span class="iconify" data-icon="lucide:file-text" style="font-size:26px"></span></div>
+        <div class="flow-node-title">填资料</div>
+        <div class="flow-node-desc">30 秒</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node end-node">
+        <div class="flow-node-icon">✓</div>
+        <div class="flow-node-title">提交申请</div>
+        <div class="flow-node-desc">秒级</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>B. 含决策分支的流程</h3>
+  <div class="demo-box">
+    <div class="flow-graph">
+      <div class="flow-node start-node">
+        <div class="flow-node-icon"><span class="iconify" data-icon="lucide:bar-chart-3" style="font-size:26px"></span></div>
+        <div class="flow-node-title">信用评估</div>
+        <div class="flow-node-desc">1-2 天</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-decision">
+        <div class="flow-decision-q">是否通过？</div>
+        <div class="flow-decision-opts">
+          <span class="flow-opt">是</span>
+          <span class="flow-opt alt">否</span>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node end-node">
+        <div class="flow-node-icon">✓</div>
+        <div class="flow-node-title">签合同</div>
+        <div class="flow-node-desc">放款阶段</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-box">
+    <div class="flow-graph">
+      <div class="flow-node">
+        <div class="flow-node-icon"><span class="iconify" data-icon="lucide:search" style="font-size:26px"></span></div>
+        <div class="flow-node-title">选车</div>
+        <div class="flow-node-desc">查车型</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node start-node">
+        <div class="flow-node-icon"><span class="iconify" data-icon="lucide:file-text" style="font-size:26px"></span></div>
+        <div class="flow-node-title">填资料</div>
+        <div class="flow-node-desc">姓名 + 手机</div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node">
+        <div class="flow-node-icon"><span class="iconify" data-icon="lucide:lock" style="font-size:26px"></span></div>
+        <div class="flow-node-title">预审</div>
+        <div class="flow-node-desc">秒级反馈</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>🎨 对应 Design Tokens</h2>
+  <table class="variants">
+    <thead><tr><th>元素</th><th>用 Token</th></tr></thead>
+    <tbody>
+      <tr><td>Step node 默认</td><td><code>--grey-100</code> 背景 + <code>--grey-400</code> 文字</td></tr>
+      <tr><td>Step done</td><td><code>--yellow-500</code> 背景 + <code>--grey-900</code> 文字</td></tr>
+      <tr><td>Step active</td><td><code>--white</code> 背景 + <code>--yellow-500</code> 边框 + <code>--yellow-50</code> 光晕</td></tr>
+      <tr><td>Step 连接线</td><td><code>--grey-100</code> 默认 / <code>--yellow-500</code> 完成</td></tr>
+      <tr><td>Timeline dot</td><td>18px 圆，3px 边，<code>--yellow-500</code> 完成 / <code>--grey-200</code> 默认</td></tr>
+      <tr><td>Flow start node</td><td><code>--yellow-50</code> 背景 + <code>--yellow-500</code> 边框</td></tr>
+      <tr><td>Flow end node</td><td><code>--green-500</code> 实心</td></tr>
+      <tr><td>Decision node</td><td><code>--white</code> 背景 + <code>--yellow-500</code> 边框</td></tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

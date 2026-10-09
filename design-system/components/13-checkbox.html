@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<!--
+  Checkbox · 复选框组件 reference
+  来源：参考组件库（4 个状态：unchecked / checked / indeterminate / disabled）
+  同步：2026-09-29
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkbox Component · UI Design System</title>
+<!-- ICON 规范：勾选标记走 Iconify CDN（lucide）· 缺此行会导致 .iconify 空渲染、勾不可见 -->
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+:root {
+  --yellow-500: #FFCF20;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+
+  --font-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --fs-body: 14px; --fs-small: 12px;
+
+  --radius-sm: 4px;
+  --space-3: 12px;
+  --shadow-card: 0 4px 16px rgba(10, 25, 41, 0.06);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); background: var(--grey-50); color: var(--grey-900); padding: 24px 16px; line-height: 1.5; }
+.header { max-width: 800px; margin: 0 auto 24px; padding-bottom: 16px; border-bottom: 2px solid var(--yellow-500); }
+.header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+.header .meta { font-size: var(--fs-body); color: var(--grey-600); }
+.header .meta code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: var(--fs-small); }
+.container { max-width: 800px; margin: 0 auto; }
+
+/* === Checkbox 控件 === */
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  user-select: none;
+  font-size: var(--fs-body);
+}
+.checkbox input { position: absolute; opacity: 0; pointer-events: none; }
+.checkbox .box {
+  width: 20px; height: 20px;
+  border: 2px solid var(--grey-300);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+.checkbox .box .iconify {
+  color: var(--white);
+  font-size: 14px;
+  opacity: 0;
+}
+.checkbox input:checked ~ .box {
+  background: var(--yellow-500);
+  border-color: var(--yellow-500);
+}
+.checkbox input:checked ~ .box .iconify { opacity: 1; }
+.checkbox input:indeterminate ~ .box {
+  background: var(--yellow-500);
+  border-color: var(--yellow-500);
+}
+.checkbox input:indeterminate ~ .box .iconify { opacity: 1; }
+/* indeterminate 用 CSS hack：展示横线 */
+.checkbox input:indeterminate ~ .box .iconify::before {
+  content: ""; display: block; width: 10px; height: 2px; background: var(--white);
+}
+.checkbox:hover .box { border-color: var(--yellow-500); }
+.checkbox:focus-within .box { box-shadow: 0 0 0 3px rgba(255, 207, 32, 0.2); }
+
+/* === Disabled === */
+.checkbox.disabled { cursor: not-allowed; opacity: 0.5; }
+
+.demo-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-card); }
+.demo-section h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+.demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; }
+.demo-label { font-size: var(--fs-small); color: #888; text-align: center; margin-bottom: 8px; }
+.demo-cell { text-align: center; padding: 16px; background: var(--grey-50); border-radius: 8px; }
+
+.spec-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-card); }
+.spec-section h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.spec-item { padding: 12px; background: var(--grey-50); border-radius: 8px; }
+.spec-item .label { font-size: var(--fs-small); color: var(--grey-600); margin-bottom: 4px; }
+.spec-item .value { font-size: var(--fs-body); font-weight: 600; }
+
+.usage-rules { background: #FFF8E1; border-left: 4px solid var(--yellow-500); padding: 16px 20px; border-radius: 8px; }
+.usage-rules h3 { font-size: 18px; margin-bottom: 8px; }
+.usage-rules ul { list-style: none; padding: 0; font-size: var(--fs-body); }
+.usage-rules li { padding: 4px 0; }
+.usage-rules li::before { content: "→ "; color: var(--yellow-500); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Checkbox · 复选框</h1>
+  <p class="meta">
+    来源：参考组件库（4 个状态：unchecked / checked / indeterminate / disabled）· 同步 2026-09-29 ·
+    用于多选场景（协议 / 标签 / 筛选）
+  </p>
+</div>
+
+<div class="container">
+
+  <div class="demo-section">
+    <h2>🎨 4 个状态</h2>
+    <div class="demo-grid">
+      <div>
+        <div class="demo-label">Unchecked（默认）</div>
+        <div class="demo-cell">
+          <label class="checkbox">
+            <input type="checkbox">
+            <span class="box"></span>
+            <span>I agree</span>
+          </label>
+        </div>
+      </div>
+      <div>
+        <div class="demo-label">Checked（已选）</div>
+        <div class="demo-cell">
+          <label class="checkbox">
+            <input type="checkbox" checked>
+            <span class="box"><span class="iconify" data-icon="lucide:check"></span></span>
+            <span>Selected</span>
+          </label>
+        </div>
+      </div>
+      <div>
+        <div class="demo-label">Indeterminate（部分）</div>
+        <div class="demo-cell">
+          <label class="checkbox">
+            <input type="checkbox" class="indeterminate">
+            <span class="box"><span class="iconify"></span></span>
+            <span>Some items</span>
+          </label>
+        </div>
+        <script>document.querySelector('.indeterminate').indeterminate = true;</script>
+      </div>
+      <div>
+        <div class="demo-label">Disabled（禁用）</div>
+        <div class="demo-cell">
+          <label class="checkbox disabled">
+            <input type="checkbox" disabled>
+            <span class="box"></span>
+            <span>Unavailable</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 实际使用场景 -->
+  <div class="demo-section">
+    <h2>📋 实际使用（多选协议 + 标签筛选）</h2>
+
+    <div style="margin-bottom:24px">
+      <div class="demo-label">协议确认（必勾 1 个或多个）</div>
+      <div style="padding:16px; background:var(--grey-50); border-radius:8px">
+        <label class="checkbox" style="margin-bottom:12px">
+          <input type="checkbox" checked>
+          <span class="box"><span class="iconify" data-icon="lucide:check"></span></span>
+          <span>我已经阅读并同意服务条款</span>
+        </label>
+        <label class="checkbox">
+          <input type="checkbox">
+          <span class="box"></span>
+          <span>我希望接收优惠信息（可选）</span>
+        </label>
+      </div>
+    </div>
+
+    <div>
+      <div class="demo-label">标签筛选（多选）</div>
+      <div style="padding:16px; background:var(--grey-50); border-radius:8px; display:flex; flex-wrap:wrap; gap:12px">
+        <label class="checkbox"><input type="checkbox" checked><span class="box"><span class="iconify" data-icon="lucide:check"></span></span><span>SUV</span></label>
+        <label class="checkbox"><input type="checkbox" checked><span class="box"><span class="iconify" data-icon="lucide:check"></span></span><span>Electric</span></label>
+        <label class="checkbox"><input type="checkbox"><span class="box"></span><span>Sedan</span></label>
+        <label class="checkbox"><input type="checkbox"><span class="box"></span><span>Truck</span></label>
+        <label class="checkbox" style="opacity:0.5"><input type="checkbox" disabled><span class="box"></span><span>Coupe (unavailable)</span></label>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-section">
+    <h2>📐 Spec Details</h2>
+    <div class="spec-grid">
+      <div class="spec-item"><div class="label">Box 尺寸</div><div class="value">20×20px</div></div>
+      <div class="spec-item"><div class="label">圆角</div><div class="value">4px</div></div>
+      <div class="spec-item"><div class="label">未选 Border</div><div class="value">2px solid --grey-300</div></div>
+      <div class="spec-item"><div class="label">选中背景</div><div class="value">--yellow-500</div></div>
+      <div class="spec-item"><div class="label">对勾尺寸</div><div class="value">14px / 白色</div></div>
+      <div class="spec-item"><div class="label">Focus 光晕</div><div class="value">--yellow-500 3px 20% opacity</div></div>
+      <div class="spec-item"><div class="label">间距</div><div class="value">12px（box ↔ label）</div></div>
+      <div class="spec-item"><div class="label">禁用透明度</div><div class="value">0.5</div></div>
+      <div class="spec-item"><div class="label">Indeterminate</div><div class="value">黄色背景 + 白色横线</div></div>
+    </div>
+  </div>
+
+  <div class="usage-rules">
+    <h3>🎯 使用规则</h3>
+    <ul>
+      <li><strong>多选</strong>：用户可以选 0/1/多个选项（如协议、标签筛选）</li>
+      <li><strong>单选场景</strong>：用 <a href="14-radio.html">Radio</a>（互斥选择）</li>
+      <li><strong>Indeterminate</strong>：父选项部分子项被选中时（树形结构 / 全选）</li>
+      <li><strong>Disabled</strong>：当前不可选但保留可读性</li>
+      <li><strong>必填项</strong>：至少 1 个必选（如协议确认）</li>
+      <li><strong>ARIA</strong>：原生 <code>&lt;input type="checkbox"&gt;</code> 自带 a11y</li>
+      <li><strong>不要全用勾</strong>：纯开关场景用 <a href="15-switch.html">Switch</a></li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>

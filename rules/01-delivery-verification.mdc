@@ -1,0 +1,115 @@
+---
+alwaysApply: true
+---
+
+<!-- ⚠️ 来源说明：本文件含项目特定示例（品牌名 / 市场 / 平台专有参数）。
+     作为通用方法论可用，但**其中的具体值（品牌色、市场法规、平台域名、埋点参数）
+     是示例性质的，用到别的项目/市场时必须按SITE-CONFIG.md 替换**。
+     原路径：Mstar 工作区 .cursor/rules/ · 随包分发于 product-ui-design v2.0 -->
+
+
+# 交付验证协议（强制 · 不可跳过）
+
+**核心理念**：约束不是「应该遵守」的指南，而是「必须证明遵守」的交付门槛。
+AI 说「我遵守了」不算数，必须出示证据。**没有自检报告 = 交付未完成。**
+
+## 1. 交付前强制自检报告（每次交付必附）
+
+在说「做完了」之前，必须输出以下结构化报告，贴在交付回复末尾：
+
+```markdown
+## 交付自检报告
+
+### 数据溯源
+| 字段 | 值 | 来源 |
+|------|-----|------|
+| （每个数字 / 价格 / 评分 / 销量一行） | | reference.html SSR JSON / autocava.com.mx / [待PM确认] / tokens.md |
+
+### 约束合规证据
+- [ ] 数据真实性：所有数字已标注来源 → 见上表
+- [ ] **平台维度真数据**：凡平台已有维度（价/月供/销量/排名/走势等）未用示意假数 → 见 `.cursor/rules/07-prototype-platform-data.mdc`
+- [ ] **环境分流**：`source:` / 外链写明 `ac_ab=`；走势类走 **canary**，榜单默认 **stable** → 见同文件 §0
+- [ ] ICON 规范：Iconify CDN 已引入 → line X
+- [ ] 品牌色：按产品线使用正确 → line X
+- [ ] 触达工具：WhatsApp 链接格式正确 → line X
+- [ ] 响应式：@media (min-width: 1024px) 已添加 → line X-X
+- [ ] 视觉规范：按对应产品线 spec.md 执行 → 见 §X
+- [ ] **留资隐私脚注**（若含手机号/WhatsApp 表单）：CTA 下有 Política de Privacidad + 中介免责，链接 `https://www.autocava.com.mx/legal/privacy` → 见 `.cursor/rules/06-mx-lead-privacy.mdc`
+
+### 视觉对比（复刻任务必填）
+| 元素 | 目标页面值 | 本交付值 | 状态 |
+|------|-----------|---------|------|
+| （逐项对比） | | | 通过 / 不通过 |
+```
+
+**没有这份报告 → PM 直接退回，不进入审阅环节。**
+
+## 2. 数据溯源注释（HTML 内嵌）
+
+HTML 中每个数据字段**必须**内嵌来源注释：
+
+```html
+<!-- source: reference.html SSR __NUXT__ JSON -->
+<span class="price">374,990 MXN</span>
+
+<!-- source: [待PM确认] -->
+<span class="range">— km</span>
+
+<!-- source: tokens.md §颜色 -->
+<style>--amber: #FFC422;</style>
+```
+
+**验证命令**：`grep -c "source:" 交付.html` 结果应 > 0，否则视为数据无溯源。
+
+## 3. 复刻任务强制对比流程
+
+当任务含「复刻 / 还原 / 100% copy / 跟 XXX 一致」时：
+
+1. **先读 reference.html**：用 Read 工具读取目标页面真实 DOM
+2. **提取关键指标**：颜色 / 字号 / 间距 / 结构 / 交互 / class 命名
+3. **产出对比表**：逐项列出目标 vs 交付的差异（见 §1 格式）
+4. **声明差异**：明确说「以下 N 项无法 100% 还原，原因是……」
+5. **禁止说「100% copy」**：除非对比表全部通过，否则必须注明差异点
+
+配套清单：`visual-specs/page-copy-checklist.md`（Pre-Flight + 结构对齐 + 视觉 diff）。
+
+## 4. 违规后果
+
+| 违规行为 | 后果 |
+|---------|------|
+| 交付物缺少自检报告 | PM 直接退回，不审阅 |
+| 数据无溯源注释 | 视为编造数据，整段重做 |
+| 声称「100% copy」但无对比表 | 视为虚假声明，退回补对比表 |
+| 自检报告与实际不符（如写了 Iconify 但实际用 emoji） | 整段重做 + 标记为 P0 违规 |
+| 连续 2 次 P0 违规 | 该 Task 转交其他 Agent 执行 |
+
+## 5. 与其他验证清单的关系
+
+- `skills/product-prototype-design/SKILL.md` §8 验证清单 = **内容级**检查（颜色对不对 / ICON 对不对）
+- 本协议 = **流程级**检查（AI 是否出示了遵守的证据）
+- **两者都必须满足**，缺一不可
+
+## 6. 立即打断信号
+
+AI 输出中出现以下任一项，立即打断并纠正：
+
+- `package.json` / `requirements.txt` / `Dockerfile` / `database.yml` / `prisma` schema
+- `app.get('/api/...')` / `mongoose.connect()` / `useSession()` / `NextAuth`
+- `fetch('https://api.autocava.com.mx/...')` 假装真后端
+- 引用 `./xxx.html` / `./yyy.md` 路径但**未预先验证文件存在** → 跑 `test -f` 确认
+- 编造数据：杜撰用户评论 / 假用户名 / 假销量
+- 用 emoji 替代界面图标
+- 出现 `微信` / `WeChat` / `加微信`
+- 把 CAVI 的 amber+navy 套到 autocava.com.mx 用户端
+- 设计「孤岛页面」（无入口 / 无下一步 / 无闭环）
+- HTML 没有响应式适配（缺 `@media` 断点）
+- 做两个独立文件分别做 PC 版和 H5 版（应为单文件响应式）
+- **在对话气泡 / 产品卡等 C 端产品表面内展示步骤序号、PM 备注、`Frame ·`、内部步骤名**（①②③ / Conclusión / solo texto 等）→ 删掉或改 HTML 注释；细则见 `03-html-prototype.mdc` §4
+- **用助手气泡展示内部逻辑**（如 `Sin objeto claro → no hay tarjeta`、状态机/边界说明）→ 删气泡，改注释或评审板 `note`；细则见 `03-html-prototype.mdc` §4
+- **同一轮回复里对话气泡与产品卡贴同义主结论**（如不买贵气泡已结论、卡底再复读）→ 删卡底结论文案；细则见 `03-html-prototype.mdc` §4.1
+- **榜单 / 宿主页落地却画成独立站 `/cavi` 顶栏**（假返回条、锁定车型行、灰底图标钮、渐变圆头像冒充浮层）→ 改 Web 嵌入顶栏；细则见 `03-html-prototype.mdc` §9.3
+- **交付含 `type="tel"` / WhatsApp o celular / 姓名+手机留资，但无 `legal/privacy` 脚注或链接为 `href="#"`** → 补隐私同意 + 中介免责；细则见 `06-mx-lead-privacy.mdc`
+- **交付 HTML 时没有附带本协议 §1 自检报告** → 要求补报告
+- **自检报告中数据溯源表为空或全是 `[待PM确认]`** → 要求先去抓真实数据
+- **平台已有维度却用「示意走势 / 假折线 / 假平均价」** → 删假图，只留真字段或外链；细则见 `07-prototype-platform-data.mdc`
+

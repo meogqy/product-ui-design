@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<!--
+  Progress · 进度条 / 电量条 / 加载进度
+  来源：Figma 「电量条」共 342 次实例抽取（最高频缺失组件）
+  共 4 个 variant：Linear（线性）/ Battery（电池）/ Circular（环形）/ Stepper（分段）
+  适用：电量、下载进度、多步流程加载、表单填写进度、视频缓冲
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Progress Component · UI Design System</title>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+:root {
+  --yellow-50: #FFFAED;
+  --yellow-500: #FFCF20;
+  --yellow-600: #E0A504;
+  --blue-500: #0056FA;
+  --red-500: #A8071A;
+  --green-500: #7CB305;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+  --font-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--grey-50);
+  color: var(--grey-900);
+  padding: 32px 16px;
+  line-height: 1.5;
+}
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  background: var(--white);
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 16px rgba(10,25,41,0.06);
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--grey-900);
+}
+.lead {
+  color: var(--grey-600);
+  font-size: 14px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--grey-100);
+}
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 32px 0 16px;
+  color: var(--grey-900);
+}
+h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 20px 0 12px;
+  color: var(--grey-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.demo-grid {
+  background: var(--grey-50);
+  padding: 24px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+.spec-section {
+  background: var(--grey-50);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--grey-600);
+}
+.spec-section code {
+  background: var(--white);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: monospace;
+  color: var(--grey-900);
+}
+.section-desc {
+  color: var(--grey-600);
+  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--yellow-50);
+  border-left: 3px solid var(--yellow-500);
+  border-radius: 4px;
+}
+
+/* ========================================================
+   ① Linear Progress · 线性进度条
+   ======================================================== */
+.linear {
+  width: 100%;
+  height: 8px;
+  background: var(--grey-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  position: relative;
+}
+.linear-bar {
+  height: 100%;
+  background: var(--yellow-500);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+.linear-bar.success { background: var(--green-500); }
+.linear-bar.warning { background: var(--yellow-500); }
+.linear-bar.error { background: var(--red-500); }
+.linear-bar.striped {
+  background-image: linear-gradient(45deg,
+    rgba(255,255,255,0.2) 25%, transparent 25%,
+    transparent 50%, rgba(255,255,255,0.2) 50%,
+    rgba(255,255,255,0.2) 75%, transparent 75%);
+  background-size: 16px 16px;
+  animation: stripe-move 1s linear infinite;
+}
+@keyframes stripe-move {
+  0% { background-position: 0 0; }
+  100% { background-position: 16px 0; }
+}
+.linear-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.linear-row .linear { flex: 1; }
+.linear-label { font-size: 13px; color: var(--grey-600); min-width: 40px; }
+
+/* 尺寸 */
+.linear.thin { height: 4px; }
+.linear.thick { height: 12px; }
+
+/* ========================================================
+   ② Battery Progress · 电池 / 电量
+   ======================================================== */
+.battery {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.battery-shell {
+  position: relative;
+  width: 80px;
+  height: 32px;
+  border: 2px solid var(--grey-900);
+  border-radius: 4px;
+  padding: 2px;
+}
+.battery-shell::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 12px;
+  background: var(--grey-900);
+  border-radius: 0 2px 2px 0;
+}
+.battery-fill {
+  height: 100%;
+  background: var(--yellow-500);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+.battery-fill.low { background: var(--red-500); }
+.battery-fill.mid { background: var(--yellow-500); }
+.battery-fill.high { background: var(--green-500); }
+.battery-percent {
+  font-size: 12px;
+  color: var(--grey-900);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  min-width: 36px;
+}
+
+/* 充电中 */
+.battery.charging .battery-shell::before {
+  content: '⚡';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  z-index: 2;
+}
+
+/* 胶囊电池 · 顶部导航内嵌 */
+.battery-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--grey-900);
+  color: var(--white);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.battery-pill-bar {
+  width: 40px;
+  height: 6px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.battery-pill-fill {
+  height: 100%;
+  background: var(--yellow-500);
+}
+
+/* ========================================================
+   ③ Circular Progress · 环形进度
+   ======================================================== */
+.circular {
+  position: relative;
+  display: inline-block;
+}
+.circular svg {
+  transform: rotate(-90deg);
+}
+.circular-track { stroke: var(--grey-100); }
+.circular-bar {
+  stroke: var(--yellow-500);
+  transition: stroke-dashoffset 0.5s ease;
+  stroke-linecap: round;
+}
+.circular-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--grey-900);
+  font-variant-numeric: tabular-nums;
+}
+.circular.spinning .circular-bar {
+  animation: circular-spin 1.2s linear infinite;
+  transform-origin: center;
+}
+@keyframes circular-spin {
+  0% { stroke-dasharray: 1 200; }
+  50% { stroke-dasharray: 100 200; }
+  100% { stroke-dasharray: 100 200; }
+}
+
+/* ========================================================
+   ④ Stepper · 步进进度 / 多段
+   ======================================================== */
+.stepper {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+}
+.stepper-step {
+  flex: 1;
+  height: 6px;
+  background: var(--grey-100);
+  border-radius: 3px;
+  position: relative;
+  overflow: hidden;
+}
+.stepper-step.done { background: var(--yellow-500); }
+.stepper-step.active {
+  background: var(--grey-100);
+}
+.stepper-step.active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--yellow-500);
+  border-radius: 3px;
+  animation: stepper-grow 1.5s ease forwards;
+}
+@keyframes stepper-grow {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* 多步流程 · 数字节点 */
+.stepper-nodes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 24px;
+}
+.stepper-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  position: relative;
+}
+.stepper-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--grey-100);
+  color: var(--grey-400);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 14px;
+  border: 2px solid var(--grey-100);
+  z-index: 1;
+}
+.stepper-node.done .stepper-circle {
+  background: var(--yellow-500);
+  color: var(--grey-900);
+  border-color: var(--yellow-500);
+}
+.stepper-node.active .stepper-circle {
+  background: var(--white);
+  color: var(--yellow-500);
+  border-color: var(--yellow-500);
+  box-shadow: 0 0 0 4px var(--yellow-50);
+}
+.stepper-label {
+  font-size: 12px;
+  color: var(--grey-600);
+  white-space: nowrap;
+}
+.stepper-node.done .stepper-label,
+.stepper-node.active .stepper-label {
+  color: var(--grey-900);
+  font-weight: 600;
+}
+.stepper-node:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  left: calc(50% + 20px);
+  right: calc(-50% + 20px);
+  height: 2px;
+  background: var(--grey-100);
+  z-index: 0;
+}
+.stepper-node.done:not(:last-child)::after {
+  background: var(--yellow-500);
+}
+
+/* ========================================================
+   Spec table
+   ======================================================== */
+table.variants {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+table.variants th, table.variants td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-100);
+  text-align: left;
+}
+table.variants th {
+  background: var(--grey-50);
+  color: var(--grey-600);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>⚡ Progress · 进度条 / 电量条</h1>
+  <p class="lead">
+    来源：Figma 「电量条」共 342 次实例抽取<br>
+    4 个 variant · Linear（线性进度）/ Battery（电池）/ Circular（环形）/ Stepper（多段步进）<br>
+    频率：Figma 使用 #1 高频缺失组件
+  </p>
+
+  <h2>① Linear · 线性进度条</h2>
+  <div class="demo-grid">
+    <div class="linear-row">
+      <div class="linear"><div class="linear-bar" style="width: 25%"></div></div>
+      <span class="linear-label">25%</span>
+    </div>
+    <div class="linear-row">
+      <div class="linear"><div class="linear-bar" style="width: 50%"></div></div>
+      <span class="linear-label">50%</span>
+    </div>
+    <div class="linear-row">
+      <div class="linear"><div class="linear-bar success" style="width: 75%"></div></div>
+      <span class="linear-label">75%</span>
+    </div>
+    <div class="linear-row">
+      <div class="linear"><div class="linear-bar error" style="width: 90%"></div></div>
+      <span class="linear-label">90%</span>
+    </div>
+    <div class="linear-row">
+      <div class="linear"><div class="linear-bar striped" style="width: 60%"></div></div>
+      <span class="linear-label">loading…</span>
+    </div>
+  </div>
+
+  <h3>尺寸变体</h3>
+  <div class="demo-grid">
+    <div class="linear-row">
+      <div class="linear thin"><div class="linear-bar" style="width: 60%"></div></div>
+      <span class="linear-label">thin 4px</span>
+    </div>
+    <div class="linear-row">
+      <div class="linear"><div class="linear-bar" style="width: 60%"></div></div>
+      <span class="linear-label">default 8px</span>
+    </div>
+    <div class="linear-row">
+      <div class="linear thick"><div class="linear-bar" style="width: 60%"></div></div>
+      <span class="linear-label">thick 12px</span>
+    </div>
+  </div>
+
+  <h2>② Battery · 电池 / 电量</h2>
+  <p class="section-desc">车辆 / 手机 / 设备剩余电量展示。从 Figma 「电量条」直接通用化而来。</p>
+  <div class="demo-grid">
+    <div class="battery">
+      <div class="battery-shell"><div class="battery-fill high" style="width: 90%"></div></div>
+      <span class="battery-percent">90%</span>
+    </div>
+    <br><br>
+    <div class="battery">
+      <div class="battery-shell"><div class="battery-fill mid" style="width: 55%"></div></div>
+      <span class="battery-percent">55%</span>
+    </div>
+    <br><br>
+    <div class="battery">
+      <div class="battery-shell"><div class="battery-fill low" style="width: 18%"></div></div>
+      <span class="battery-percent">18%</span>
+    </div>
+    <br><br>
+    <div class="battery charging">
+      <div class="battery-shell"><div class="battery-fill mid" style="width: 60%"></div></div>
+      <span class="battery-percent"><span class="iconify" data-icon="lucide:zap" style="font-size:14px"></span> 60%</span>
+    </div>
+  </div>
+
+  <h3>胶囊电池 · 顶部导航内嵌</h3>
+  <div class="demo-grid">
+    <div class="battery-pill">
+      <span><span class="iconify" data-icon="lucide:battery-full" style="font-size:20px"></span></span>
+      <div class="battery-pill-bar"><div class="battery-pill-fill" style="width: 75%"></div></div>
+      <span>75%</span>
+    </div>
+  </div>
+
+  <h2>③ Circular · 环形进度</h2>
+  <div class="demo-grid">
+    <div class="circular">
+      <svg width="120" height="120">
+        <circle class="circular-track" cx="60" cy="60" r="48" stroke-width="8" fill="none"/>
+        <circle class="circular-bar" cx="60" cy="60" r="48" stroke-width="8" fill="none"
+          stroke-dasharray="301.59" stroke-dashoffset="75.4"/>
+      </svg>
+      <div class="circular-label">75%</div>
+    </div>
+    &nbsp;&nbsp;&nbsp;
+    <div class="circular spinning">
+      <svg width="40" height="40">
+        <circle class="circular-track" cx="20" cy="20" r="16" stroke-width="3" fill="none"/>
+        <circle class="circular-bar" cx="20" cy="20" r="16" stroke-width="3" fill="none"/>
+      </svg>
+    </div>
+    &nbsp;&nbsp;&nbsp;
+    <div class="circular">
+      <svg width="60" height="60">
+        <circle class="circular-track" cx="30" cy="30" r="24" stroke-width="4" fill="none"/>
+        <circle class="circular-bar" cx="30" cy="30" r="24" stroke-width="4" fill="none"
+          stroke-dasharray="150.8" stroke-dashoffset="30.16"
+          style="stroke: var(--green-500)"/>
+      </svg>
+      <div class="circular-label" style="font-size:11px">80%</div>
+    </div>
+  </div>
+
+  <h2>④ Stepper · 步进进度</h2>
+  <h3>A. 段落条</h3>
+  <div class="demo-grid">
+    <div class="stepper">
+      <div class="stepper-step done"></div>
+      <div class="stepper-step done"></div>
+      <div class="stepper-step active"></div>
+      <div class="stepper-step"></div>
+      <div class="stepper-step"></div>
+    </div>
+    <br>
+    <div class="stepper">
+      <div class="stepper-step done"></div>
+      <div class="stepper-step done"></div>
+      <div class="stepper-step done"></div>
+      <div class="stepper-step done"></div>
+      <div class="stepper-step done"></div>
+    </div>
+  </div>
+
+  <h3>B. 节点式 · 购车流程</h3>
+  <div class="demo-grid">
+    <div class="stepper-nodes">
+      <div class="stepper-node done">
+        <div class="stepper-circle">✓</div>
+        <div class="stepper-label">选车型</div>
+      </div>
+      <div class="stepper-node done">
+        <div class="stepper-circle">✓</div>
+        <div class="stepper-label">贷款预审</div>
+      </div>
+      <div class="stepper-node active">
+        <div class="stepper-circle">3</div>
+        <div class="stepper-label">信用评估</div>
+      </div>
+      <div class="stepper-node">
+        <div class="stepper-circle">4</div>
+        <div class="stepper-label">合同签署</div>
+      </div>
+      <div class="stepper-node">
+        <div class="stepper-circle">5</div>
+        <div class="stepper-label">提车</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-section">
+    <strong>📐 规范：</strong><br>
+    • Linear 默认 8px 高度、Yellow-500 主题，状态色（success/warning/error）映射文本色<br>
+    • Battery 80×32px、2px 边框，状态分档 ≥60% 绿 / 30-60% 黄 / &lt;30% 红<br>
+    • Circular 半径=容器一半、stroke 8px；数字居中字号=容器 1/4<br>
+    • Stepper 节点 32px；连线 2px grey-100，完成态转 Yellow-500
+  </div>
+
+  <h2>🎨 对应 Design Tokens</h2>
+  <table class="variants">
+    <thead><tr><th>元素</th><th>用 Token</th></tr></thead>
+    <tbody>
+      <tr><td>Linear 轨道</td><td><code>--grey-100</code> (#F1F1F1)</td></tr>
+      <tr><td>Linear 填充</td><td><code>--yellow-500</code> (#FFCF20) / <code>--green-500</code> / <code>--red-500</code></td></tr>
+      <tr><td>Battery 边框</td><td><code>--grey-900</code> (#222222)</td></tr>
+      <tr><td>Battery ≥60%</td><td><code>--green-500</code></td></tr>
+      <tr><td>Battery 30-60%</td><td><code>--yellow-500</code></td></tr>
+      <tr><td>Battery &lt;30%</td><td><code>--red-500</code></td></tr>
+      <tr><td>Circular 轨道</td><td><code>--grey-100</code></td></tr>
+      <tr><td>Circular 进度</td><td><code>--yellow-500</code></td></tr>
+      <tr><td>Stepper done</td><td><code>--yellow-500</code></td></tr>
+      <tr><td>Stepper pending</td><td><code>--grey-100</code></td></tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

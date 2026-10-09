@@ -1,0 +1,61 @@
+# product-ui-design · 工具入口（Cursor / Cline / Roo Code / Continue / Windsurf）
+
+把本文件放到**项目根目录**，AI 会自动加载。
+
+---
+
+## 必读（按顺序，不可跳）
+
+1. **读 `product-ui-design/SKILL.md`** —— 完整工作流与硬规则
+2. **填 `product-ui-design/SITE-CONFIG.md`** —— 品牌色 / 市场 / 视口 / 触达工具 / 数据来源
+
+> ⚠️ **未填 SITE-CONFIG 就开工 = 必返工。** 规范里所有 `<PRIMARY_COLOR>` 这类占位符会直接进你的页面。
+
+---
+
+## 10 条硬规则（不可协商）
+
+| # | 规则 |
+|---|------|
+| 1 | **数据必须真实** —— 生产页面禁止 mock / 示意曲线 / 假序列 |
+| 2 | **组件必须复用** —— 先查 `design-system/components/`，禁止自创新样式 |
+| 3 | **token 不跨线借用** —— 主站色 ≠ 报告页色 ≠ 后台色 |
+| 4 | **多环境必须分流** —— 交付物标注用了哪个环境 |
+| 5 | **WCAG AA** —— 正文对比度 ≥4.5:1，控件边框 ≥3:1（**实测**不目测） |
+| 6 | **触控热区 ≥44×44px** —— 主 CTA ≥48px（**实测**不目测） |
+| 7 | **每个可聚焦元素都要有`:focus-visible`** —— 禁止 `outline: none` 了事 |
+| 8 | **单文件响应式** —— 断点 1024px，禁止拆 PC/移动两个文件 |
+| 9 | **按最低端机型压测** —— 不用你的开发机视口 |
+| 10 | **图标走 Iconify 单源** —— 禁止 emoji 当图标，禁止混用多个图标库 |
+
+---
+
+## 动手前先查（不要造轮子）
+
+| 我要做什么 | 看哪里 |
+|-----------|--------|
+| 有哪些组件 | `product-ui-design/design-system/components/README.md` |
+| 一页扫完所有组件 | `product-ui-design/design-system/gallery.html` |
+| 要个交互流程 pattern | `product-ui-design/design-system/recipes/README.md` |
+| 改品牌色 / 查色值 | `product-ui-design/design-specs/tokens.md` |
+| 查图标 | `product-ui-design/ICON_SPEC.md` |
+| 写 HTML 拿不准 | `product-ui-design/rules/03-html-prototype.mdc` |
+| 交付前自检 | `product-ui-design/rules/01-delivery-verification.mdc` |
+
+---
+
+## 技术范围
+
+✅ 只产出**静态产物**：单文件 HTML（Vanilla + CSS + 少量 JS）、静态资源、跳转链接、模拟交互。
+
+❌ **不写**：后端 API / 数据库 / 鉴权 / 服务端逻辑 / 部署脚本 / 真实支付订单逻辑。
+❌ **禁止**在页面里写假 `fetch('/api/...')` 假装真后端。
+
+---
+
+## 交付要求
+
+每次交付**必须附自检报告**，含数据溯源表 + 约束合规证据（逐条指明在文件哪一行）。
+格式见 `product-ui-design/rules/01-delivery-verification.mdc`。
+
+**没有自检报告 = 交付未完成。**

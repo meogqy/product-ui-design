@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<!--
+  Brand Grid · 品牌 Logo Grid（通用化）
+  来源：Figma 「车品牌 (125)」+「车品牌列表-12」+「车品牌-黑白」+「汽车品牌」共 168+ 次实例抽取
+  用途：通用化的"品牌 Logo 网格"，可展示 6/8/12/16/24 等任意数量的品牌
+  适用：电商首页品牌墙、汽车品牌列表、车型筛选 App 选择
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Grid Component · UI Design System</title>
+<style>
+:root {
+  --yellow-50: #FFFAED;
+  --yellow-500: #FFCF20;
+  --blue-500: #0056FA;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-700: #555555;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-card: 0 4px 16px rgba(10,25,41,0.06);
+  --font-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--grey-50);
+  color: var(--grey-900);
+  padding: 32px 16px;
+  line-height: 1.5;
+}
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  background: var(--white);
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.lead {
+  color: var(--grey-600);
+  font-size: 14px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--grey-100);
+}
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 32px 0 16px;
+}
+h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 20px 0 12px;
+  color: var(--grey-600);
+}
+.demo-box {
+  background: var(--grey-50);
+  padding: 24px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+.section-desc {
+  color: var(--grey-600);
+  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--yellow-50);
+  border-left: 3px solid var(--yellow-500);
+  border-radius: 4px;
+}
+
+/* ========================================================
+   ① Brand Grid · 6 列 / 4 列 / 3 列 自适应
+   ======================================================== */
+.brand-grid {
+  display: grid;
+  gap: 12px;
+}
+.brand-grid.col-6 { grid-template-columns: repeat(6, 1fr); }
+.brand-grid.col-4 { grid-template-columns: repeat(4, 1fr); }
+.brand-grid.col-3 { grid-template-columns: repeat(3, 1fr); }
+.brand-grid.col-2 { grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 640px) {
+  .brand-grid.col-6 { grid-template-columns: repeat(3, 1fr); }
+  .brand-grid.col-4 { grid-template-columns: repeat(2, 1fr); }
+  .brand-grid.col-3 { grid-template-columns: repeat(2, 1fr); }
+}
+
+.brand-cell {
+  background: var(--white);
+  border: 1px solid var(--grey-100);
+  border-radius: var(--radius-md);
+  padding: 16px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.brand-cell:hover {
+  border-color: var(--yellow-500);
+  background: var(--yellow-50);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+.brand-cell.active {
+  border-color: var(--yellow-500);
+  background: var(--yellow-50);
+}
+.brand-cell.active::after {
+  content: '✓';
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  color: var(--yellow-500);
+  font-weight: 700;
+}
+.brand-cell { position: relative; }
+.brand-logo {
+  width: 48px;
+  height: 48px;
+  background: var(--grey-50);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--grey-900);
+}
+.brand-cell.bw .brand-logo {
+  background: var(--grey-900);
+  color: var(--white);
+}
+.brand-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--grey-700);
+  text-align: center;
+}
+.brand-name-cn {
+  font-size: 11px;
+  color: var(--grey-400);
+  text-align: center;
+}
+
+/* 字母版 */
+.brand-letter {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--grey-900);
+}
+
+/* 真实品牌 · 字母标识 */
+.brand-nissan { background: #C30002; color: white; }
+.brand-toyota { background: #EB0A1E; color: white; }
+.brand-honda { background: #E4001B; color: white; }
+.brand-vw { background: #001E62; color: white; }
+.brand-kia { background: #05141F; color: white; }
+.brand-hyundai { background: #002C5F; color: white; }
+.brand-mg { background: #B9121B; color: white; }
+.brand-xpeng { background: #00C8C8; color: white; }
+.brand-byd { background: #0066B3; color: white; }
+.brand-tesla { background: #E31937; color: white; }
+.brand-bmw { background: #0066B1; color: white; }
+.brand-audi { background: #BB0A30; color: white; }
+
+/* 圆形字母版（无 logo 图场景） */
+.brand-mono {
+  background: var(--grey-900);
+  color: var(--white);
+}
+
+/* ========================================================
+   ② Brand List · 单列品牌列表
+   ======================================================== */
+.brand-list {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--grey-100);
+}
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--grey-100);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.brand-row:last-child { border-bottom: none; }
+.brand-row:hover { background: var(--grey-50); }
+.brand-row-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--grey-50);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--white);
+  flex-shrink: 0;
+}
+.brand-row-info { flex: 1; min-width: 0; }
+.brand-row-name { font-size: 14px; font-weight: 600; color: var(--grey-900); }
+.brand-row-meta { font-size: 12px; color: var(--grey-400); margin-top: 2px; }
+.brand-row-count {
+  font-size: 13px;
+  color: var(--grey-400);
+  flex-shrink: 0;
+}
+
+/* ========================================================
+   ③ Brand Index · A-Z 索引
+   ======================================================== */
+.brand-index {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--grey-100);
+  overflow: hidden;
+}
+.brand-letter-section {
+  border-bottom: 1px solid var(--grey-100);
+}
+.brand-letter-section:last-child { border-bottom: none; }
+.brand-letter-header {
+  background: var(--grey-50);
+  padding: 8px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--grey-600);
+  letter-spacing: 0.05em;
+}
+.brand-letter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--grey-100);
+}
+.brand-letter-cell {
+  background: var(--white);
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--grey-700);
+}
+.brand-letter-cell:hover { background: var(--yellow-50); }
+
+table.variants {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+table.variants th, table.variants td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-100);
+  text-align: left;
+}
+table.variants th {
+  background: var(--grey-50);
+  color: var(--grey-600);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🚗 Brand Grid · 品牌 Logo Grid</h1>
+  <p class="lead">
+    来源：Figma 「车品牌 (125)」+「车品牌-黑白」+「车品牌列表-12」+「汽车品牌」共 168+ 次实例抽取<br>
+    通用化为"品牌 Logo 网格" · 4 个 view · 6/4/3 列网格 / 单列品牌列表 / A-Z 索引
+  </p>
+
+  <h2>① Grid 6 列 · 12 品牌</h2>
+  <p class="section-desc">品牌墙 / App 选车入口 / 首页"找品牌"模块。6 列在 PC、3 列在 H5。鼠标悬停转黄底+上移 2px。</p>
+  <div class="demo-box">
+    <div class="brand-grid col-6">
+      <div class="brand-cell"><div class="brand-logo brand-nissan">N</div><div class="brand-name">Nissan</div></div>
+      <div class="brand-cell"><div class="brand-logo brand-toyota">T</div><div class="brand-name">Toyota</div></div>
+      <div class="brand-cell"><div class="brand-logo brand-honda">H</div><div class="brand-name">Honda</div></div>
+      <div class="brand-cell"><div class="brand-logo brand-vw">VW</div><div class="brand-name">Volkswagen</div></div>
+      <div class="brand-cell"><div class="brand-logo brand-kia">K</div><div class="brand-name">Kia</div></div>
+      <div class="brand-cell"><div class="brand-logo brand-hyundai">H</div><div class="brand-name">Hyundai</div></div>
+      <div class="brand-cell active"><div class="brand-logo brand-mg">MG</div><div class="brand-name">MG</div></div>
+      <div class="brand-cell"><div class="brand-logo brand-xpeng">X</div><div class="brand-name">XPENG</div></div>
+      <div class="brand-cell"><div class="brand-logo brand-byd">B</div><div class="brand-name">BYD</div></div>
+      <div class="brand-cell"><div class="brand-logo brand-tesla">T</div><div class="brand-name">Tesla</div></div>
+      <div class="brand-cell"><div class="brand-logo brand-bmw">B</div><div class="brand-name">BMW</div></div>
+      <div class="brand-cell"><div class="brand-logo brand-audi">A</div><div class="brand-name">Audi</div></div>
+    </div>
+  </div>
+
+  <h2>② Grid 4 列 · 单色版（黑白）</h2>
+  <p class="section-desc">从 Figma 「车品牌-黑白」抽取，单色背景适合极简风页面。</p>
+  <div class="demo-box">
+    <div class="brand-grid col-4">
+      <div class="brand-cell bw"><div class="brand-logo">N</div><div class="brand-name">Nissan</div></div>
+      <div class="brand-cell bw"><div class="brand-logo">T</div><div class="brand-name">Toyota</div></div>
+      <div class="brand-cell bw"><div class="brand-logo">H</div><div class="brand-name">Honda</div></div>
+      <div class="brand-cell bw"><div class="brand-logo">V</div><div class="brand-name">Volkswagen</div></div>
+      <div class="brand-cell bw"><div class="brand-logo">K</div><div class="brand-name">Kia</div></div>
+      <div class="brand-cell bw"><div class="brand-logo">H</div><div class="brand-name">Hyundai</div></div>
+      <div class="brand-cell bw"><div class="brand-logo">M</div><div class="brand-name">MG</div></div>
+      <div class="brand-cell bw"><div class="brand-logo">T</div><div class="brand-name">Tesla</div></div>
+    </div>
+  </div>
+
+  <h2>③ Brand List · 单列品牌列表（带车型数）</h2>
+  <p class="section-desc">车型筛选的侧边栏 / 设置页面。每个品牌显示 Logo + 名称 + 车型数。</p>
+  <div class="demo-box">
+    <div class="brand-list">
+      <div class="brand-row">
+        <div class="brand-row-logo brand-nissan">N</div>
+        <div class="brand-row-info">
+          <div class="brand-row-name">Nissan</div>
+          <div class="brand-row-meta">日产 · 日本</div>
+        </div>
+        <div class="brand-row-count">3 款车型</div>
+      </div>
+      <div class="brand-row">
+        <div class="brand-row-logo brand-kia">K</div>
+        <div class="brand-row-info">
+          <div class="brand-row-name">Kia</div>
+          <div class="brand-row-meta">起亚 · 韩国</div>
+        </div>
+        <div class="brand-row-count">2 款车型</div>
+      </div>
+      <div class="brand-row">
+        <div class="brand-row-logo brand-hyundai">H</div>
+        <div class="brand-row-info">
+          <div class="brand-row-name">Hyundai</div>
+          <div class="brand-row-meta">现代 · 韩国</div>
+        </div>
+        <div class="brand-row-count">5 款车型</div>
+      </div>
+      <div class="brand-row">
+        <div class="brand-row-logo brand-mg">MG</div>
+        <div class="brand-row-info">
+          <div class="brand-row-name">MG</div>
+          <div class="brand-row-meta">名爵 · 上汽</div>
+        </div>
+        <div class="brand-row-count">2 款车型</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>④ Brand Index · A-Z 字母索引</h2>
+  <p class="section-desc">从 Figma 「车品牌列表-12」抽取。字母分区 + 4 列 cell，适合品牌数量 > 30 的场景。</p>
+  <div class="demo-box">
+    <div class="brand-index">
+      <div class="brand-letter-section">
+        <div class="brand-letter-header">A</div>
+        <div class="brand-letter-grid">
+          <div class="brand-letter-cell">Audi</div>
+          <div class="brand-letter-cell">Acura</div>
+          <div class="brand-letter-cell">Alfa Romeo</div>
+          <div class="brand-letter-cell">Aston Martin</div>
+        </div>
+      </div>
+      <div class="brand-letter-section">
+        <div class="brand-letter-header">B</div>
+        <div class="brand-letter-grid">
+          <div class="brand-letter-cell">BMW</div>
+          <div class="brand-letter-cell">BYD</div>
+          <div class="brand-letter-cell">Bentley</div>
+          <div class="brand-letter-cell">Buick</div>
+        </div>
+      </div>
+      <div class="brand-letter-section">
+        <div class="brand-letter-header">T</div>
+        <div class="brand-letter-grid">
+          <div class="brand-letter-cell">Tesla</div>
+          <div class="brand-letter-cell">Toyota</div>
+          <div class="brand-letter-cell">Tiguan</div>
+          <div class="brand-letter-cell">Troller</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>🎨 对应 Design Tokens</h2>
+  <table class="variants">
+    <thead><tr><th>元素</th><th>用 Token</th></tr></thead>
+    <tbody>
+      <tr><td>Cell 默认</td><td><code>--white</code> 背景 + <code>--grey-100</code> 边框</td></tr>
+      <tr><td>Cell hover</td><td><code>--yellow-50</code> 背景 + <code>--yellow-500</code> 边框 + 上移 2px</td></tr>
+      <tr><td>Cell active</td><td><code>--yellow-50</code> 背景 + 右上角 ✓</td></tr>
+      <tr><td>Cell 黑白版</td><td>Logo 容器 <code>--grey-900</code> + 白字</td></tr>
+      <tr><td>Logo 圆形容器</td><td>48×48px 圆 + 字母 / 真实品牌色（可拓展）</td></tr>
+      <tr><td>Letter header</td><td><code>--grey-50</code> 背景 + <code>--grey-600</code> 文字 12px / 700</td></tr>
+      <tr><td>Letter cell hover</td><td><code>--yellow-50</code> 背景</td></tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

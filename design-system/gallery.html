@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<!--
+  Components Gallery · 一页总览所有 25+5 组件
+  用途：人和 AI 快速浏览所有组件 → 点链接打开对应 HTML
+  包含：缩略图 + 名称 + 简述 + 跳转
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI Design System · Gallery · 30 Components</title>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+:root {
+  --yellow-50: #FFFAE9;
+  --yellow-500: #FFCF20;
+  --yellow-600: #E8BC1D;
+  --blue-500: #0056FA;
+  --green-500: #7CB305;
+  --red-500: #A8071A;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-700: #555555;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow-card: 0 4px 16px rgba(10,25,41,0.06);
+  --shadow-hover: 0 8px 24px rgba(10,25,41,0.12);
+  --font-sans: 'Inter', 'PingFang SC', sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--grey-50);
+  color: var(--grey-900);
+  padding: 0;
+  line-height: 1.5;
+}
+
+/* Header */
+.gallery-header {
+  background: var(--yellow-500);
+  padding: 40px 32px;
+  text-align: center;
+  border-bottom: 1px solid var(--yellow-600);
+}
+.gallery-header h1 {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--grey-900);
+  margin-bottom: 8px;
+}
+.gallery-header .lead {
+  font-size: 14px;
+  color: rgba(10,25,41,0.7);
+  margin-bottom: 16px;
+}
+.gallery-meta {
+  display: inline-flex;
+  gap: 16px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.5);
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  color: var(--grey-900);
+  font-weight: 600;
+}
+
+/* Navigation */
+.gallery-nav {
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--grey-100);
+  z-index: 10;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.gallery-nav strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--grey-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.gallery-nav a {
+  font-size: 13px;
+  color: var(--grey-700);
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+}
+.gallery-nav a:hover {
+  background: var(--yellow-50);
+  color: var(--grey-900);
+}
+
+/* Container */
+.gallery-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+/* Section */
+.gallery-section {
+  margin-bottom: 48px;
+}
+.gallery-section-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--grey-900);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.gallery-section-title .count {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--grey-400);
+  background: var(--grey-100);
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+.gallery-section-desc {
+  color: var(--grey-600);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* Component Grid */
+.comp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* Component Card */
+.comp-card {
+  background: var(--white);
+  border: 1px solid var(--grey-100);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s;
+}
+.comp-card:hover {
+  border-color: var(--yellow-500);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+.comp-preview {
+  height: 140px;
+  background: linear-gradient(135deg, var(--grey-50), var(--grey-100));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 16px;
+}
+.comp-preview-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+.comp-info {
+  padding: 14px 16px;
+  border-top: 1px solid var(--grey-100);
+}
+.comp-num {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--grey-400);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.comp-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--grey-900);
+  margin: 4px 0 6px;
+}
+.comp-desc {
+  font-size: 12px;
+  color: var(--grey-600);
+  line-height: 1.5;
+}
+.comp-tag-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+.comp-tag {
+  font-size: 10px;
+  background: var(--yellow-50);
+  color: var(--grey-900);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.comp-tag.priority {
+  background: var(--red-500);
+  color: var(--white);
+}
+.comp-tag.recipes {
+  background: var(--blue-500);
+  color: var(--white);
+}
+
+/* Footer */
+.gallery-footer {
+  background: var(--white);
+  padding: 32px;
+  border-top: 1px solid var(--grey-100);
+  margin-top: 48px;
+}
+.gallery-footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+.foot-link {
+  background: var(--grey-50);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--grey-900);
+  display: block;
+}
+.foot-link:hover {
+  background: var(--yellow-50);
+}
+.foot-link strong {
+  font-size: 14px;
+  display: block;
+  margin-bottom: 4px;
+}
+.foot-link span {
+  font-size: 12px;
+  color: var(--grey-600);
+}
+
+/* ===== 内联预览样式(精简版,从各组件复制) ===== */
+
+/* Button */
+.preview-btn {
+  display: inline-block;
+  padding: 10px 18px;
+  background: var(--yellow-500);
+  color: var(--grey-900);
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+}
+.preview-btn.blue { background: var(--blue-500); color: var(--white); }
+.preview-btn.grey { background: var(--grey-100); color: var(--grey-900); }
+
+/* Input */
+.preview-input {
+  padding: 10px 14px;
+  border: 1px solid var(--grey-200);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  background: var(--white);
+  width: 100%;
+  max-width: 220px;
+}
+
+/* Tag */
+.preview-tag {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--grey-100);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.preview-tag.active { background: var(--yellow-500); }
+
+/* Tabbar */
+.preview-tabbar {
+  display: flex;
+  gap: 4px;
+  background: var(--white);
+  padding: 6px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--grey-100);
+}
+.preview-tab {
+  padding: 6px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--grey-600);
+  border-radius: 6px;
+}
+.preview-tab.active {
+  background: var(--yellow-500);
+  color: var(--grey-900);
+}
+
+/* Badge */
+.preview-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  background: var(--yellow-50);
+  color: var(--grey-900);
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* Top Nav */
+.preview-topnav {
+  background: var(--grey-900);
+  color: var(--white);
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* Loading */
+.preview-loading {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--grey-100);
+  border-top-color: var(--yellow-500);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Empty */
+.preview-empty {
+  text-align: center;
+  font-size: 12px;
+  color: var(--grey-400);
+}
+.preview-empty .icon { font-size: 28px; }
+
+/* Modal */
+.preview-modal {
+  width: 100%;
+  max-width: 220px;
+  background: var(--white);
+  border: 1px solid var(--grey-200);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+  box-shadow: var(--shadow-card);
+}
+.preview-modal-title { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+.preview-modal-text { font-size: 11px; color: var(--grey-600); }
+
+/* Toast */
+.preview-toast {
+  background: var(--grey-900);
+  color: var(--white);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Search */
+.preview-search {
+  background: var(--white);
+  border: 1px solid var(--grey-200);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  max-width: 240px;
+}
+
+/* Select */
+.preview-select {
+  background: var(--white);
+  border: 1px solid var(--grey-200);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  max-width: 200px;
+}
+
+/* Checkbox / Radio / Switch */
+.preview-cb, .preview-radio, .preview-switch {
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--grey-300);
+  border-radius: 4px;
+  display: inline-block;
+  position: relative;
+}
+.preview-cb.checked { background: var(--yellow-500); border-color: var(--yellow-500); }
+.preview-cb.checked::after { content: '✓'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--grey-900); }
+.preview-radio { border-radius: 50%; }
+.preview-radio.checked { border-color: var(--yellow-500); }
+.preview-radio.checked::after { content: ''; position: absolute; inset: 3px; background: var(--yellow-500); border-radius: 50%; }
+.preview-switch { width: 36px; border-radius: 12px; }
+.preview-switch.on { background: var(--yellow-500); border-color: var(--yellow-500); }
+.preview-switch.on::after { content: ''; position: absolute; right: 2px; top: 1px; width: 12px; height: 12px; background: var(--white); border-radius: 50%; }
+.preview-switch::after { content: ''; position: absolute; left: 2px; top: 1px; width: 12px; height: 12px; background: var(--grey-300); border-radius: 50%; }
+
+/* Avatar */
+.preview-avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--blue-500);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* Banner */
+.preview-banner {
+  background: var(--yellow-500);
+  color: var(--grey-900);
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  font-size: 12px;
+  width: 100%;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* Progress */
+.preview-linear {
+  width: 100%;
+  height: 6px;
+  background: var(--grey-100);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.preview-linear-bar {
+  height: 100%;
+  background: var(--yellow-500);
+  width: 70%;
+}
+.preview-battery {
+  width: 50px;
+  height: 22px;
+  border: 2px solid var(--grey-900);
+  border-radius: 3px;
+  padding: 2px;
+  position: relative;
+}
+.preview-battery::after {
+  content: '';
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 10px;
+  background: var(--grey-900);
+  border-radius: 0 2px 2px 0;
+}
+.preview-battery-fill {
+  width: 80%;
+  height: 100%;
+  background: var(--green-500);
+  border-radius: 1px;
+}
+.preview-circular {
+  width: 60px;
+  height: 60px;
+}
+.preview-stepper { display: flex; gap: 4px; width: 100%; }
+.preview-stepper-step { flex: 1; height: 6px; background: var(--grey-100); border-radius: 3px; }
+.preview-stepper-step.done { background: var(--yellow-500); }
+
+/* Typography */
+.preview-display {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--grey-900);
+  letter-spacing: -0.02em;
+}
+.preview-h2 { font-size: 22px; font-weight: 700; color: var(--grey-900); }
+.preview-h3 { font-size: 16px; font-weight: 600; color: var(--grey-900); }
+
+/* Steps */
+.preview-steps-h { display: flex; gap: 0; align-items: center; justify-content: space-between; width: 100%; }
+.preview-step-h { width: 20px; height: 20px; border-radius: 50%; background: var(--grey-100); font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--grey-400); }
+.preview-step-h.done { background: var(--yellow-500); color: var(--grey-900); }
+.preview-step-h.active { background: var(--white); border: 2px solid var(--yellow-500); color: var(--yellow-500); }
+
+/* Filter */
+.preview-filter-chip {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--white);
+  border: 1px solid var(--grey-200);
+  border-radius: 999px;
+  font-size: 11px;
+}
+.preview-filter-chip.active { background: var(--yellow-500); border-color: var(--yellow-500); font-weight: 600; }
+
+/* Brand */
+.preview-brand-cell {
+  width: 50px;
+  height: 50px;
+  background: var(--grey-50);
+  border: 1px solid var(--grey-100);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* Ranking */
+.preview-ranking {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+.preview-rank-num { width: 24px; height: 24px; border-radius: 50%; background: #D4AF37; color: var(--white); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 11px; }
+.preview-rank-thumb { width: 32px; height: 24px; background: var(--grey-100); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.preview-rank-name { font-size: 12px; font-weight: 600; }
+
+/* Footer */
+.preview-footer { background: var(--grey-900); color: var(--white); padding: 8px 12px; border-radius: var(--radius-md); font-size: 11px; text-align: center; width: 100%; }
+
+/* Content Card */
+.preview-content-card { display: flex; gap: 8px; padding: 8px; background: var(--white); border: 1px solid var(--grey-100); border-radius: var(--radius-md); width: 100%; }
+.preview-content-card .rank { background: var(--yellow-500); padding: 2px 6px; border-radius: 4px; font-weight: 700; font-size: 11px; }
+.preview-content-card .thumb { width: 40px; height: 30px; background: var(--grey-100); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+.preview-content-card .name { font-size: 12px; font-weight: 600; }
+
+/* Article */
+.preview-article { padding: 8px; background: var(--white); border: 1px solid var(--grey-100); border-radius: var(--radius-md); width: 100%; }
+.preview-article-thumb { height: 60px; background: linear-gradient(135deg, var(--grey-100), var(--grey-200)); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 6px; }
+.preview-article-title { font-size: 12px; font-weight: 700; }
+
+/* Product */
+.preview-product { padding: 8px; background: var(--white); border: 1px solid var(--grey-100); border-radius: var(--radius-md); width: 100%; }
+.preview-product-thumb { height: 70px; background: linear-gradient(180deg, var(--grey-50), var(--grey-100)); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin-bottom: 6px; }
+.preview-product-name { font-size: 11px; font-weight: 700; }
+.preview-product-price { font-size: 12px; font-weight: 700; color: var(--grey-900); }
+
+/* Brand Card */
+.preview-brand-card { padding: 8px; background: var(--white); border: 1px solid var(--grey-100); border-radius: var(--radius-md); display: flex; align-items: center; gap: 8px; width: 100%; }
+.preview-brand-card-logo { width: 36px; height: 36px; background: var(--blue-500); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--white); font-weight: 700; }
+.preview-brand-card-name { font-size: 12px; font-weight: 600; }
+
+/* Recipe card */
+.recipe-card {
+  background: linear-gradient(135deg, var(--yellow-50), var(--white));
+  border: 2px solid var(--yellow-500);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-decoration: none;
+  color: var(--grey-900);
+  display: block;
+  transition: all 0.2s;
+}
+.recipe-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+.recipe-card-num {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--yellow-600);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.recipe-card-name {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 8px 0;
+}
+.recipe-card-desc {
+  font-size: 13px;
+  color: var(--grey-600);
+  line-height: 1.5;
+}
+.recipe-card-comps {
+  font-size: 11px;
+  color: var(--grey-400);
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--yellow-100);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gallery-header { padding: 24px 16px; }
+  .gallery-header h1 { font-size: 24px; }
+  .gallery-container { padding: 16px; }
+  .gallery-nav { padding: 12px 16px; gap: 8px; }
+  .comp-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+}
+@media (max-width: 480px) {
+  .comp-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header class="gallery-header">
+  <h1>🎨 UI Design System · Gallery</h1>
+  <p class="lead">所有 25 个核心组件 + 5 张内容卡 · 一页总览 · 点卡片打开对应 HTML</p>
+  <div class="gallery-meta">
+    <span><span class="iconify" data-icon="lucide:package" style="font-size:15px"></span> 30 组件</span>
+    <span><span class="iconify" data-icon="lucide:cooking-pot" style="font-size:15px"></span> 4 Recipes</span>
+    <span><span class="iconify" data-icon="lucide:target" style="font-size:15px"></span> 588 Figma 实例覆盖 ~95%</span>
+  </div>
+</header>
+
+<nav class="gallery-nav">
+  <strong>跳转：</strong>
+  <a href="#p0-basic">基础交互</a>
+  <a href="#p0-nav">导航容器</a>
+  <a href="#p1-feedback">反馈场景</a>
+  <a href="#p2-business">业务通用</a>
+  <a href="#cards">内容卡</a>
+  <a href="#recipes">Recipes</a>
+  <a href="#resources">资源</a>
+</nav>
+
+<div class="gallery-container">
+
+  <!-- ========== P0 基础交互 ========== -->
+  <section class="gallery-section" id="p0-basic">
+    <h2 class="gallery-section-title">P0 基础交互 <span class="count">11 个</span></h2>
+    <p class="gallery-section-desc">按钮 · 表单 · 反馈 · 选择控件 — 所有页面的基础构件</p>
+    <div class="comp-grid">
+
+      <a class="comp-card" href="components/01-button.html">
+        <div class="comp-preview"><span class="preview-btn">立即申请</span> <span class="preview-btn blue">预审</span> <span class="preview-btn grey">取消</span></div>
+        <div class="comp-info">
+          <div class="comp-num">01 · Button</div>
+          <div class="comp-name">按钮 / 按钮组</div>
+          <div class="comp-desc">22 variant + 按钮组/单选/操作栏/浮动操作栏</div>
+          <div class="comp-tag-row"><span class="comp-tag">CTA</span><span class="comp-tag">核心</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/02-input.html">
+        <div class="comp-preview"><input class="preview-input" placeholder="输入手机号..."></div>
+        <div class="comp-info">
+          <div class="comp-num">02 · Input</div>
+          <div class="comp-name">输入框</div>
+          <div class="comp-desc">4 variant · 文本/数字/密码/搜索</div>
+          <div class="comp-tag-row"><span class="comp-tag">表单</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/03-tag.html">
+        <div class="comp-preview">
+          <span class="preview-tag">评分 8.7</span>
+          <span class="preview-tag active">#1</span>
+          <span class="preview-tag">SUV</span>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">03 · Tag</div>
+          <div class="comp-name">标签 / 分类标签</div>
+          <div class="comp-desc">评分/排行 + 5 个分类变体</div>
+          <div class="comp-tag-row"><span class="comp-tag">分类</span><span class="comp-tag">筛选</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/04-tabbar.html">
+        <div class="comp-preview"><div class="preview-tabbar"><span class="preview-tab active">首页</span><span class="preview-tab">车型</span><span class="preview-tab">收藏</span></div></div>
+        <div class="comp-info">
+          <div class="comp-num">04 · Tabbar</div>
+          <div class="comp-name">底部导航</div>
+          <div class="comp-desc">H5 主导航 · 3-5 tab</div>
+          <div class="comp-tag-row"><span class="comp-tag">导航</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/05-badge.html">
+        <div class="comp-preview"><span class="preview-badge">✓ 认证</span> <span class="preview-badge">⭐ 推荐</span></div>
+        <div class="comp-info">
+          <div class="comp-num">05 · Badge</div>
+          <div class="comp-name">徽章</div>
+          <div class="comp-desc">认证 / 资质 / 状态标识</div>
+          <div class="comp-tag-row"><span class="comp-tag">状态</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/09-modal.html">
+        <div class="comp-preview">
+          <div class="preview-modal">
+            <div class="preview-modal-title">弹窗标题</div>
+            <div class="preview-modal-text">弹窗内容...</div>
+          </div>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">09 · Modal</div>
+          <div class="comp-name">模态弹窗</div>
+          <div class="comp-desc">3 + Header/Footer slot 复合型</div>
+          <div class="comp-tag-row"><span class="comp-tag">反馈</span><span class="comp-tag">表单</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/10-toast.html">
+        <div class="comp-preview"><div class="preview-toast">✓ 提交成功</div></div>
+        <div class="comp-info">
+          <div class="comp-num">10 · Toast</div>
+          <div class="comp-name">操作反馈</div>
+          <div class="comp-desc">success / info / warning / error</div>
+          <div class="comp-tag-row"><span class="comp-tag">反馈</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/12-select.html">
+        <div class="comp-preview"><span class="preview-select">选择品牌 <span>▾</span></span></div>
+        <div class="comp-info">
+          <div class="comp-num">12 · Select</div>
+          <div class="comp-name">下拉选择</div>
+          <div class="comp-desc">基本 / 带搜索 / 多选</div>
+          <div class="comp-tag-row"><span class="comp-tag">表单</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/13-checkbox.html">
+        <div class="comp-preview">
+          <span class="preview-cb"></span>
+          <span class="preview-cb checked"></span>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">13 · Checkbox</div>
+          <div class="comp-name">复选框</div>
+          <div class="comp-desc">unchecked / checked / indeterminate / disabled</div>
+          <div class="comp-tag-row"><span class="comp-tag">表单</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/14-radio.html">
+        <div class="comp-preview">
+          <span class="preview-radio"></span>
+          <span class="preview-radio checked"></span>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">14 · Radio</div>
+          <div class="comp-name">单选框</div>
+          <div class="comp-desc">互斥选项</div>
+          <div class="comp-tag-row"><span class="comp-tag">表单</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/15-switch.html">
+        <div class="comp-preview">
+          <span class="preview-switch"></span>
+          <span class="preview-switch on"></span>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">15 · Switch</div>
+          <div class="comp-name">开关</div>
+          <div class="comp-desc">立即生效设置</div>
+          <div class="comp-tag-row"><span class="comp-tag">表单</span></div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ========== P0 导航与容器 ========== -->
+  <section class="gallery-section" id="p0-nav">
+    <h2 class="gallery-section-title">P0 导航与容器 <span class="count">4 个</span></h2>
+    <p class="gallery-section-desc">页面结构与导航 — Top Nav / Progress / Steps / Typography</p>
+    <div class="comp-grid">
+
+      <a class="comp-card" href="components/06-topnav.html">
+        <div class="comp-preview"><div class="preview-topnav"><span>← 返回</span><span>Nissan Versa</span><span><span class="iconify" data-icon="lucide:heart"></span></span></div></div>
+        <div class="comp-info">
+          <div class="comp-num">06 · Top Nav</div>
+          <div class="comp-name">顶部导航</div>
+          <div class="comp-desc">H5 简单 / H5 完整 / PC 顶栏</div>
+          <div class="comp-tag-row"><span class="comp-tag">导航</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/18-progress.html">
+        <div class="comp-preview" style="flex-direction:column; gap:8px; padding:20px;">
+          <div class="preview-linear"><div class="preview-linear-bar"></div></div>
+          <div style="display:flex; gap:12px; align-items:center">
+            <div class="preview-battery"><div class="preview-battery-fill"></div></div>
+            <svg width="40" height="40" viewBox="0 0 40 40">
+              <circle cx="20" cy="20" r="14" stroke="#F1F1F1" stroke-width="4" fill="none"/>
+              <circle cx="20" cy="20" r="14" stroke="#FFCF20" stroke-width="4" fill="none" stroke-dasharray="88" stroke-dashoffset="22" transform="rotate(-90 20 20)"/>
+            </svg>
+          </div>
+          <div class="preview-stepper"><div class="preview-stepper-step done"></div><div class="preview-stepper-step done"></div><div class="preview-stepper-step done"></div><div class="preview-stepper-step"></div></div>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">18 · Progress ⭐</div>
+          <div class="comp-name">进度条 / 电量条</div>
+          <div class="comp-desc">Linear + Battery + Circular + Stepper · Figma 缺口 #1</div>
+          <div class="comp-tag-row"><span class="comp-tag priority">342 次</span><span class="comp-tag">最高频</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/19-typography.html">
+        <div class="comp-preview" style="flex-direction:column; gap:4px; align-items:flex-start;">
+          <div class="preview-display">Display</div>
+          <div class="preview-h2">H2 · Section Title</div>
+          <div class="preview-h3">H3 · Card Title</div>
+          <div style="font-size:13px; color:var(--grey-600)">Body 16px · 段落正文</div>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">19 · Typography</div>
+          <div class="comp-name">字体层级</div>
+          <div class="comp-desc">Display + H1-H6 + Body + 数字 + 字组</div>
+          <div class="comp-tag-row"><span class="comp-tag">排版</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/20-steps.html">
+        <div class="comp-preview"><div class="preview-steps-h">
+          <span class="preview-step-h done">✓</span>
+          <span class="preview-step-h done">✓</span>
+          <span class="preview-step-h active">3</span>
+          <span class="preview-step-h">4</span>
+          <span class="preview-step-h">5</span>
+        </div></div>
+        <div class="comp-info">
+          <div class="comp-num">20 · Steps</div>
+          <div class="comp-name">流程步骤</div>
+          <div class="comp-desc">横排步骤 / 时间线 / 流程图节点</div>
+          <div class="comp-tag-row"><span class="comp-tag">流程</span><span class="comp-tag">84 次</span></div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ========== P1 反馈场景 ========== -->
+  <section class="gallery-section" id="p1-feedback">
+    <h2 class="gallery-section-title">P1 反馈场景 <span class="count">5 个</span></h2>
+    <p class="gallery-section-desc">异步状态 · 搜索 · 头像 · 横幅 · 筛选</p>
+    <div class="comp-grid">
+
+      <a class="comp-card" href="components/07-loading.html">
+        <div class="comp-preview"><div class="preview-loading"></div></div>
+        <div class="comp-info">
+          <div class="comp-num">07 · Loading</div>
+          <div class="comp-name">加载占位</div>
+          <div class="comp-desc">卡片 / 列表行 / 全页骨架</div>
+          <div class="comp-tag-row"><span class="comp-tag">反馈</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/08-empty-state.html">
+        <div class="comp-preview"><div class="preview-empty"><div class="icon"><span class="iconify" data-icon="lucide:inbox" style="font-size:20px"></span></div>暂无数据</div></div>
+        <div class="comp-info">
+          <div class="comp-num">08 · Empty State</div>
+          <div class="comp-name">空状态</div>
+          <div class="comp-desc">无数据 / 无结果 / 错误</div>
+          <div class="comp-tag-row"><span class="comp-tag">反馈</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/11-search.html">
+        <div class="comp-preview"><div class="preview-search"><span class="iconify" data-icon="lucide:search"></span> 搜索品牌、车型...</div></div>
+        <div class="comp-info">
+          <div class="comp-num">11 · Search</div>
+          <div class="comp-name">搜索框</div>
+          <div class="comp-desc">基本 / 带快捷键 / H5 嵌入</div>
+          <div class="comp-tag-row"><span class="comp-tag">导航</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/16-avatar.html">
+        <div class="comp-preview" style="gap:8px">
+          <span class="preview-avatar">N</span>
+          <span class="preview-avatar" style="background:#A8071A">M</span>
+          <span class="preview-avatar" style="background:#7CB305">K</span>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">16 · Avatar</div>
+          <div class="comp-name">头像</div>
+          <div class="comp-desc">字母 / 图片 / 状态点 / 头像组</div>
+          <div class="comp-tag-row"><span class="comp-tag">UI</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/17-banner.html">
+        <div class="comp-preview"><div class="preview-banner"><span class="iconify" data-icon="lucide:party-popper"></span> 9月购车节 · 最高优惠 $40,000</div></div>
+        <div class="comp-info">
+          <div class="comp-num">17 · Banner</div>
+          <div class="comp-name">横幅</div>
+          <div class="comp-desc">公告 / 营销 / 警告</div>
+          <div class="comp-tag-row"><span class="comp-tag">营销</span></div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ========== P2 业务通用化 ========== -->
+  <section class="gallery-section" id="p2-business">
+    <h2 class="gallery-section-title">P2 业务场景通用化 <span class="count">5 个</span></h2>
+    <p class="gallery-section-desc">把领域专属组件(车品牌/排行榜/收藏/页脚)通用化后跨场景复用</p>
+    <div class="comp-grid">
+
+      <a class="comp-card" href="components/21-filter.html">
+        <div class="comp-preview" style="gap:6px">
+          <span class="preview-filter-chip active">综合 ▾</span>
+          <span class="preview-filter-chip">价格 ▾</span>
+          <span class="preview-filter-chip active with-count">已选 (3)</span>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">21 · Filter</div>
+          <div class="comp-name">筛选</div>
+          <div class="comp-desc">Chip 行 / Sheet / Modal 三容器</div>
+          <div class="comp-tag-row"><span class="comp-tag">筛选</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/22-brand-grid.html">
+        <div class="comp-preview" style="gap:6px">
+          <span class="preview-brand-cell" style="background:#C30002;color:white">N</span>
+          <span class="preview-brand-cell" style="background:#EB0A1E;color:white">T</span>
+          <span class="preview-brand-cell" style="background:#05141F;color:white">K</span>
+          <span class="preview-brand-cell" style="background:#002C5F;color:white">H</span>
+          <span class="preview-brand-cell" style="background:#B9121B;color:white">MG</span>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">22 · Brand Grid</div>
+          <div class="comp-name">品牌 Logo 网格</div>
+          <div class="comp-desc">6/4/3 列 + 黑白 + A-Z 索引</div>
+          <div class="comp-tag-row"><span class="comp-tag">导航</span><span class="comp-tag">168+ 次</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/23-ranking.html">
+        <div class="comp-preview" style="flex-direction:column; gap:4px">
+          <div class="preview-ranking">
+            <span class="preview-rank-num">1</span>
+            <span class="preview-rank-thumb"><span class="iconify" data-icon="lucide:car"></span></span>
+            <span class="preview-rank-name">Nissan Versa</span>
+          </div>
+          <div class="preview-ranking">
+            <span class="preview-rank-num" style="background:#C0C0C0;color:#222">2</span>
+            <span class="preview-rank-thumb"><span class="iconify" data-icon="lucide:car-front"></span></span>
+            <span class="preview-rank-name">MG ZS</span>
+          </div>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">23 · Ranking</div>
+          <div class="comp-name">排行榜</div>
+          <div class="comp-desc">标准榜 / 金银铜 / 条形榜</div>
+          <div class="comp-tag-row"><span class="comp-tag">数据</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/24-favorite.html">
+        <div class="comp-preview" style="font-size:24px">
+          <span class="iconify" data-icon="lucide:heart"></span> <span style="color:var(--red-500)"><span class="iconify" data-icon="lucide:heart"></span></span>
+        </div>
+        <div class="comp-info">
+          <div class="comp-num">24 · Favorite</div>
+          <div class="comp-name">收藏切换</div>
+          <div class="comp-desc">按钮 / 角标 / Tab / 列表行</div>
+          <div class="comp-tag-row"><span class="comp-tag">交互</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/25-footer.html">
+        <div class="comp-preview"><div class="preview-footer">© 2026 Autocava · 隐私 · 条款</div></div>
+        <div class="comp-info">
+          <div class="comp-num">25 · Footer</div>
+          <div class="comp-name">页面底部</div>
+          <div class="comp-desc">链接 / 简单 / 完整 / 移动 Tabbar</div>
+          <div class="comp-tag-row"><span class="comp-tag">容器</span></div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ========== Cards ========== -->
+  <section class="gallery-section" id="cards">
+    <h2 class="gallery-section-title">内容卡库 <span class="count">5 张</span></h2>
+    <p class="gallery-section-desc">通用化的内容呈现卡 · 适用各种列表 / 详情 / 搜索场景</p>
+    <div class="comp-grid">
+
+      <a class="comp-card" href="components/cards/01-content-card.html">
+        <div class="comp-preview"><div class="preview-content-card">
+          <span class="rank">1</span>
+          <span class="thumb"><span class="iconify" data-icon="lucide:car" style="font-size:22px"></span></span>
+          <span class="name">Nissan Versa 2026</span>
+        </div></div>
+        <div class="comp-info">
+          <div class="comp-num">01 · Content Card</div>
+          <div class="comp-name">内容卡(榜单/资讯/商品)</div>
+          <div class="comp-desc">排名 + 图 + 标题 + 价格 + 双 CTA</div>
+          <div class="comp-tag-row"><span class="comp-tag">列表</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/cards/02-simple-card.html">
+        <div class="comp-preview"><div style="padding:8px;background:white;border:1px solid var(--grey-100);border-radius:8px;display:flex;gap:8px;width:100%">
+          <span style="width:36px;height:36px;background:var(--grey-100);border-radius:6px;display:flex;align-items:center;justify-content:center"><span class="iconify" data-icon="lucide:car-front"></span></span>
+          <span style="font-size:11px;font-weight:600">简洁卡 · 列表</span>
+        </div></div>
+        <div class="comp-info">
+          <div class="comp-num">02 · Simple Card</div>
+          <div class="comp-name">简洁卡(列表/搜索)</div>
+          <div class="comp-desc">极简信息 · 全宽 CTA</div>
+          <div class="comp-tag-row"><span class="comp-tag">列表</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/cards/03-brand-card.html">
+        <div class="comp-preview"><div class="preview-brand-card">
+          <span class="preview-brand-card-logo">N</span>
+          <span class="preview-brand-card-name">Nissan · 日产</span>
+        </div></div>
+        <div class="comp-info">
+          <div class="comp-num">03 · Brand Card</div>
+          <div class="comp-name">品牌入口卡</div>
+          <div class="comp-desc">Logo + 品牌名 + 副标 + CTA</div>
+          <div class="comp-tag-row"><span class="comp-tag">品牌</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/cards/04-article-card.html">
+        <div class="comp-preview"><div class="preview-article">
+          <div class="preview-article-thumb"><span class="iconify" data-icon="lucide:newspaper"></span></div>
+          <div class="preview-article-title">2026 墨西哥汽车市场报告</div>
+        </div></div>
+        <div class="comp-info">
+          <div class="comp-num">04 · Article Card</div>
+          <div class="comp-name">文章 / 资讯卡</div>
+          <div class="comp-desc">横/竖/紧凑/视频 4 视图</div>
+          <div class="comp-tag-row"><span class="comp-tag">内容</span><span class="comp-tag">视频</span></div>
+        </div>
+      </a>
+
+      <a class="comp-card" href="components/cards/05-product-card.html">
+        <div class="comp-preview"><div class="preview-product">
+          <div class="preview-product-thumb"><span class="iconify" data-icon="lucide:car"></span></div>
+          <div class="preview-product-name">Nissan Versa 2026</div>
+          <div class="preview-product-price">$389,900</div>
+        </div></div>
+        <div class="comp-info">
+          <div class="comp-num">05 · Product Card</div>
+          <div class="comp-name">商品 / 车型卡</div>
+          <div class="comp-desc">标准/横版/极简/优惠 4 视图</div>
+          <div class="comp-tag-row"><span class="comp-tag">商品</span><span class="comp-tag">促销</span></div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ========== Recipes ========== -->
+  <section class="gallery-section" id="recipes">
+    <h2 class="gallery-section-title">Recipes · 组合模式 <span class="count">4 个</span></h2>
+    <p class="gallery-section-desc">把多个组件组合起来完成真实页面流程 — 每个 recipe 含完整剧本+代码模板</p>
+    <div class="comp-grid">
+
+      <a class="recipe-card" href="recipes/01-feedback-flow.md">
+        <div class="recipe-card-num">Recipe 01 · 反馈流</div>
+        <div class="recipe-card-name">Modal + Toast + Loading + Empty State</div>
+        <div class="recipe-card-desc">用户点 CTA → 弹窗填表 → Loading → 成功 Toast / 失败 Empty State · 经典反馈闭环</div>
+        <div class="recipe-card-comps">09-modal · 10-toast · 07-loading · 08-empty-state</div>
+      </a>
+
+      <a class="recipe-card" href="recipes/02-progress-flow.md">
+        <div class="recipe-card-num">Recipe 02 · 进度流</div>
+        <div class="recipe-card-name">Progress + Steps + Battery</div>
+        <div class="recipe-card-desc">多步骤表单 / 续航展示 / 上传进度 / 订单追踪</div>
+        <div class="recipe-card-comps">18-progress · 20-steps · 19-typography</div>
+      </a>
+
+      <a class="recipe-card" href="recipes/03-discovery-flow.md">
+        <div class="recipe-card-num">Recipe 03 · 发现流</div>
+        <div class="recipe-card-name">Brand Grid + Ranking + Filter + Favorite</div>
+        <div class="recipe-card-desc">选车 → 看销量榜 → 筛选条件 → 收藏到我的</div>
+        <div class="recipe-card-comps">22-brand-grid · 23-ranking · 21-filter · 24-favorite · cards/05-product-card</div>
+      </a>
+
+      <a class="recipe-card" href="recipes/04-card-composition.md">
+        <div class="recipe-card-num">Recipe 04 · 内容卡组合</div>
+        <div class="recipe-card-name">Content + Article + Product + Brand Card</div>
+        <div class="recipe-card-desc">首页/列表/详情/搜索 — 各种内容卡混排</div>
+        <div class="recipe-card-comps">cards/01-05</div>
+      </a>
+
+    </div>
+  </section>
+
+</div>
+
+<!-- ========== Footer Resources ========== -->
+<footer class="gallery-footer" id="resources">
+  <div class="gallery-footer-grid">
+    <a class="foot-link" href="tokens.md">
+      <strong>🎨 tokens.md</strong>
+      <span>60 颜色 + 25 字体 token · CSS 变量映射</span>
+    </a>
+    <a class="foot-link" href="principles.md">
+      <strong>📋 principles.md</strong>
+      <span>7 条跨线硬规则 · ICON / 颜色 / 自适应</span>
+    </a>
+    <a class="foot-link" href="FIGMA_MAP.md">
+      <strong>🗺 FIGMA_MAP.md</strong>
+      <span>Figma 588 组件名 → HTML 文件映射表</span>
+    </a>
+    <a class="foot-link" href="SKILL.md">
+      <strong><span class="iconify" data-icon="lucide:bot"></span> SKILL.md</strong>
+      <span>AI 自动加载入口 · Cursor/Cline 触发</span>
+    </a>
+    <a class="foot-link" href="demo/product-detail-page.html">
+      <strong>🚀 demo/</strong>
+      <span>完整生产页 demo · 17 组件集成示例</span>
+    </a>
+    <a class="foot-link" href="README.md">
+      <strong>📖 README.md</strong>
+      <span>安装 / 使用 / 适配指南</span>
+    </a>
+  </div>
+</footer>
+
+</body>
+</html>

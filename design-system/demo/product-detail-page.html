@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════
+  组件集成沙盘 · Component Integration Sandbox
+  ════════════════════════════════════════════════════════════════
+  ⚠️ 定位说明（别当生产页看）：
+    本页是「把 25 个组件 + 5 张卡堆进一页」的组件集成沙盘，
+    文案为演示用 mock（英文 + 假价格/假销量），未抓生产数据。
+    生产级真实页面（全部抓 autocava.com.mx 真数据）→ 同目录：
+      01-autocava-news-home.html    首页（32 车系 / 72 品牌 / 5 篇真实资讯）
+      03-series-detail-captiva.html 车系页（Captiva 真实价格/版本/评价）
+      04-cavi-lead-report.html      CAVI 留资页（真实 WhatsApp + 联系方式）
+      05-car-list-filter.html       车型列表页（20 台真实车系 + INEGI 分榜）
+      06-rank-ventas.html            排行榜页（INEGI 2026-08 Top 20）
+  ────────────────────────────────────────────────────────────────────────
+  演示范畴（13+ 组件集成）：
+    ✅ Banner（顶部 info）
+    ✅ Top Nav（含 Search）
+    ✅ Tag 评分 chip / Badge 状态徽章
+    ✅ Select 下拉（选择产品变体）
+    ✅ Radio 单选（选择融资期数）
+    ✅ Checkbox 复选（附加服务）
+    ✅ Switch 开关（通知设置）
+    ✅ Avatar 头像（客服 / 卖家）
+    ✅ Modal 弹窗（点击 CTA 触发）
+    ✅ Toast 操作反馈
+    ✅ Loading 骨架（评论加载中）
+    ✅ Empty State（暂无评论）
+    ✅ Button CTA / Tabbar
+    ✅ Progress（续航 / 加载）· Ranking（销量榜）· Brand Grid（品牌墙）· Steps（购车流程）
+    ✅ 单文件自适应（1024px 断点）
+    ✅ Design Tokens 60+ 颜色
+    ✅ 触达 = WhatsApp（占位）
+    ✅ 留资合规（隐私脚注）
+  ════════════════════════════════════════════════════════════════
+-->
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Example Product 2026 · Product Detail · UI Design System Demo</title>
+
+<style>
+:root {
+  /* === Design Tokens · 对齐生产实测值（2026-09-30 校验）=== */
+  /* 品牌黄 --yellow-500:#FFCF20 · hover --yellow-600:#E0A504 */
+  /* 极浅黄底 --yellow-50:var(--yellow-50) · 字体=生产系统栈（非 Roboto）*/
+  --yellow-50: #FFFAED;
+  --yellow-500: #FFCF20;
+  --yellow-600: #E0A504;
+  --blue-500: #0056FA;
+  --red-500: #A8071A;
+  --green-500: #7CB305;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-500: #888888;
+  --grey-600: #666666;
+  --grey-700: #555555;
+  --grey-800: #444444;
+  --grey-900: #222222;
+
+  /* Semantic */
+  --text-important: var(--grey-900);
+  --text-regular: var(--grey-600);
+  --text-hint: var(--grey-400);
+  --bg-page: var(--grey-50);
+  --bg-card: #FFFFFF;
+  --border-line: var(--grey-200);
+  --border-divider: var(--grey-100);
+
+  /* Typography · 生产系统栈（此前声明 Roboto 但从未加载，实为死字体）*/
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Spacing */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px;
+
+  /* Radius / Shadow · 对齐 tokens.md 规范（4/6/8/12）*/
+  --r-sm: 4px; --r-md: 6px; --r-lg: 8px; --r-xl: 12px; --r-full: 9999px;
+  --medal-gold: #D4AF37; --medal-silver: #C0C0C0; --medal-bronze: #CD7F32;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-news: 0 4px 12px rgba(255, 207, 32, 0.16);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg-page);
+  color: var(--text-important);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.app { min-height: 100vh; max-width: 100%; padding-bottom: 96px; }
+
+/* === Banner · Promo（顶部优惠） === */
+.banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border-radius: 0;
+  font-size: 14px;
+  background: var(--yellow-500);
+  color: var(--grey-900);
+}
+.banner .icon-wrap {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--grey-900);
+  color: var(--yellow-500);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.banner .body { flex: 1; }
+.banner .title { font-weight: 600; margin-bottom: 2px; }
+.banner .desc { font-size: 12px; opacity: 0.9; }
+.banner .close {
+  width: 28px; height: 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  opacity: 0.6;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+/* === Top Nav · H5 含 Search === */
+.top-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--yellow-500);
+  height: 56px;
+  display: flex; align-items: center;
+  padding: 0 var(--sp-3);
+  gap: var(--sp-2);
+  box-shadow: 0 1px 0 var(--yellow-600);
+}
+.top-nav .back {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--grey-900);
+  text-decoration: none;
+  font-size: 20px;
+}
+.top-nav .search-mini {
+  flex: 1;
+  display: flex; align-items: center;
+  background: var(--bg-card);
+  border-radius: 9999px;
+  height: 36px;
+  padding: 0 var(--sp-3);
+  font-size: 13px;
+  color: var(--grey-400);
+}
+.top-nav .search-mini .iconify { color: var(--grey-400); font-size: 16px; margin-right: 6px; }
+.top-nav .share {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--grey-900);
+  font-size: 18px;
+  background: none; border: none; cursor: pointer;
+}
+
+/* === Hero === */
+.hero {
+  background: var(--bg-card);
+  padding: var(--sp-6) var(--sp-4);
+  text-align: center;
+}
+.hero .product-image {
+  width: 100%;
+  max-width: 320px;
+  height: auto;
+  margin: 0 auto var(--sp-4);
+  display: block;
+  background: var(--grey-50);
+  border-radius: var(--r-md);
+  min-height: 180px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--grey-400);
+}
+.hero .product-name {
+  font-size: 24px; font-weight: 600; line-height: 1.17;
+  margin-bottom: var(--sp-2);
+}
+.hero .product-tag {
+  display: flex; justify-content: center; gap: var(--sp-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--sp-3);
+}
+.price-block {
+  background: rgba(255, 207, 32, 0.1);
+  border-radius: var(--r-md);
+  padding: var(--sp-3) var(--sp-4);
+  display: inline-block;
+}
+.price-block .label {
+  font-size: 12px; color: var(--text-hint);
+  margin-bottom: 2px;
+}
+.price-block .amount {
+  font-size: 24px; font-weight: 700;
+  color: var(--text-important);
+}
+.price-block .currency {
+  font-size: 14px; color: var(--text-regular);
+  margin-left: 4px;
+}
+
+/* === Tag / Badge chips === */
+.tag-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 20px;
+  padding: 0 var(--sp-2);
+  background: var(--bg-card);
+  border-radius: 10px;
+  font-size: 11px; font-weight: 600;
+  color: var(--text-important);
+  border: 1px solid var(--border-line);
+}
+.tag-chip .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--yellow-500);
+}
+.badge-verified {
+  display: inline-flex; align-items: center; gap: 4px;
+  height: 20px;
+  padding: 0 var(--sp-2);
+  background: var(--yellow-500);
+  color: var(--text-important);
+  border-radius: var(--r-sm);
+  font-size: 11px; font-weight: 600;
+}
+
+/* === Section 通用 === */
+.section {
+  background: var(--bg-card);
+  margin-top: var(--sp-3);
+  padding: var(--sp-5) var(--sp-4);
+}
+.section-title {
+  font-size: 18px; font-weight: 600;
+  margin-bottom: var(--sp-3);
+}
+.section-desc {
+  font-size: 12px; color: var(--text-hint);
+  margin-top: var(--sp-2);
+}
+
+/* === KPI grid === */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--sp-3);
+}
+.kpi-item {
+  padding: var(--sp-3);
+  background: var(--bg-page);
+  border-radius: var(--r-md);
+}
+.kpi-item .k {
+  font-size: 12px; color: var(--text-hint);
+  margin-bottom: 4px;
+}
+.kpi-item .v {
+  font-size: 16px; font-weight: 500;
+  display: flex; align-items: baseline; gap: 4px;
+}
+.kpi-item .v .unit { font-size: 12px; font-weight: 400; color: var(--text-regular); }
+
+/* === Price card === */
+.price-card {
+  background: var(--bg-page);
+  border-radius: var(--r-md);
+  padding: var(--sp-4);
+}
+.price-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--border-divider);
+}
+.price-row:last-child { border-bottom: 0; }
+.price-row .label { color: var(--text-regular); }
+.price-row .value { font-weight: 600; }
+.price-row .value.highlight { color: var(--blue-500); }
+
+/* === Select trigger === */
+.select-trigger {
+  display: flex; align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-line);
+  border-radius: var(--r-md);
+  padding: 0 var(--sp-3);
+  height: 48px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.select-trigger .label { flex: 1; }
+
+/* === Radio / Checkbox === */
+.radio, .checkbox {
+  display: flex; align-items: center;
+  gap: var(--sp-3);
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 14px;
+  user-select: none;
+}
+.radio input, .checkbox input {
+  position: absolute; opacity: 0; pointer-events: none;
+}
+.radio .circle {
+  width: 20px; height: 20px;
+  border: 2px solid var(--grey-300);
+  border-radius: 50%;
+  background: var(--bg-card);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+.radio .circle::after {
+  content: ""; width: 10px; height: 10px;
+  background: var(--yellow-500);
+  border-radius: 50%;
+  opacity: 0; transform: scale(0);
+}
+.radio input:checked ~ .circle { border-color: var(--yellow-500); }
+.radio input:checked ~ .circle::after { opacity: 1; transform: scale(1); }
+
+.checkbox .box {
+  width: 20px; height: 20px;
+  border: 2px solid var(--grey-300);
+  border-radius: var(--r-sm);
+  background: var(--bg-card);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  color: var(--bg-card);
+  font-size: 14px;
+}
+.checkbox input:checked ~ .box {
+  background: var(--yellow-500); border-color: var(--yellow-500);
+}
+
+/* === Switch === */
+.switch-row {
+  display: flex; align-items: center; gap: var(--sp-3);
+  padding: 12px 0;
+  cursor: pointer;
+  user-select: none;
+  font-size: 14px;
+}
+.switch-row input { position: absolute; opacity: 0; pointer-events: none; }
+.switch-track {
+  width: 44px; height: 24px;
+  background: var(--grey-300);
+  border-radius: 12px;
+  position: relative;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.switch-track::after {
+  content: "";
+  position: absolute; top: 2px; left: 2px;
+  width: 20px; height: 20px;
+  background: var(--bg-card);
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+}
+.switch-row input:checked + .switch-track { background: var(--yellow-500); }
+.switch-row input:checked + .switch-track::after { transform: translateX(20px); }
+
+/* === Avatar === */
+.avatar {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--grey-200);
+  color: var(--grey-600);
+  font-weight: 600;
+  font-size: 14px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar.color-yellow { background: var(--yellow-500); color: var(--grey-900); }
+.avatar.size-32 { width: 32px; height: 32px; font-size: 12px; }
+.avatar.size-56 { width: 56px; height: 56px; font-size: 18px; }
+
+/* === Review card === */
+.review-card {
+  display: flex; gap: var(--sp-3);
+  padding: var(--sp-4) 0;
+  border-bottom: 1px solid var(--border-divider);
+}
+.review-card:last-child { border-bottom: 0; }
+.review-card .body { flex: 1; }
+.review-card .name { font-weight: 600; font-size: 14px; }
+.review-card .stars { font-size: 12px; color: var(--yellow-600); margin: 2px 0; }
+.review-card .text { font-size: 13px; color: var(--text-regular); line-height: 1.5; }
+
+/* === Loading 骨架 === */
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--grey-100) 0%, var(--grey-200) 50%, var(--grey-100) 100%);
+  background-size: 200% 100%;
+  animation: skel-pulse 1.5s ease-in-out infinite;
+  border-radius: 4px;
+}
+@keyframes skel-pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+.skel-line { height: 14px; margin-bottom: 8px; }
+.skel-line.short { width: 40%; }
+.skel-line.long { width: 100%; }
+.skel-circle { width: 40px; height: 40px; border-radius: 50%; }
+
+/* === Empty State === */
+.empty-state {
+  text-align: center;
+  padding: 32px 16px;
+}
+.empty-state .icon-wrap {
+  width: 64px; height: 64px;
+  margin: 0 auto 12px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--grey-100);
+  color: var(--grey-400);
+  font-size: 32px;
+}
+.empty-state .title { font-weight: 600; font-size: 16px; margin-bottom: 4px; }
+.empty-state .desc { font-size: 13px; color: var(--text-regular); }
+
+/* === Button === */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  border: none; cursor: pointer; font-family: inherit;
+  border-radius: var(--r-md);
+  white-space: nowrap; text-align: center; text-decoration: none;
+}
+.btn.size-44 {
+  height: 44px; padding: 0 var(--sp-4);
+  font-size: 14px; font-weight: 500;
+}
+.btn.color-yellow.status-default { background: var(--yellow-500); color: var(--grey-900); }
+.btn.full-width { width: 100%; }
+
+/* === Tabbar === */
+.tabbar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 64px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-divider);
+  display: flex; align-items: stretch;
+  z-index: 98;
+}
+.tab {
+  flex: 1;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px;
+  font-size: 11px; font-weight: 500;
+  color: var(--text-regular);
+  text-decoration: none;
+  position: relative;
+}
+.tab .iconify { font-size: 22px; }
+.tab.active { color: var(--text-important); font-weight: 600; }
+.tab.active::after {
+  content: "";
+  position: absolute; top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 28px; height: 3px;
+  background: var(--yellow-500);
+}
+
+/* === CTA floating === */
+.cta-floating {
+  position: fixed; bottom: 64px; left: 0; right: 0;
+  background: var(--bg-card);
+  padding: var(--sp-3) var(--sp-4);
+  border-top: 1px solid var(--border-divider);
+  z-index: 99;
+}
+.cta-floating .privacy {
+  font-size: 11px; color: var(--text-hint);
+  text-align: center; margin-top: var(--sp-1);
+  line-height: 1.4;
+}
+.cta-floating .privacy a { color: var(--blue-500); text-decoration: none; }
+
+/* === Modal 弹窗 === */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  align-items: center; justify-content: center;
+  z-index: 1100;
+  padding: 16px;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--bg-card);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-modal);
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border-divider);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-title { font-size: 18px; font-weight: 600; }
+.modal-close {
+  width: 32px; height: 32px;
+  border: none;
+  background: var(--grey-50);
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-regular);
+}
+.modal-body {
+  padding: 24px;
+  text-align: center;
+  color: var(--text-regular);
+  line-height: 1.6;
+}
+.modal-body .icon-wrap {
+  width: 56px; height: 56px;
+  margin: 0 auto 16px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--grey-50);
+  color: var(--grey-600);
+  font-size: 28px;
+}
+.modal-body .title {
+  font-size: 18px; font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-important);
+}
+.modal-footer {
+  padding: 16px 24px 20px;
+  display: flex; gap: var(--sp-3);
+  justify-content: flex-end;
+}
+.modal-footer .btn { flex: 1; }
+.modal-footer .btn.color-grey { background: var(--grey-100); color: var(--grey-900); }
+
+/* === Toast === */
+.toast {
+  display: none;
+  position: fixed;
+  top: 16px; left: 50%; transform: translateX(-50%);
+  background: var(--grey-900); color: var(--bg-card);
+  padding: 12px var(--sp-4);
+  border-radius: var(--r-md);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  max-width: 360px;
+  z-index: 1099;
+  font-size: 14px;
+  align-items: center; gap: var(--sp-3);
+}
+.toast.show { display: flex; }
+.toast.success { background: var(--green-500); }
+.toast.error { background: var(--red-500); }
+.toast .icon-wrap { font-size: 18px; }
+
+/* === Switch 状态演示 toggle === */
+.demo-toggle {
+  display: inline-block;
+  padding: 4px 10px;
+  background: var(--grey-100);
+  border-radius: 9999px;
+  font-size: 11px;
+  color: var(--text-hint);
+  margin-bottom: var(--sp-3);
+  cursor: pointer;
+}
+
+/* === Responsive · 单文件自适应 === */
+@media (min-width: 1024px) {
+  body { background: #E5E7EB; }
+  .app { max-width: 1024px; margin: 0 auto; background: var(--bg-page); box-shadow: 0 0 24px rgba(0,0,0,0.08); }
+  .hero .product-image { max-width: 480px; }
+  .hero .product-name { font-size: 32px; line-height: 38px; }
+  .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+  .section { padding: var(--sp-8); }
+  .cta-floating { position: static; background: transparent; border-top: 0; padding: var(--sp-6) var(--sp-8); }
+  .app { padding-bottom: 0; }
+}
+
+/* ===== 18-progress / 23-ranking / 22-brand-grid / 20-steps ===== */
+/* Progress · Linear */
+.linear { width: 100%; height: 8px; background: var(--grey-100); border-radius: 999px; overflow: hidden; }
+.linear-bar { height: 100%; background: var(--yellow-500); border-radius: 999px; transition: width 0.3s ease; }
+
+/* Battery */
+.battery { display: inline-flex; align-items: center; gap: 8px; }
+.battery-shell { position: relative; width: 80px; height: 32px; border: 2px solid var(--grey-900); border-radius: 4px; padding: 2px; }
+.battery-shell::after { content: ''; position: absolute; right: -6px; top: 50%; transform: translateY(-50%); width: 4px; height: 12px; background: var(--grey-900); border-radius: 0 2px 2px 0; }
+.battery-fill { height: 100%; border-radius: 2px; transition: width 0.3s ease; }
+.battery-fill.high { background: var(--green-500); }
+.battery-percent { font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* Stepper */
+.stepper { display: flex; gap: 4px; width: 100%; }
+.stepper-step { flex: 1; height: 6px; background: var(--grey-100); border-radius: 3px; position: relative; overflow: hidden; }
+.stepper-step.done { background: var(--yellow-500); }
+.stepper-step.active::after { content: ''; position: absolute; inset: 0; background: var(--yellow-500); border-radius: 3px; animation: stepper-grow 1.5s ease forwards; }
+@keyframes stepper-grow { 0% { width: 0%; } 100% { width: 100%; } }
+
+/* Ranking list */
+.rank-list { background: var(--bg-card); border-radius: 12px; overflow: hidden; border: 1px solid var(--grey-100); }
+.rank-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--grey-100); cursor: pointer; transition: background 0.15s; }
+.rank-item:last-child { border-bottom: none; }
+.rank-item:hover { background: var(--grey-50); }
+.rank-num-badge { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--bg-card); flex-shrink: 0; }
+.rank-num-badge.gold { background: var(--medal-gold); }
+.rank-num-badge.silver { background: var(--medal-silver); color: var(--grey-900); }
+.rank-num-badge.bronze { background: var(--medal-bronze); }
+.rank-thumb { width: 48px; height: 36px; background: var(--grey-100); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.rank-info { flex: 1; min-width: 0; }
+.rank-title { font-size: 14px; font-weight: 600; color: var(--grey-900); margin-bottom: 4px; }
+.rank-sub { font-size: 12px; color: var(--grey-400); }
+.rank-value { text-align: right; flex-shrink: 0; }
+.rank-value-main { font-size: 14px; font-weight: 700; color: var(--grey-900); font-variant-numeric: tabular-nums; }
+.rank-value-sub { font-size: 11px; color: var(--green-500); margin-top: 2px; }
+.rank-value-sub:last-child:not(.down) { color: var(--green-500); }
+
+/* Brand grid */
+.brand-grid { display: grid; gap: 12px; }
+.brand-grid.col-6 { grid-template-columns: repeat(6, 1fr); }
+@media (max-width: 768px) { .brand-grid.col-6 { grid-template-columns: repeat(3, 1fr); } }
+.brand-cell { background: var(--bg-card); border: 1px solid var(--grey-100); border-radius: 8px; padding: 16px 8px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s; }
+.brand-cell:hover { border-color: var(--yellow-500); background: var(--yellow-50); transform: translateY(-2px); }
+.brand-logo { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 18px; color: var(--bg-card); }
+.brand-nissan { background: #C30002; }
+.brand-toyota { background: #EB0A1E; }
+.brand-honda { background: #E4001B; }
+.brand-vw { background: #001E62; }
+.brand-kia { background: #05141F; }
+.brand-hyundai { background: #002C5F; }
+.brand-mg { background: #B9121B; }
+.brand-xpeng { background: #00C8C8; }
+.brand-byd { background: #0066B3; }
+.brand-tesla { background: #E31937; }
+.brand-bmw { background: #0066B1; }
+.brand-audi { background: #BB0A30; }
+.brand-name { font-size: 12px; font-weight: 600; color: var(--grey-700); text-align: center; }
+
+/* Steps horizontal */
+.steps-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 0; background: var(--bg-card); padding: 24px; border: 1px solid var(--grey-100); border-radius: 12px; }
+.step-h { display: flex; flex-direction: column; align-items: center; flex: 1; position: relative; text-align: center; }
+.step-h-icon { width: 40px; height: 40px; border-radius: 50%; background: var(--grey-100); color: var(--grey-400); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; border: 2px solid var(--grey-100); z-index: 1; }
+.step-h.done .step-h-icon { background: var(--yellow-500); color: var(--grey-900); border-color: var(--yellow-500); }
+.step-h.active .step-h-icon { background: var(--bg-card); color: var(--yellow-500); border-color: var(--yellow-500); box-shadow: 0 0 0 4px var(--yellow-50); }
+.step-h-label { margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--grey-600); }
+.step-h.done .step-h-label, .step-h.active .step-h-label { color: var(--grey-900); }
+.step-h-desc { font-size: 11px; color: var(--grey-400); margin-top: 2px; }
+.step-h.done .step-h-desc { color: var(--grey-600); }
+.step-h:not(:last-child)::after { content: ''; position: absolute; top: 20px; left: calc(50% + 24px); right: calc(-50% + 24px); height: 2px; background: var(--grey-100); }
+.step-h.done:not(:last-child)::after { background: var(--yellow-500); }
+</style>
+
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ 1. Banner · 顶部 promo ============ -->
+  <div class="banner" role="status">
+    <div class="icon-wrap"><span class="iconify" data-icon="lucide:gift"></span></div>
+    <div class="body">
+      <div class="title">Limited offer · Save up to 20%</div>
+      <div class="desc">Apply code <strong>SAVE20</strong> at checkout. Valid until Oct 31.</div>
+    </div>
+    <button class="close" aria-label="Close" onclick="this.parentElement.remove()">
+      <span class="iconify" data-icon="lucide:x"></span>
+    </button>
+  </div>
+
+  <!-- ============ 2. Top Nav + Search ============ -->
+  <nav class="top-nav" aria-label="Top navigation">
+    <a href="javascript:history.back()" class="back" aria-label="Back">
+      <span class="iconify" data-icon="lucide:arrow-left"></span>
+    </a>
+    <div class="search-mini">
+      <span class="iconify" data-icon="lucide:search"></span>
+      <span>Search products, brands...</span>
+    </div>
+    <button class="share" aria-label="Share" onclick="showToast('Link copied to clipboard', 'success')">
+      <span class="iconify" data-icon="lucide:share-2"></span>
+    </button>
+  </nav>
+
+  <main>
+
+    <!-- ============ 3. Hero ============ -->
+    <section class="hero">
+      <div class="product-image">
+        <span class="iconify" data-icon="lucide:image" style="font-size:48px"></span>
+      </div>
+      <h1 class="product-name">Example Product 2026</h1>
+
+      <div class="product-tag">
+        <span class="tag-chip">
+          <span class="dot"></span>
+          <span>Score 3.14 / 5</span>
+        </span>
+        <span class="badge-verified">
+          <span class="iconify" data-icon="lucide:shield-check"></span>
+          <span>Verified</span>
+        </span>
+      </div>
+
+      <div class="price-block">
+        <div class="label">Price from</div>
+        <div class="amount">$406,990<span class="currency">USD</span></div>
+      </div>
+    </section>
+
+    <!-- ============ 4. Specs / KPI ============ -->
+    <section class="section">
+      <h2 class="section-title">Specifications</h2>
+      <div class="kpi-grid">
+        <div class="kpi-item"><div class="k">Max Power</div><div class="v"><span>118</span><span class="unit">hp</span></div></div>
+        <div class="kpi-item"><div class="k">Cargo Volume</div><div class="v"><span>482</span><span class="unit">L</span></div></div>
+        <div class="kpi-item"><div class="k">Transmission</div><div class="v" style="font-size:14px">CVT</div></div>
+        <div class="kpi-item"><div class="k">Service Centers</div><div class="v"><span>220</span></div></div>
+      </div>
+    </section>
+
+    <!-- ============ 5. Select · Choose variant ============ -->
+    <section class="section">
+      <h2 class="section-title">Choose your variant</h2>
+      <p class="section-desc">Select the trim that fits your needs</p>
+      <div class="select-trigger" onclick="showToast('Variant selected: Premium', 'success')">
+        <span class="label">Premium · $45,990 USD</span>
+        <span class="iconify" data-icon="lucide:chevron-down"></span>
+      </div>
+    </section>
+
+    <!-- ============ 6. Radio · Financing term ============ -->
+    <section class="section">
+      <h2 class="section-title">Financing term</h2>
+      <p class="section-desc">Choose your monthly payment plan</p>
+      <label class="radio">
+        <input type="radio" name="term">
+        <span class="circle"></span>
+        <span>12 months · <strong>$XXX</strong> / mo</span>
+      </label>
+      <label class="radio">
+        <input type="radio" name="term" checked>
+        <span class="circle"></span>
+        <span>36 months · <strong>$XXX</strong> / mo</span>
+        <span style="color:var(--yellow-600); font-size:12px; margin-left:auto">Recommended</span>
+      </label>
+      <label class="radio">
+        <input type="radio" name="term">
+        <span class="circle"></span>
+        <span>72 months · <strong>$XXX</strong> / mo</span>
+      </label>
+    </section>
+
+    <!-- ============ 7. Checkbox · Add-ons ============ -->
+    <section class="section">
+      <h2 class="section-title">Add-on services</h2>
+      <label class="checkbox">
+        <input type="checkbox" checked>
+        <span class="box"><span class="iconify" data-icon="lucide:check"></span></span>
+        <span>Extended warranty · +$599</span>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        <span>Maintenance package · +$299</span>
+      </label>
+      <label class="checkbox">
+        <input type="checkbox">
+        <span class="box"></span>
+        <span>Roadside assistance · +$99</span>
+      </label>
+    </section>
+
+    <!-- ============ 8. Switch · Notification preferences ============ -->
+    <section class="section">
+      <h2 class="section-title">Notifications</h2>
+      <p class="section-desc">Choose how we keep you informed</p>
+      <label class="switch-row">
+        <span>Email notifications</span>
+        <input type="checkbox" checked>
+        <span class="switch-track"></span>
+      </label>
+      <label class="switch-row">
+        <span>SMS notifications</span>
+        <input type="checkbox">
+        <span class="switch-track"></span>
+      </label>
+      <label class="switch-row">
+        <span>Promotional offers</span>
+        <input type="checkbox">
+        <span class="switch-track"></span>
+      </label>
+    </section>
+
+    <!-- ============ 9. Reviews · Avatar + Tag ============ -->
+    <section class="section">
+      <h2 class="section-title">Owner reviews</h2>
+      <p class="section-desc">1,331 reviews · 3.14 / 5 average</p>
+
+      <div class="review-card">
+        <div class="avatar color-yellow size-32">J</div>
+        <div class="body">
+          <div class="name">John D.</div>
+          <div class="stars">★★★★★ · Verified owner</div>
+          <div class="text">Great product, very satisfied with the purchase. Recommended!</div>
+        </div>
+      </div>
+
+      <div class="review-card">
+        <div class="avatar size-32">
+          <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23E6EEFF'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23B9CCF5'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23B9CCF5'/%3E%3C/svg%3E" alt="Reviewer avatar placeholder">
+        </div>
+        <div class="body">
+          <div class="name">Maria L.</div>
+          <div class="stars">★★★★☆ · Verified owner</div>
+          <div class="text">Good value for money. Service was professional.</div>
+        </div>
+      </div>
+
+      <button class="demo-toggle" onclick="loadMoreReviews()">
+        Load more reviews
+      </button>
+    </section>
+
+    <!-- ============ 10. Loading 骨架 · 评论加载中 ============ -->
+    <section class="section" id="loading-section" style="display:none">
+      <h2 class="section-title">Loading more reviews...</h2>
+      <div class="review-card">
+        <div class="skeleton skel-circle"></div>
+        <div class="body" style="flex:1">
+          <div class="skeleton skel-line short"></div>
+          <div class="skeleton skel-line"></div>
+          <div class="skeleton skel-line long"></div>
+        </div>
+      </div>
+      <div class="review-card">
+        <div class="skeleton skel-circle"></div>
+        <div class="body" style="flex:1">
+          <div class="skeleton skel-line short"></div>
+          <div class="skeleton skel-line"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 11. Empty State · 无更多评论 ============ -->
+    <section class="section" id="empty-section" style="display:none">
+      <div class="empty-state">
+        <div class="icon-wrap">
+          <span class="iconify" data-icon="lucide:inbox"></span>
+        </div>
+        <div class="title">No more reviews</div>
+        <div class="desc">You've seen all reviews for this product.</div>
+      </div>
+    </section>
+
+    <!-- ============ 12. Progress · 续航 / 加载进度 ============ -->
+    <section class="section">
+      <h2 class="section-title">Rendimiento y carga</h2>
+      <p class="section-subtitle">Componentes 18-progress (Linear / Battery / Stepper) — variantes</p>
+
+      <div style="background:#fff; padding:20px; border-radius:12px; border:1px solid var(--border-divider); margin-bottom:16px">
+        <div style="font-size:12px; color:var(--text-hint); margin-bottom:6px">续航 (Autonomía)</div>
+        <div class="linear">
+          <div class="linear-bar" style="width:75%"></div>
+        </div>
+        <div style="font-size:11px; color:var(--text-hint); margin-top:4px">375 / 500 km</div>
+      </div>
+
+      <div style="background:#fff; padding:20px; border-radius:12px; border:1px solid var(--border-divider); margin-bottom:16px">
+        <div style="font-size:12px; color:var(--text-hint); margin-bottom:6px">电池电量 (Batería)</div>
+        <div class="battery">
+          <div class="battery-shell"><div class="battery-fill high" style="width:82%"></div></div>
+          <span class="battery-percent">82%</span>
+        </div>
+      </div>
+
+      <div style="background:#fff; padding:20px; border-radius:12px; border:1px solid var(--border-divider)">
+        <div style="font-size:12px; color:var(--text-hint); margin-bottom:8px">购车流程 · 5 步</div>
+        <div class="stepper">
+          <div class="stepper-step done"></div>
+          <div class="stepper-step done"></div>
+          <div class="stepper-step active"></div>
+          <div class="stepper-step"></div>
+          <div class="stepper-step"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 13. Ranking · 销量榜 ============ -->
+    <section class="section">
+      <h2 class="section-title">Top ventas del mes</h2>
+      <p class="section-subtitle">Componente 23-ranking · 标准榜</p>
+
+      <div class="rank-list">
+        <div class="rank-item top3">
+          <div class="rank-num-badge gold">1</div>
+          <div class="rank-thumb"><span class="iconify" data-icon="lucide:car" style="font-size:28px"></span></div>
+          <div class="rank-info">
+            <div class="rank-title">Nissan Versa 2026</div>
+            <div class="rank-sub">Sedán compacto · 1.6L</div>
+          </div>
+          <div class="rank-value">
+            <div class="rank-value-main">3,842</div>
+            <div class="rank-value-sub">↑ 12.5%</div>
+          </div>
+        </div>
+        <div class="rank-item top3">
+          <div class="rank-num-badge silver">2</div>
+          <div class="rank-thumb"><span class="iconify" data-icon="lucide:car-front" style="font-size:28px"></span></div>
+          <div class="rank-info">
+            <div class="rank-title">MG ZS 2025</div>
+            <div class="rank-sub">SUV compacto · 1.5T</div>
+          </div>
+          <div class="rank-value">
+            <div class="rank-value-main">2,915</div>
+            <div class="rank-value-sub">↑ 8.2%</div>
+          </div>
+        </div>
+        <div class="rank-item top3">
+          <div class="rank-num-badge bronze">3</div>
+          <div class="rank-thumb"><span class="iconify" data-icon="lucide:car" style="font-size:28px"></span></div>
+          <div class="rank-info">
+            <div class="rank-title">Kia Rio 2025</div>
+            <div class="rank-sub">Sedán compacto · 1.6L</div>
+          </div>
+          <div class="rank-value">
+            <div class="rank-value-main">2,408</div>
+            <div class="rank-value-sub">↓ 3.1%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 14. Brand Grid · 品牌墙 ============ -->
+    <section class="section">
+      <h2 class="section-title">Otras marcas</h2>
+      <p class="section-subtitle">Componente 22-brand-grid · 6 列</p>
+
+      <div class="brand-grid col-6">
+        <div class="brand-cell"><div class="brand-logo brand-nissan">N</div><div class="brand-name">Nissan</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-toyota">T</div><div class="brand-name">Toyota</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-honda">H</div><div class="brand-name">Honda</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-vw">VW</div><div class="brand-name">Volkswagen</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-kia">K</div><div class="brand-name">Kia</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-hyundai">H</div><div class="brand-name">Hyundai</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-mg">MG</div><div class="brand-name">MG</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-xpeng">X</div><div class="brand-name">XPENG</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-byd">B</div><div class="brand-name">BYD</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-tesla">T</div><div class="brand-name">Tesla</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-bmw">B</div><div class="brand-name">BMW</div></div>
+        <div class="brand-cell"><div class="brand-logo brand-audi">A</div><div class="brand-name">Audi</div></div>
+      </div>
+    </section>
+
+    <!-- ============ 15. Steps · 流程图（购车全流程） ============ -->
+    <section class="section">
+      <h2 class="section-title">Tu camino al volante</h2>
+      <p class="section-subtitle">Componente 20-steps · 横排步骤条</p>
+
+      <div class="steps-h">
+        <div class="step-h done"><div class="step-h-icon">✓</div><div class="step-h-label">Elige</div><div class="step-h-desc">Tu modelo</div></div>
+        <div class="step-h done"><div class="step-h-icon">✓</div><div class="step-h-label">Solicitud</div><div class="step-h-desc">30s</div></div>
+        <div class="step-h active"><div class="step-h-icon">3</div><div class="step-h-label">Evaluación</div><div class="step-h-desc">1-2 días</div></div>
+        <div class="step-h"><div class="step-h-icon">4</div><div class="step-h-label">Contrato</div><div class="step-h-desc">Firma</div></div>
+        <div class="step-h"><div class="step-h-icon">5</div><div class="step-h-label">Entrega</div><div class="step-h-desc">3 días</div></div>
+      </div>
+    </section>
+
+    <!-- ============ 16. Trust + Contact · Avatar ============ -->
+    <section class="section">
+      <h2 class="section-title">Talk to our team</h2>
+      <div style="display:flex; align-items:center; gap:var(--sp-3); padding:var(--sp-3) 0">
+        <div class="avatar size-56">
+          <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23FFF6DC'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23F2DFA8'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23F2DFA8'/%3E%3C/svg%3E" alt="Customer service placeholder">
+        </div>
+        <div style="flex:1">
+          <div style="font-weight:600">Carlos M. · Sales advisor</div>
+          <div style="font-size:12px; color:var(--text-hint)">Online now · Replies within 1 hour</div>
+        </div>
+        <span class="badge-verified">
+          <span class="iconify" data-icon="lucide:badge-check"></span>
+          <span>Verified</span>
+        </span>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============ 13. CTA floating · opens Modal ============ -->
+  <div class="cta-floating">
+    <button class="btn size-44 color-yellow status-default full-width" onclick="openModal()">
+      <span class="iconify" data-icon="simple-icons:whatsapp" style="margin-right:8px"></span>
+      Contact sales advisor
+    </button>
+    <!-- TODO(接入方必改): 把 your-platform.com 换成你自己的隐私政策 URL。
+         ⚠️ 禁止留 href="#" —— 留资表单的隐私链接失效属交付不合格（见 principles.md §5）。
+         MX / AutoCava 项目请用 https://www.autocava.com.mx/legal/privacy -->
+    <p class="privacy">
+      By submitting, you agree to our
+      <a href="https://your-platform.com/legal/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+      and authorize us as an intermediary between you and the providers.
+    </p>
+  </div>
+
+  <!-- ============ Tabbar ============ -->
+  <nav class="tabbar" role="navigation" aria-label="Bottom navigation">
+    <a href="#" class="tab">
+      <span class="iconify" data-icon="lucide:home"></span>
+      <span>Home</span>
+    </a>
+    <a href="#" class="tab active">
+      <span class="iconify" data-icon="lucide:package"></span>
+      <span>Products</span>
+    </a>
+    <a href="#" class="tab">
+      <span class="iconify" data-icon="lucide:dollar-sign"></span>
+      <span>Financing</span>
+    </a>
+    <a href="#" class="tab">
+      <span class="iconify" data-icon="lucide:user"></span>
+      <span>Account</span>
+    </a>
+  </nav>
+
+</div>
+
+<!-- ============ Modal ============ -->
+<div class="modal-overlay" id="contactModal" onclick="if(event.target===this)closeModal()">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div class="modal-title">Contact sales advisor</div>
+      <button class="modal-close" onclick="closeModal()" aria-label="Close">
+        <span class="iconify" data-icon="lucide:x"></span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="icon-wrap">
+        <span class="iconify" data-icon="simple-icons:whatsapp" style="color:#25D366"></span>
+      </div>
+      <div class="title">Continue on WhatsApp?</div>
+      <p>We'll redirect you to WhatsApp where Carlos M. (your sales advisor) will help you with this product.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn size-44 color-grey" onclick="closeModal()">Cancel</button>
+      <button class="btn size-44 color-yellow status-default" onclick="confirmContact()">
+        Continue
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ Toast ============ -->
+<div class="toast" id="toast">
+  <span class="icon-wrap" id="toast-icon"></span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+// === Modal 控制 ===
+function openModal() {
+  document.getElementById('contactModal').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('contactModal').classList.remove('show');
+}
+
+// === Toast 控制 ===
+function showToast(msg, type) {
+  const toast = document.getElementById('toast');
+  const icon = document.getElementById('toast-icon');
+  const msgEl = document.getElementById('toast-msg');
+  toast.className = 'toast show ' + (type || 'info');
+  icon.innerHTML = '<span class="iconify" data-icon="lucide:' +
+    (type === 'success' ? 'check-circle' : type === 'error' ? 'alert-circle' : 'info') +
+    '"></span>';
+  msgEl.textContent = msg;
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// === 模拟跳转 WhatsApp + Toast 反馈 ===
+function confirmContact() {
+  closeModal();
+  showToast('Redirecting to WhatsApp...', 'success');
+  // 实际生产：window.location.href = 'https://wa.me/...';
+}
+
+// === 模拟"加载更多评论"交互 ===
+function loadMoreReviews() {
+  const loading = document.getElementById('loading-section');
+  const empty = document.getElementById('empty-section');
+  const btn = event.target;
+
+  btn.style.display = 'none';
+  loading.style.display = 'block';
+
+  // 2 秒后切换到 Empty State
+  setTimeout(() => {
+    loading.style.display = 'none';
+    empty.style.display = 'block';
+  }, 2000);
+}
+</script>
+
+</body>
+</html>

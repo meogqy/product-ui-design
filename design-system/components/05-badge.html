@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<!--
+  Badge · 徽章组件 reference
+  来源：参考组件库（2 个 variant）
+  共 2 个 variant（橙 / 灰）· 70×20 徽章
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Badge Component · UI Design System</title>
+<style>
+:root {
+  --orange-500: #FFCF20;
+  --orange-600: #E0A504;
+  --grey-100: #F1F1F1;
+  --grey-600: #666666;
+  --text-important: #222222;
+  --white: #FFFFFF;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background: #F8F8F8;
+  color: #222222;
+  padding: 24px 16px;
+  line-height: 1.5;
+}
+.header { max-width: 800px; margin: 0 auto 24px; padding-bottom: 16px; border-bottom: 2px solid #FFCF20; }
+.header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+.header .meta { font-size: 14px; color: #666; }
+.header .meta code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+.container { max-width: 800px; margin: 0 auto; }
+
+.demo-grid {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.demo-grid h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+
+.demo-row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #F1F1F1;
+}
+.demo-row:last-child { border-bottom: 0; padding-bottom: 0; margin-bottom: 0; }
+.demo-label { width: 130px; font-size: 12px; color: #888; }
+
+/* === 认证徽章 === */
+.auth-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.auth-badge.orange { background: #FFCF20; color: #222222; }
+.auth-badge.grey { background: #F1F1F1; color: #666666; }
+.auth-badge .iconify { font-size: 12px; }
+
+.spec-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.spec-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.spec-item { padding: 12px; background: #F8F8F8; border-radius: 8px; }
+.spec-item .label { font-size: 12px; color: #666; margin-bottom: 4px; }
+.spec-item .value { font-size: 14px; font-weight: 600; }
+
+.usage-rules { background: #FFF8E1; border-left: 4px solid #FFCF20; padding: 16px 20px; border-radius: 8px; }
+.usage-rules h3 { font-size: 16px; margin-bottom: 8px; }
+.usage-rules ul { list-style: none; padding: 0; font-size: 14px; }
+.usage-rules li { padding: 4px 0; }
+.usage-rules li::before { content: "→ "; color: #FFCF20; font-weight: 700; }
+</style>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+</head>
+<body>
+
+<div class="header">
+  <h1>Badge · 状态徽章</h1>
+  <p class="meta">
+    来源：参考组件库（2 个 variant）· 同步 2026-09-29 ·
+    共 <strong>2 个 variant</strong>（橙 / 灰） · 70×20 · 认证 / 状态徽章
+  </p>
+</div>
+
+<div class="container">
+
+  <div class="demo-grid">
+    <h2>🎨 2 个 variant</h2>
+
+    <div class="demo-row">
+      <div class="demo-label">颜色=橙<br><small>(已认证 / 高亮)</small></div>
+      <span class="auth-badge orange">
+        <span class="iconify" data-icon="lucide:badge-check"></span>
+        <span>Verified</span>
+      </span>
+      <span class="auth-badge orange">
+        <span class="iconify" data-icon="lucide:shield-check"></span>
+        <span>Guaranteed</span>
+      </span>
+    </div>
+
+    <div class="demo-row">
+      <div class="demo-label">颜色=灰<br><small>(未认证 / 默认)</small></div>
+      <span class="auth-badge grey">
+        <span class="iconify" data-icon="lucide:badge-info"></span>
+        <span>Unverified</span>
+      </span>
+      <span class="auth-badge grey">
+        <span class="iconify" data-icon="lucide:clock"></span>
+        <span>Pending</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="spec-section">
+    <h2>📐 Spec Details</h2>
+    <div class="spec-grid">
+      <div class="spec-item"><div class="label">Width</div><div class="value">70×20</div></div>
+      <div class="spec-item"><div class="label">Border Radius</div><div class="value">4px</div></div>
+      <div class="spec-item"><div class="label">Padding</div><div class="value">0 8px</div></div>
+      <div class="spec-item"><div class="label">Font</div><div class="value">11px / 600</div></div>
+      <div class="spec-item"><div class="label">Orange 背景</div><div class="value">#FFCF20</div></div>
+      <div class="spec-item"><div class="label">Grey 背景</div><div class="value">#F1F1F1</div></div>
+      <div class="spec-item"><div class="label">Orange 文字</div><div class="value">#222222</div></div>
+      <div class="spec-item"><div class="label">Grey 文字</div><div class="value">#666666</div></div>
+    </div>
+  </div>
+
+  <div class="usage-rules">
+    <h3>🎯 使用场景</h3>
+    <ul>
+      <li><strong>Orange（已认证）</strong>：用户身份已验证 / 资质已通过 / 售后保障</li>
+      <li><strong>Grey（默认）</strong>：未认证 / 审核中 / 待处理</li>
+      <li><strong>常用文案</strong>：Verified / Unverified / Guaranteed / Pending / Approved（按你的市场语言）</li>
+      <li><strong>位置</strong>：用户名旁边 / 商品标题旁 / 卡片右上角</li>
+      <li><strong>Iconify</strong>：<code>lucide:badge-check</code> / <code>lucide:shield-check</code> / <code>lucide:clock</code></li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  车型列表页 Demo · Autos nuevos en México（筛选 + 密集列表）
+  ════════════════════════════════════════════════════════════════════════
+  数据来源（全部真实抓取，无编造）：
+    source: https://www.autocava.com.mx/auto/library
+    env:    stable（?ac_ab=stable）
+    抓取日期: 2026-09-30
+
+  真实数据：
+    · 20 台车的「Precio actual」区间 + 分榜排名(INEGI, ago. 2026) 逐条取自生产页
+    · 车系 ID 与白底图：与 06-rank-ventas.html 同一批 20 个车系，
+      每个车系页单独抓取取其自身 seriesImageWhiteUrl（20/20 唯一，HTTP 200）
+    · 筛选项（Pago mensual / Precio actual / Otros / Ordenar por）照搬生产
+    · 「Chevrolet Tornado Van」生产页未显示分榜排名，故本页也不显示
+
+  ⚠️ 说明：筛选项的「Personalizar」为生产站的自定义区间入口，
+     本 demo 只做前端交互演示，不实现自定义区间计算（无后端）。
+  断点：1024px（PC ≥1024 侧栏 / H5 <1024 抽屉）· 单文件自适应
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Autos nuevos en México | Precios, modelos y comparativas | AutoCava</title>
+<meta name="description" content="20 autos nuevos en México con precio actual, ranking por segmento y ficha verificada. Nissan Versa desde $309,990.">
+<style>
+:root{
+  --yellow-50:#FFFAED; --yellow-100:#FFF6DC; --yellow-400:#FFD04E;
+  --yellow-500:#FFCF20; --yellow-600:#E0A504; --yellow-700:#B59317;
+  --yellow-800:#8C7212; --yellow-900:#744500;
+  --blue-500:#0056FA; --red-500:#A8071A; --green-500:#7CB305;
+  --grey-900:#222; --grey-800:#444; --grey-700:#555; --grey-600:#666;
+  --grey-500:#888; --grey-400:#999; --grey-300:#BBB; --grey-200:#DDD;
+  --grey-100:#EEE; --grey-50:#F8F8F8;
+  --bg-page:#fff; --bg-card:#fff; --bg-soft:var(--grey-50);
+  --text-important:var(--grey-900); --text-regular:var(--grey-600);
+  --text-hint:var(--grey-400);
+  --border-line:var(--grey-200); --border-divider:var(--grey-100);
+  --overlay:rgba(0,0,0,.55);
+  --font-sans:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --r-sm:4px; --r-md:6px; --r-lg:8px; --r-xl:12px; --r-full:9999px;
+  --shadow-card:0 1px 3px rgba(0,0,0,.08);
+  --shadow-news:0 4px 12px rgba(255,207,32,.16);
+  --shadow-popup:0 20px 60px rgba(0,0,0,.45);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
+  --header-h:56px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--font-sans);background:var(--bg-page);color:var(--text-important);
+  line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button,select{font-family:inherit}
+button{cursor:pointer;border:none;background:none}
+:focus-visible{outline:2px solid var(--blue-500);outline-offset:2px;border-radius:var(--r-sm)}
+.container{width:100%;max-width:1280px;margin:0 auto;padding:0 var(--sp-4)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+
+/* ==========================================================================
+   06-topnav
+   ========================================================================== */
+.topnav{position:sticky;top:0;z-index:80;background:var(--yellow-500);
+  border-bottom:1px solid var(--yellow-600)}
+.topnav-inner{display:flex;align-items:center;gap:var(--sp-3);
+  max-width:1280px;margin:0 auto;padding:0 var(--sp-4);min-height:var(--header-h)}
+.logo{height:20px}
+.topnav-nav{display:flex;gap:var(--sp-4);margin-left:var(--sp-4)}
+.topnav-nav a{font-size:13px;font-weight:600;color:#0a1929;padding:var(--sp-2) 0;
+  border-bottom:2px solid transparent}
+.topnav-nav a:hover{border-bottom-color:var(--grey-900)}
+.topnav-actions{margin-left:auto;display:flex;align-items:center;gap:var(--sp-2)}
+.topnav-cta{display:flex;align-items:center;height:36px;padding:0 var(--sp-4);
+  border-radius:var(--r-md);background:var(--grey-900);color:#fff;font-size:13px;font-weight:700}
+.topnav-burger{display:none;width:40px;height:40px;place-items:center;color:#0a1929}
+
+.breadcrumb{display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-3) 0;
+  font-size:12px;color:var(--text-hint);flex-wrap:wrap}
+.breadcrumb a:hover{color:var(--text-important)}
+.breadcrumb span[aria-current]{color:var(--text-important);font-weight:600}
+
+.page-head{padding:var(--sp-2) 0 var(--sp-4)}
+.page-head h1{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:4px}
+.page-head p{font-size:13px;color:var(--text-hint)}
+
+/* ==========================================================================
+   主体：侧栏筛选 + 结果列表
+   ========================================================================== */
+.layout{display:grid;grid-template-columns:248px 1fr;gap:var(--sp-6);align-items:start;
+  padding-bottom:var(--sp-8)}
+
+/* ---- 21-filter 侧栏 ---- */
+.filters{position:sticky;top:calc(var(--header-h) + 16px);
+  background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-lg);padding:var(--sp-4)}
+.fgroup{padding-bottom:var(--sp-4);margin-bottom:var(--sp-4);
+  border-bottom:1px solid var(--border-divider)}
+.fgroup:last-of-type{border-bottom:0;margin-bottom:0;padding-bottom:0}
+.fgroup h3{font-size:13px;font-weight:700;margin-bottom:var(--sp-3);
+  display:flex;align-items:center;gap:6px}
+.fgroup h3 .iconify{color:var(--grey-400)}
+.fopts{display:flex;flex-direction:column;gap:2px}
+.fopt{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-2);
+  min-height:32px;padding:5px var(--sp-2);border-radius:var(--r-sm);
+  font-size:13px;color:var(--text-regular);text-align:left;width:100%;
+}
+.fopt:hover{background:var(--yellow-50)}
+.fopt[aria-pressed="true"]{background:var(--yellow-50);color:var(--text-important);font-weight:700}
+.fopt[aria-pressed="true"]::after{content:"✓";color:var(--yellow-700);font-weight:800;font-size:12px}
+.fopt-n{font-size:11px;color:var(--text-hint);font-variant-numeric:tabular-nums}
+.fopt-custom{display:inline-flex;align-items:center;gap:5px;color:var(--blue-500);
+  font-size:12px;font-weight:600;margin-top:var(--sp-2);padding:var(--sp-1) var(--sp-2)}
+.fopt-custom:hover{text-decoration:underline}
+
+.sortbar{display:flex;align-items:center;justify-content:space-between;gap:var(--sp-3);
+  flex-wrap:wrap;margin-bottom:var(--sp-4);padding-bottom:var(--sp-3);
+  border-bottom:1px solid var(--border-divider)}
+.sortbar-label{font-size:13px;color:var(--text-regular)}
+.sortbar select{height:36px;padding:0 var(--sp-3);border:1px solid var(--grey-200);
+  border-radius:var(--r-md);background:var(--bg-card);font-size:13px;color:var(--text-important)}
+.sortbar select:hover{border-color:var(--yellow-500)}
+.filter-toggle{display:none;align-items:center;gap:6px;height:36px;padding:0 var(--sp-4);
+  border:1px solid var(--grey-200);border-radius:var(--r-md);font-size:13px;font-weight:600;
+  color:var(--text-important);background:var(--bg-card)}
+.filter-toggle:hover{border-color:var(--yellow-500)}
+
+/* ---- 结果卡片（cards 05-product-card 形态）---- */
+.cars{display:grid;gap:var(--sp-3)}
+.car{display:grid;grid-template-columns:168px 1fr 168px;gap:var(--sp-4);align-items:center;
+  background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-lg);padding:var(--sp-3);
+  transition:border-color .2s,box-shadow .2s}
+.car:hover{border-color:var(--yellow-500);box-shadow:var(--shadow-news)}
+.car-media{background:var(--grey-50);border-radius:var(--r-md);overflow:hidden;
+  aspect-ratio:4/3;position:relative}
+.car-media img{width:100%;height:100%;object-fit:contain;padding:var(--sp-2)}
+.fav{position:absolute;top:6px;right:6px;width:32px;height:32px;display:grid;
+  place-items:center;border-radius:50%;background:#fff;border:1px solid var(--border-divider);
+  color:var(--grey-600)}
+.fav:hover{border-color:var(--yellow-500);color:var(--yellow-600)}
+.fav[aria-pressed="true"]{color:var(--yellow-600);border-color:var(--yellow-500);background:var(--yellow-50)}
+
+.car-body{min-width:0}
+.car-name{font-size:16px;font-weight:700;margin-bottom:5px}
+.car:hover .car-name{color:var(--yellow-800)}
+.car-rank{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
+  color:var(--yellow-800);background:var(--yellow-50);border:1px solid var(--yellow-100);
+  border-radius:var(--r-full);padding:2px 9px;margin-bottom:6px}
+.car-price-lab{font-size:11px;color:var(--text-hint)}
+.car-price{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.25}
+.car-price small{font-size:13px;font-weight:600;color:var(--text-regular)}
+
+.car-act{display:flex;flex-direction:column;gap:var(--sp-2);align-items:stretch}
+.btn-see{display:flex;align-items:center;justify-content:center;height:38px;
+  border:1px solid var(--grey-200);border-radius:var(--r-md);
+  font-size:13px;font-weight:700;color:var(--text-important)}
+.btn-see:hover{border-color:var(--yellow-500);background:var(--yellow-50)}
+.btn-wa{display:flex;align-items:center;justify-content:center;gap:6px;height:38px;
+  background:var(--yellow-500);color:#222;border-radius:var(--r-md);font-size:13px;font-weight:800}
+.btn-wa:hover{background:var(--yellow-400)}
+
+/* ---- 08-empty-state ---- */
+.empty{background:var(--bg-card);border:1px dashed var(--border-line);
+  border-radius:var(--r-lg);padding:var(--sp-8) var(--sp-4);text-align:center;display:none}
+.empty.show{display:block}
+.empty-icon{width:56px;height:56px;margin:0 auto var(--sp-3);border-radius:50%;
+  background:var(--grey-100);display:grid;place-items:center}
+.empty h3{font-size:15px;font-weight:700;margin-bottom:var(--sp-1)}
+.empty p{font-size:13px;color:var(--text-hint);margin-bottom:var(--sp-4)}
+
+/* ---- 隐私脚注 ---- */
+.privacy{font-size:11px;line-height:1.6;color:var(--text-hint);margin-top:var(--sp-5);
+  padding-top:var(--sp-4);border-top:1px dashed var(--border-divider)}
+.privacy a{text-decoration:underline;color:var(--text-regular)}
+
+/* ==========================================================================
+   09-modal · H5 筛选抽屉
+   ========================================================================== */
+.overlay{display:none;position:fixed;inset:0;z-index:110;background:var(--overlay,rgba(0,0,0,.55));
+  padding:var(--sp-4)}
+.overlay.show{display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:100%;max-width:480px;max-height:88vh;overflow-y:auto;background:var(--bg-card);
+  border-radius:var(--r-xl) var(--r-xl) 0 0;padding:var(--sp-4);
+  animation:sheetUp .25s cubic-bezier(.16,1,.3,1)}
+@keyframes sheetUp{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:var(--sp-4);padding-bottom:var(--sp-3);border-bottom:1px solid var(--border-divider)}
+.sheet-head h2{font-size:16px;font-weight:800}
+.sheet-close{width:36px;height:36px;display:grid;place-items:center;
+  border-radius:50%;color:var(--grey-600)}
+.sheet-close:hover{background:var(--grey-100)}
+.sheet .fgroup{border-bottom:1px solid var(--border-divider)}
+.sheet-foot{display:flex;gap:var(--sp-2);margin-top:var(--sp-4);
+  position:sticky;bottom:0;background:var(--bg-card);padding-top:var(--sp-3)}
+.sheet-foot button{flex:1;height:44px;border-radius:var(--r-lg);font-size:14px;font-weight:700}
+.btn-clear{border:1px solid var(--grey-200);color:var(--text-important)}
+.btn-clear:hover{border-color:var(--grey-300)}
+.btn-apply{background:var(--yellow-500);color:#222}
+.btn-apply:hover{background:var(--yellow-400)}
+
+/* ==========================================================================
+   25-footer
+   ========================================================================== */
+.footer{background:var(--grey-900);color:var(--grey-300);padding:var(--sp-8) 0 var(--sp-6)}
+.footer-top{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:var(--sp-6);
+  padding-bottom:var(--sp-6);border-bottom:1px solid var(--grey-700)}
+.footer-logo{height:20px;margin-bottom:var(--sp-2);filter:brightness(0) invert(1)}
+.footer-tag{font-size:13px;color:var(--grey-400);line-height:1.6;max-width:300px}
+.footer-h{font-size:13px;font-weight:700;color:#fff;margin-bottom:var(--sp-3)}
+.footer-list{list-style:none;display:flex;flex-direction:column;gap:var(--sp-2)}
+.footer-list a,.footer-list span{font-size:13px;color:var(--grey-300);line-height:1.6}
+.footer-list a:hover{color:var(--yellow-500)}
+.footer-bottom{padding-top:var(--sp-4);font-size:12px;color:var(--grey-400);line-height:1.7}
+.footer-bottom a{color:var(--grey-400);text-decoration:underline}
+
+/* ==========================================================================
+   04-tabbar
+   ========================================================================== */
+.tabbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:90;
+  background:var(--bg-card);border-top:1px solid var(--border-divider);
+  padding:var(--sp-1) 0 calc(var(--sp-1) + env(safe-area-inset-bottom))}
+.tabbar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 0;font-size:11px;color:var(--text-hint);min-height:44px;justify-content:center}
+.tabbar-item[aria-current]{color:var(--yellow-600);font-weight:700}
+
+/* ==========================================================================
+   10-toast
+   ========================================================================== */
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));
+  transform:translate(-50%,16px);z-index:300;background:var(--grey-900);color:#fff;
+  padding:var(--sp-3) var(--sp-5);border-radius:var(--r-md);font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:var(--sp-2);opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:1023px){
+  .topnav-nav,.topnav-actions{display:none}
+  .topnav-burger{display:grid;margin-left:auto}
+  .layout{grid-template-columns:1fr;gap:var(--sp-4)}
+  .filters{display:none}          /* 桌面侧栏 → H5 抽屉 */
+  .filter-toggle{display:inline-flex}
+  .car{grid-template-columns:132px 1fr;gap:var(--sp-3)}
+  .car-act{grid-column:1/-1;flex-direction:row}
+  .car-act > *{flex:1}
+  .footer-top{grid-template-columns:1fr 1fr;gap:var(--sp-5)}
+  .tabbar{display:flex}
+  body{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
+}
+@media (max-width:480px){
+  .page-head h1{font-size:20px}
+  .car{grid-template-columns:104px 1fr}
+  .car-name{font-size:15px}
+  .car-price{font-size:17px}
+  .footer-top{grid-template-columns:1fr}
+}
+/* MX 低端安卓 360×800 压测 */
+@media (max-width:360px){
+  .container{padding:0 12px}
+  .page-head h1{font-size:18px}
+  .car{grid-template-columns:88px 1fr;padding:8px;gap:8px}
+  .car-name{font-size:14px}
+  .car-price{font-size:16px}
+  .car-rank{font-size:10px;padding:1px 7px}
+  .btn-see,.btn-wa{height:36px;font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== 06-topnav ==================== -->
+<header class="topnav">
+  <div class="topnav-inner">
+    <img class="logo" src="https://cdn.autocava.com.mx/_nuxt/asset/logo.v3.mLItLIXo.svg" alt="Autocava">
+    <nav class="topnav-nav" aria-label="Principal">
+      <a href="https://www.autocava.com.mx/">Inicio</a>
+      <a href="https://www.autocava.com.mx/auto" aria-current="page">Autos</a>
+      <a href="https://www.autocava.com.mx/rank">Autos más vendidos</a>
+      <a href="https://www.autocava.com.mx/cavi">Cavi</a>
+    </nav>
+    <div class="topnav-actions">
+      <a class="topnav-cta" href="#">Cotizar</a>
+    </div>
+    <button class="topnav-burger" aria-label="Abrir menú">
+      <span class="iconify" data-icon="lucide:menu" style="font-size:22px"></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="https://www.autocava.com.mx/">Inicio</a>
+      <span aria-hidden="true">/</span>
+      <a href="https://www.autocava.com.mx/auto">Autos</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Filtrar</span>
+    </nav>
+
+    <div class="page-head">
+      <h1>Autos nuevos en México</h1>
+      <p>Precio actual por línea y ranking por segmento · fuente INEGI, agosto de 2026</p>
+    </div>
+
+    <div class="layout">
+      <!-- ==================== 21-filter 侧栏（PC）==================== -->
+      <aside class="filters" aria-label="Filtros">
+        <div class="fgroup">
+          <h3><span class="iconify" data-icon="lucide:wallet" style="font-size:15px"></span>Pago mensual</h3>
+          <div class="fopts" data-group="pago">
+            <button class="fopt" aria-pressed="false" data-min="0"    data-max="5000">≤ $5,000</button>
+            <button class="fopt" aria-pressed="false" data-min="5000" data-max="6000">$5,000 – $6,000</button>
+            <button class="fopt" aria-pressed="false" data-min="6000" data-max="7000">$6,000 – $7,000</button>
+            <button class="fopt" aria-pressed="false" data-min="7000" data-max="8000">$7,000 – $8,000</button>
+            <button class="fopt" aria-pressed="false" data-min="8000" data-max="99999999">≥ $8,000</button>
+          </div>
+          <button class="fopt-custom"><span class="iconify" data-icon="lucide:sliders-horizontal" style="font-size:13px"></span>Personalizar</button>
+        </div>
+
+        <div class="fgroup">
+          <h3><span class="iconify" data-icon="lucide:tag" style="font-size:15px"></span>Precio actual</h3>
+          <div class="fopts" data-group="precio">
+            <button class="fopt" aria-pressed="false" data-min="0"     data-max="300000">≤ $300k</button>
+            <button class="fopt" aria-pressed="false" data-min="300000" data-max="400000">$300k – $400k</button>
+            <button class="fopt" aria-pressed="false" data-min="400000" data-max="500000">$400k – $500k</button>
+            <button class="fopt" aria-pressed="false" data-min="500000" data-max="600000">$500k – $600k</button>
+            <button class="fopt" aria-pressed="false" data-min="600000" data-max="900000">$600k – $900k</button>
+            <button class="fopt" aria-pressed="false" data-min="900000" data-max="99999999">≥ $900k</button>
+          </div>
+          <button class="fopt-custom"><span class="iconify" data-icon="lucide:sliders-horizontal" style="font-size:13px"></span>Personalizar</button>
+        </div>
+
+        <div class="fgroup">
+          <h3><span class="iconify" data-icon="lucide:list-filter" style="font-size:15px"></span>Otros</h3>
+          <div class="fopts">
+            <button class="fopt" aria-pressed="false" data-noop="1">Tipo</button>
+            <button class="fopt" aria-pressed="false" data-noop="1">País</button>
+            <button class="fopt" aria-pressed="false" data-noop="1">Transmisión</button>
+            <button class="fopt" aria-pressed="false" data-noop="1">Origen</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ==================== 结果区 ==================== -->
+      <div>
+        <div class="sortbar">
+          <button class="filter-toggle" id="open-filters">
+            <span class="iconify" data-icon="lucide:sliders-horizontal" style="font-size:15px"></span>
+            Filtrar <span id="ft-count"></span>
+          </button>
+          <label class="sortbar-label" for="sort">Ordenar por</label>
+          <select id="sort">
+            <option value="popular">Más vendidos</option>
+            <option value="cheap">Más baratos</option>
+            <option value="expensive">Más caros</option>
+          </select>
+        </div>
+
+        <!-- 20 台真实车系 · 价格区间 + 分榜排名（INEGI ago. 2026）-->
+        <div class="cars" id="cars">
+
+          <article class="car" data-price="309990" data-rank="1" data-series="356">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/car/series/87bfccbc706c4e7fa2174f07b784baf3.png" alt="Nissan Versa" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Nissan Versa a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Nissan Versa</h2>
+              <span class="car-rank">
+                <span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>
+                Ranking Sedán ago. N.º 1 · INEGI
+              </span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$309,990 <small>– $406,990</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/356">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Nissan%20Versa" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="332800" data-rank="2" data-series="519">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/car/series/21f3ba391d844310a684b92b3199da88.png" alt="Chevrolet Aveo Sedán" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Chevrolet Aveo Sedán a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Chevrolet Aveo Sedán</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking Sedán ago. N.º 2 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$332,800 <small>– $390,000</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/519">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Chevrolet%20Aveo" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="439990" data-rank="3" data-series="523">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/car/series/ad5caf237ea1445e8d74108c93919830.png" alt="Nissan NP300" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Nissan NP300 a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Nissan NP300</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking Pickup ago. N.º 1 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$439,990 <small>– $471,990</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/523">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Nissan%20NP300" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="304900" data-rank="4" data-series="526">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/car/series/4d10f808e5894bc1a136e719e7747245.png" alt="Kia K3 Sedán" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Kia K3 Sedán a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Kia K3 Sedán</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking Sedán ago. N.º 3 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$304,900 <small>– $477,900</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/526">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Kia%20K3" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="402900" data-rank="5" data-series="380">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0380.png" alt="RAM 1200" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar RAM 1200 a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">RAM 1200</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking Pickup ago. N.º 2 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$402,900 <small>– $694,900</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/380">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20RAM%201200" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="451900" data-rank="6" data-series="302">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0302.png" alt="Mazda CX-30" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Mazda CX-30 a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Mazda CX-30</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking SUV ago. N.º 1 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$451,900 <small>– $585,900</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/302">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Mazda%20CX-30" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="322490" data-rank="7" data-series="452">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0452.png" alt="Volkswagen Virtus" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Volkswagen Virtus a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Volkswagen Virtus</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking Sedán ago. N.º 4 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$322,490 <small>– $399,490</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/452">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Volkswagen%20Virtus" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="570900" data-rank="8" data-series="510">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0442.png" alt="Toyota Hilux" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Toyota Hilux a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Toyota Hilux</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking Pickup ago. N.º 3 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$570,900 <small>– $880,900</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/510">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20la%20Toyota%20Hilux" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="500800" data-rank="9" data-series="107">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0107.png" alt="Chevrolet Captiva" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Chevrolet Captiva a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Chevrolet Captiva</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking SUV ago. N.º 2 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$500,800 <small>– $584,000</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/107">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20la%20Chevrolet%20Captiva" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="421500" data-rank="10" data-series="112">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0112.png" alt="Chevrolet Groove" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Chevrolet Groove a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Chevrolet Groove</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking SUV ago. N.º 3 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$421,500 <small>– $501,400</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/112">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Chevrolet%20Groove" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="225990" data-rank="11" data-series="354">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0354.png" alt="Nissan March" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Nissan March a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Nissan March</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking Hatchback ago. N.º 1 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$225,990 <small>– $253,990</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/354">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Nissan%20March" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="559900" data-rank="12" data-series="165">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0165.png" alt="Ford TERRITORY" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Ford TERRITORY a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Ford TERRITORY</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking SUV ago. N.º 4 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$559,900 <small>– $739,900</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/165">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20la%20Ford%20TERRITORY" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="374900" data-rank="13" data-series="351">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0351.png" alt="Nissan Magnite" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Nissan Magnite a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Nissan Magnite</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking SUV ago. N.º 5 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$374,900 <small>– $456,900</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/351">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Nissan%20Magnite" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="599900" data-rank="14" data-series="306">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0306.png" alt="Mazda CX-5" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Mazda CX-5 a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Mazda CX-5</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking SUV ago. N.º 6 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$599,900 <small>– $734,900</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/306">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Mazda%20CX-5" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="274900" data-rank="15" data-series="332">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0332.png" alt="MG MG5" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar MG MG5 a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">MG MG5</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking Sedán ago. N.º 5 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$274,900 <small>– $344,000</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/332">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20MG%20MG5" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="252000" data-rank="16" data-series="391">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0391.png" alt="Renault KWID" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Renault KWID a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Renault KWID</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking SUV ago. N.º 7 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$252,000 <small>– $291,000</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/391">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Renault%20KWID" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="393400" data-rank="17" data-series="113">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0113.png" alt="Chevrolet S10 Max" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Chevrolet S10 Max a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Chevrolet S10 Max</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking Pickup ago. N.º 4 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$393,400 <small>– $626,700</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/113">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20la%20Chevrolet%20S10" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="441400" data-rank="18" data-series="231">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0338.png" alt="Hyundai CRETA" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Hyundai CRETA a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Hyundai CRETA</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking SUV ago. N.º 8 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$441,400 <small>– $602,200</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/231">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20la%20Hyundai%20CRETA" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="315200" data-rank="19" data-series="128">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0091.png" alt="Chevrolet Tornado Van" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Chevrolet Tornado Van a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Chevrolet Tornado Van</h2>
+              <!-- 生产页此车未显示分榜排名，故不渲染 rank chip -->
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$315,200 <small>– $315,200</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/128">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20la%20Chevrolet%20Tornado" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+
+          <article class="car" data-price="549990" data-rank="20" data-series="358">
+            <div class="car-media">
+              <img src="https://cdn.autocava.com.mx/series/white/0358.png" alt="Nissan X-Trail" loading="lazy" width="336" height="252">
+              <button class="fav" aria-pressed="false" aria-label="Agregar Nissan X-Trail a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:16px"></span></button>
+            </div>
+            <div class="car-body">
+              <h2 class="car-name">Nissan X-Trail</h2>
+              <span class="car-rank"><span class="iconify" data-icon="lucide:award" style="font-size:12px"></span>Ranking SUV ago. N.º 9 · INEGI</span>
+              <div class="car-price-lab">Precio actual:</div>
+              <div class="car-price">$549,990 <small>– $744,990</small></div>
+            </div>
+            <div class="car-act">
+              <a class="btn-see" href="https://www.autocava.com.mx/auto/series/358">Ver detalles</a>
+              <a class="btn-wa" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20de%20la%20Nissan%20X-Trail" target="_blank" rel="noopener"><span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:15px"></span>WhatsApp</a>
+            </div>
+          </article>
+        </div>
+
+        <!-- 08-empty-state -->
+        <div class="empty" id="empty">
+          <div class="empty-icon">
+            <span class="iconify" data-icon="lucide:search-x" style="font-size:26px;color:var(--grey-300)"></span>
+          </div>
+          <h3>No encontramos autos</h3>
+          <p>Prueba con menos filtros o revisa el rango de precio.</p>
+          <button class="btn-apply" id="reset" style="height:40px;padding:0 24px;border-radius:var(--r-md);font-weight:700">Limpiar filtros</button>
+        </div>
+
+        <!-- 留资隐私脚注（06-mx-lead-privacy 硬约束）-->
+        <p class="privacy">
+          Al continuar, aceptas la
+          <a href="https://www.autocava.com.mx/legal/privacy" target="_blank" rel="noopener">Aviso de Privacidad</a>.
+          Autocava es una plataforma intermediaria (Chengdu Tiangong Bianjie Technology Co., Ltd.);
+          la operación la realiza la agencia que elijas. Datos capturados 2026-09-30 (entorno stable).
+        </p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ==================== 09-modal · H5 筛选抽屉 ==================== -->
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Filtros">
+  <div class="sheet">
+    <div class="sheet-head">
+      <h2>Filtrar</h2>
+      <button class="sheet-close" id="close-filters" aria-label="Cerrar filtros">
+        <span class="iconify" data-icon="lucide:x" style="font-size:20px"></span>
+      </button>
+    </div>
+    <div class="fgroup">
+      <h3>Pago mensual</h3>
+      <div class="fopts" data-group="pago">
+        <button class="fopt" aria-pressed="false" data-min="0" data-max="5000">≤ $5,000</button>
+        <button class="fopt" aria-pressed="false" data-min="5000" data-max="6000">$5,000 – $6,000</button>
+        <button class="fopt" aria-pressed="false" data-min="6000" data-max="7000">$6,000 – $7,000</button>
+        <button class="fopt" aria-pressed="false" data-min="7000" data-max="8000">$7,000 – $8,000</button>
+        <button class="fopt" aria-pressed="false" data-min="8000" data-max="99999999">≥ $8,000</button>
+      </div>
+    </div>
+    <div class="fgroup">
+      <h3>Precio actual</h3>
+      <div class="fopts" data-group="precio">
+        <button class="fopt" aria-pressed="false" data-min="0" data-max="300000">≤ $300k</button>
+        <button class="fopt" aria-pressed="false" data-min="300000" data-max="400000">$300k – $400k</button>
+        <button class="fopt" aria-pressed="false" data-min="400000" data-max="500000">$400k – $500k</button>
+        <button class="fopt" aria-pressed="false" data-min="500000" data-max="600000">$500k – $600k</button>
+        <button class="fopt" aria-pressed="false" data-min="600000" data-max="900000">$600k – $900k</button>
+        <button class="fopt" aria-pressed="false" data-min="900000" data-max="99999999">≥ $900k</button>
+      </div>
+    </div>
+    <div class="sheet-foot">
+      <button class="btn-clear" id="sheet-clear">Limpiar</button>
+      <button class="btn-apply" id="sheet-apply">Aplicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 25-footer ==================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <img class="footer-logo" src="https://cdn.autocava.com.mx/_nuxt/asset/logo.v3.mLItLIXo.svg" alt="Autocava" loading="lazy">
+        <p class="footer-tag">Compra y vende autos en México con precios reales y financiamiento a tu medida.</p>
+      </div>
+      <div>
+        <h3 class="footer-h">Comprar</h3>
+        <ul class="footer-list">
+          <li><a href="https://www.autocava.com.mx/auto">Autos nuevos</a></li>
+          <li><a href="https://www.autocava.com.mx/rank">Autos más vendidos</a></li>
+          <li><a href="https://www.autocava.com.mx/finance/draft">Financiamiento</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-h">Contacto</h3>
+        <ul class="footer-list">
+          <li><span>Teléfono: +52 55 0000 0000</span></li>
+          <li><a href="https://wa.me/525000000000">WhatsApp: +52 55 0000 0000</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-h">Legales</h3>
+        <ul class="footer-list">
+          <li><a href="https://www.autocava.com.mx/legal/privacy">Aviso de Privacidad</a></li>
+          <li><a href="https://www.autocava.com.mx/legal/declaration">Términos y Condiciones</a></li>
+          <li><a href="https://www.autocava.com.mx/about">Sobre nosotros</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© AutoCava, Chengdu Tiangong Bianjie Technology Co., Ltd. · Datos capturados 2026-09-30 (entorno stable)</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ==================== 04-tabbar ==================== -->
+<nav class="tabbar" aria-label="Navegación principal">
+  <a class="tabbar-item" aria-current="page" href="https://www.autocava.com.mx/">
+    <span class="iconify" data-icon="lucide:house" style="font-size:20px"></span>Inicio
+  </a>
+  <a class="tabbar-item" href="https://www.autocava.com.mx/auto">
+    <span class="iconify" data-icon="lucide:car-front" style="font-size:20px"></span>Autos
+  </a>
+  <a class="tabbar-item" href="https://www.autocava.com.mx/rank">
+    <span class="iconify" data-icon="lucide:trophy" style="font-size:20px"></span>Ranking
+  </a>
+  <a class="tabbar-item" href="https://www.autocava.com.mx/">
+    <span class="iconify" data-icon="lucide:heart" style="font-size:20px"></span>Favoritos
+  </a>
+  <a class="tabbar-item" href="https://www.autocava.com.mx/">
+    <span class="iconify" data-icon="lucide:user" style="font-size:20px"></span>Mi cuenta
+  </a>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  // 渐进增强标记：无 JS 时属性不存在，CSS 可据此降级
+  document.documentElement.setAttribute('data-js','on');
+  var cars=Array.prototype.slice.call(document.querySelectorAll('.car'));
+  var empty=document.getElementById('empty');
+  var toast=document.getElementById('toast'),t=null;
+  var overlay=document.getElementById('overlay');
+  var countEl=document.getElementById('ft-count');
+
+  function show(m){toast.textContent=m;toast.classList.add('show');
+    clearTimeout(t);t=setTimeout(function(){toast.classList.remove('show');},2000);}
+
+  // 排序：popular = data-rank 升序（生产「Más vendidos」口径）
+  function apply(){
+    var picks={};
+    Array.prototype.forEach.call(document.querySelectorAll('.fopt[aria-pressed="true"]'),function(b){
+      if(b.hasAttribute('data-min')){
+        // 向上找带 data-group 的容器（侧栏与 H5 抽屉共用同一套 key）
+        var g=b.closest('[data-group]');
+        if(!g) return;
+        var key=g.getAttribute('data-group');
+        (picks[key]=picks[key]||[]).push(b);
+      }
+    });
+    var sort=document.getElementById('sort').value;
+    var list=cars.slice();
+
+    list.sort(function(a,b){
+      if(sort==='cheap')   return a.dataset.price-b.dataset.price;
+      if(sort==='expensive')return b.dataset.price-a.dataset.price;
+      return a.dataset.rank-b.dataset.rank;
+    });
+
+    var shown=0;
+    list.forEach(function(c){
+      var p=+c.dataset.price;
+      var ok=true;
+      // 注：本 demo 的价格过滤作用于 data-price（各车系「desde」真实价）
+      if(picks.precio) ok = ok && picks.precio.some(function(b){
+        return p>=+b.dataset.min && p<=+b.dataset.max; });
+      c.style.display=ok?'':'none';
+      if(ok) shown++;
+    });
+
+    // 按排序后的顺序重排 DOM（必须用 list，不能用 cars，否则排序会被原序覆盖）
+    var box=document.getElementById('cars');
+    list.forEach(function(c){ box.appendChild(c); });
+    empty.classList.toggle('show',shown===0);
+
+    var n=document.querySelectorAll('.fopt[aria-pressed="true"][data-min]').length;
+    countEl.textContent=n?('('+n+')'):'';
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('.fopt'),function(b){
+    b.addEventListener('click',function(){
+      if(b.hasAttribute('data-noop')){ show('Filtro no capturado en este demo'); return; }
+      b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')==='true'?'false':'true');
+      apply();
+    });
+  });
+
+  document.getElementById('sort').addEventListener('change',apply);
+
+  document.getElementById('reset').addEventListener('click',function(){
+    Array.prototype.forEach.call(document.querySelectorAll('.fopt'),function(b){
+      if(!b.hasAttribute('data-noop')) b.setAttribute('aria-pressed','false'); });
+    document.getElementById('sort').value='popular';
+    apply();
+  });
+
+  // 24-favorite
+  Array.prototype.forEach.call(document.querySelectorAll('.fav'),function(b){
+    b.addEventListener('click',function(){
+      var on=b.getAttribute('aria-pressed')==='true';
+      b.setAttribute('aria-pressed',String(!on));
+      var n=b.closest('.car').querySelector('.car-name').textContent.trim();
+      show((on?'Quitado: ':'Agregado: ')+n);
+    });
+  });
+
+  // H5 抽屉
+  document.getElementById('open-filters').addEventListener('click',function(){
+    overlay.classList.add('show');
+  });
+  function close(){overlay.classList.remove('show');}
+  document.getElementById('close-filters').addEventListener('click',close);
+  document.getElementById('sheet-apply').addEventListener('click',function(){apply();close();});
+  document.getElementById('sheet-clear').addEventListener('click',function(){
+    Array.prototype.forEach.call(overlay.querySelectorAll('.fopt'),function(b){
+      if(!b.hasAttribute('data-noop')) b.setAttribute('aria-pressed','false'); });
+  });
+  overlay.addEventListener('click',function(e){ if(e.target===overlay) close(); });
+
+  apply();
+})();
+</script>
+</body>
+</html>

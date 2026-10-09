@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--
+  Avatar · 头像组件 reference
+  来源：参考组件库（4 个 variant：图片 / 字母 / 状态 + 头像组）
+  同步：2026-09-29
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avatar Component · UI Design System</title>
+<style>
+:root {
+  --yellow-500: #FFCF20;
+  --yellow-600: #E0A504;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+  --green-500: #7CB305;
+  --red-500: #A8071A;
+
+  --font-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --fs-body: 14px; --fs-small: 12px;
+
+  --radius-pill: 9999px;
+
+  --shadow-card: 0 4px 16px rgba(10, 25, 41, 0.06);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); background: var(--grey-50); color: var(--grey-900); padding: 24px 16px; line-height: 1.5; }
+.header { max-width: 800px; margin: 0 auto 24px; padding-bottom: 16px; border-bottom: 2px solid var(--yellow-500); }
+.header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+.header .meta { font-size: var(--fs-body); color: var(--grey-600); }
+.header .meta code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: var(--fs-small); }
+.container { max-width: 800px; margin: 0 auto; }
+
+/* === Avatar 通用样式 === */
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--grey-100);
+  color: var(--grey-900);
+  font-weight: 600;
+  user-select: none;
+  position: relative;
+  flex-shrink: 0;
+}
+.avatar img { width: 100%; height: 100%; object-fit: cover; }
+.avatar.size-24 { width: 24px; height: 24px; font-size: 10px; }
+.avatar.size-32 { width: 32px; height: 32px; font-size: 12px; }
+.avatar.size-40 { width: 40px; height: 40px; font-size: 14px; }
+.avatar.size-56 { width: 56px; height: 56px; font-size: 18px; }
+.avatar.size-80 { width: 80px; height: 80px; font-size: 24px; }
+.avatar.color-yellow { background: var(--yellow-500); }
+.avatar.color-blue { background: var(--blue-500, #0056FA); color: var(--white); }
+.avatar.color-green { background: var(--green-500); color: var(--white); }
+.avatar.color-grey { background: var(--grey-200); color: var(--grey-600); }
+
+/* === Avatar 状态点 === */
+.avatar.has-status::after {
+  content: "";
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 25%; height: 25%;
+  min-width: 8px; min-height: 8px;
+  background: var(--green-500);
+  border: 2px solid var(--white);
+  border-radius: 50%;
+}
+.avatar.has-status.status-offline::after { background: var(--grey-400); }
+.avatar.has-status.status-busy::after { background: var(--red-500); }
+
+/* === Avatar 组 === */
+.avatar-group { display: inline-flex; }
+.avatar-group .avatar {
+  border: 2px solid var(--white);
+  margin-left: -8px;
+}
+.avatar-group .avatar:first-child { margin-left: 0; }
+
+.demo-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-card); }
+.demo-section h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+.demo-row { display: flex; align-items: center; gap: 12px; padding: 16px; background: var(--grey-50); border-radius: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.demo-label { font-size: var(--fs-small); color: #888; min-width: 110px; }
+
+.spec-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-card); }
+.spec-section h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.spec-item { padding: 12px; background: var(--grey-50); border-radius: 8px; }
+.spec-item .label { font-size: var(--fs-small); color: var(--grey-600); margin-bottom: 4px; }
+.spec-item .value { font-size: var(--fs-body); font-weight: 600; }
+
+.usage-rules { background: #FFF8E1; border-left: 4px solid var(--yellow-500); padding: 16px 20px; border-radius: 8px; }
+.usage-rules h3 { font-size: 18px; margin-bottom: 8px; }
+.usage-rules ul { list-style: none; padding: 0; font-size: var(--fs-body); }
+.usage-rules li { padding: 4px 0; }
+.usage-rules li::before { content: "→ "; color: var(--yellow-500); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Avatar · 头像</h1>
+  <p class="meta">
+    来源：参考组件库（4 个 variant：图片 / 字母 / 状态 / 头像组）· 同步 2026-09-29 ·
+    用于用户头像 / 品牌 logo / 占位符 / 多人组合
+  </p>
+</div>
+
+<div class="container">
+
+  <div class="demo-section">
+    <h2>🎨 4 个 variant</h2>
+
+    <!-- Variant 1: 字母占位 -->
+    <div class="demo-row">
+      <div class="demo-label">Variant 1 · 字母占位（无图片时 fallback）</div>
+      <div class="avatar color-yellow size-32">A</div>
+      <div class="avatar color-blue size-40">JD</div>
+      <div class="avatar color-green size-56">B</div>
+      <div class="avatar color-grey size-80">U</div>
+    </div>
+
+    <!-- Variant 2: 图片 -->
+    <div class="demo-row">
+      <!-- source: 内联 SVG 占位图（自绘中性色块 + 剪影，不引用外部随机头像服务，不冒充实拍人像） -->
+      <div class="demo-label">Variant 2 · 图片（有图态 · 内联 SVG 占位）</div>
+      <div class="avatar size-32">
+        <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23E6EEFF'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23B9CCF5'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23B9CCF5'/%3E%3C/svg%3E" alt="User 1">
+      </div>
+      <div class="avatar size-40">
+        <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23FFF6DC'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23F2DFA8'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23F2DFA8'/%3E%3C/svg%3E" alt="User 2">
+      </div>
+      <div class="avatar size-56">
+        <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23F1F8EC'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23C6E3B4'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23C6E3B4'/%3E%3C/svg%3E" alt="User 3">
+      </div>
+    </div>
+
+    <!-- Variant 3: 状态点 -->
+    <div class="demo-row">
+      <div class="demo-label">Variant 3 · 状态点（在线 / 离线 / 忙碌）</div>
+      <div class="avatar size-40 has-status">
+        <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23E6EEFF'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23B9CCF5'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23B9CCF5'/%3E%3C/svg%3E" alt="">
+      </div>
+      <div class="avatar size-40 has-status status-offline">
+        <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23E6EEFF'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23B9CCF5'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23B9CCF5'/%3E%3C/svg%3E" alt="">
+      </div>
+      <div class="avatar size-40 has-status status-busy">
+        <img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23E6EEFF'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23B9CCF5'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23B9CCF5'/%3E%3C/svg%3E" alt="">
+      </div>
+      <div class="avatar color-blue size-40 has-status">JD</div>
+    </div>
+
+    <!-- Variant 4: 头像组 -->
+    <div class="demo-row">
+      <div class="demo-label">Variant 4 · 头像组（多人参与）</div>
+      <div class="avatar-group">
+        <div class="avatar size-40"><img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23E6EEFF'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23B9CCF5'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23B9CCF5'/%3E%3C/svg%3E" alt=""></div>
+        <div class="avatar size-40"><img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23E6EEFF'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23B9CCF5'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23B9CCF5'/%3E%3C/svg%3E" alt=""></div>
+        <div class="avatar size-40"><img src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23E6EEFF'/%3E%3Ccircle cx='32' cy='25' r='11' fill='%23B9CCF5'/%3E%3Cpath d='M10 60c0-12 10-19 22-19s22 7 22 19z' fill='%23B9CCF5'/%3E%3C/svg%3E" alt=""></div>
+        <div class="avatar size-40 color-grey">+5</div>
+      </div>
+      <span style="margin-left:16px; color:var(--grey-600); font-size:var(--fs-small)">8 collaborators</span>
+    </div>
+  </div>
+
+  <div class="spec-section">
+    <h2>📐 Spec Details</h2>
+    <div class="spec-grid">
+      <div class="spec-item"><div class="label">圆角</div><div class="value">50%（圆）</div></div>
+      <div class="spec-item"><div class="label">尺寸</div><div class="value">24 / 32 / 40 / 56 / 80 px</div></div>
+      <div class="spec-item"><div class="label">字母 fallback</div><div class="value">首字母（自动取用户名前 1-2 字）</div></div>
+      <div class="spec-item"><div class="label">默认背景色</div><div class="value">--yellow-500（品牌主色）</div></div>
+      <div class="spec-item"><div class="label">字号</div><div class="value">尺寸 × 0.36（自适应）</div></div>
+      <div class="spec-item"><div class="label">字重</div><div class="value">600（Semi Bold）</div></div>
+      <div class="spec-item"><div class="label">状态点</div><div class="value">右下 25% · 2px 白边</div></div>
+      <div class="spec-item"><div class="label">状态点色</div><div class="value">绿/灰/红（在线/离线/忙碌）</div></div>
+      <div class="spec-item"><div class="label">头像组重叠</div><div class="value">-8px margin-left + 2px 白边</div></div>
+    </div>
+  </div>
+
+  <div class="usage-rules">
+    <h3>🎯 使用规则</h3>
+    <ul>
+      <li><strong>图片 fallback</strong>：无图片时显示字母（首字母 · 品牌主色背景）</li>
+      <li><strong>尺寸选择</strong>：评论/列表=32 · 个人资料=56 · 大头像=80 · 内联=24</li>
+      <li><strong>状态点</strong>：实时系统（聊天 / 协作）才需要，普通页面不加</li>
+      <li><strong>头像组</strong>：协作者 / 团队成员 / 多人头像 · 最多显示 3-4 个 + "N+" 提示</li>
+      <li><strong>占位符</strong>：用户未上传头像时 fallback 到首字母</li>
+      <li><strong>ARIA</strong>：加 <code>alt</code> 描述用户名</li>
+      <li><strong>不要</strong>：跨用户混用不同尺寸（同一区域尺寸应一致）</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>

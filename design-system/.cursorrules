@@ -1,0 +1,176 @@
+# =============================================================================
+# AI 工具自动加载入口 · UI Design System
+# =============================================================================
+#
+# 用法（把本目录复制到你的项目根目录）：
+#   cp ui-design-system-starter/.cursorrules /path/to/your-project/
+#
+# 支持工具：Cursor / Cline / Roo Code / Windsurf / Continue.dev
+# 装好后直接说「帮我做一个 XX 页面」，AI 会自动按下面的流程走。
+#
+# =============================================================================
+
+## 🎯 什么时候加载本设计系统
+
+**立即加载**（命中任一即用）：
+- "做产品页面" / "上线页面" / "真实页面" / "production"
+- "用现有组件" / "复用组件库" / "组件库" / "design system"
+- "做 UI" / "做产品 UI" / "ui-design-system"
+- 要求接真实数据 / 符合 WCAG / Core Web Vitals / 响应式
+
+**不要加载**（走演示原型流程）：
+- 单 feature demo / 给老板评审 / mock 数据 OK / 评审通过即可
+  → 这种用 `product-prototype-design` skill
+
+---
+
+## ⛔ 加载后 5 步流程（不许跳步）
+
+### Step 1 — 判断是不是真生产 UI
+
+| 是生产 UI | 不是（用 product-prototype-design） |
+|---------|------|
+| 用户在真实产品里看到的页面 | 单 feature demo 给老板看 |
+| 需要接真实数据 | mock / 占位数据 OK |
+| 必须复用本目录已有组件 | 可以自创新样式 |
+| 要过 WCAG AA + Core Web Vitals | 评审通过即可 |
+
+判断错 → 换 skill，**别混用**。
+
+### Step 2 — 复用视觉资产（5 个查表路径，⚡ 第一步必做）
+
+按这个顺序查，**不要跳**：
+
+1. **`gallery.html`** — 一页总览所有 30 组件 + 4 recipes
+2. **`components/README.md`** — 组件索引 + 场景选型表 + 优先级矩阵
+3. **`recipes/`** — 4 个组合 pattern（反馈流 / 进度流 / 发现流 / 内容卡）
+4. **`FIGMA_MAP.md`** — Figma 588 组件名 → HTML 文件映射
+5. **`tokens.md`** — 颜色 / 字体 / 间距 / 圆角 / 阴影 是否有现成变量
+6. **`components/`** + **`components/cards/`** — 现成组件样式
+
+**决策路径**：
+```
+需求/设计稿
+  → 查 FIGMA_MAP.md 找对应 HTML 文件
+  → 查 recipes/ 看有没有现成组合模式
+  → 复制 components/ 对应组件的 class
+  → 改 tokens.md 的 5 个颜色变量适配品牌
+```
+
+❌ **禁止**自创新设计 token / 新组件样式 / 新图标来源
+❌ **禁止**在生产页立"新一套卡片样式 / 新颜色 / 新图标"
+
+### Step 2.5 — ⚠️ 做平台页面时，必须核对生产环境真实值
+
+> `tokens.md` 的值**可能已过时**。做 autocava.com.mx 等真实平台页面时必做。
+
+```bash
+# ① 抓 HTML
+curl -s -A "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ..." \
+  "https://www.autocava.com.mx" -o /tmp/ac.html
+# ② 看真实在用的颜色（看 class，不是看 CSS 变量定义）
+grep -oE '\b(bg|text|border)-[0-9a-f]{3,6}\b' /tmp/ac.html | sort | uniq -c | sort -rn | head -20
+```
+
+**判断主色只看渲染 DOM 的 class**（如 `bg-ffcf20` = 黄色主色）+ 使用频次。
+
+> 🚨 **翻车案例**：Autocava 框架预置 `--color-green-*` 色板，但实际启用的是
+> `bg-ffcf20`（黄色）。AI 看变量定义就断定主色是绿 → 整站改绿 → **完全错**。
+> **框架默认色板 ≠ 品牌色。永远看真实渲染结果。**
+
+### Step 3 — 接真实数据
+
+- 数据从真实平台取（SSR / API / CMS）
+- **环境分流**（硬规则）：
+  - 基础数据 = stable
+  - 新功能 / 灰度 = canary
+  - 实验性 = experiment
+- ❌ 禁止用示意曲线 / 假序列冒充真点位
+- ❌ 拿不到真数据就标 `[待PM确认]` 留空，**不要编**
+
+### Step 4 — 生产级质量
+
+| 项 | 要求 |
+|----|------|
+| 可达性 | WCAG AA（普通文字 4.5:1 / 大字 3:1）|
+| 视口 | 按目标市场最低端机型压测（MX 360×800）|
+| 性能 | LCP < 2.5s / FID < 100ms / CLS < 0.1 |
+| 响应式 | 单文件自适应，断点 **1024px**（PC ≥1024 / H5 <1024）|
+
+### Step 5 — 上线前自检
+
+- [ ] 入口 → 交付 → 闭环 写了吗
+- [ ] 7 条跨线硬规则全过（见 `principles.md`）
+- [ ] 每个数字字段都有数据溯源注释
+- [ ] 0 个硬编码 hex（必须 CSS 变量）
+- [ ] ICON 全走 Iconify 单源
+
+---
+
+## 🔒 本设计系统的 10 条专属硬规则
+
+| # | 规则 | 要求 |
+|---|------|------|
+| 1 | **数据来源** | 必须真实数据；无数据 = 标 `[待PM确认]` 留空 |
+| 2 | **组件复用** | 必须查 `components/` 复用，禁止新立 |
+| 3 | **颜色 token** | 按页面归属选（前台 / 后台 / 浮层）|
+| 4 | **环境分流** | 必须分流（stable / canary / experiment，注明）|
+| 5 | **可达性** | WCAG AA 必达 |
+| 6 | **性能** | Core Web Vitals 必达 |
+| 7 | **触达工具** | 用目标市场的合规通道（MX = WhatsApp）|
+| 8 | **留资隐私** | 留资表单必带隐私政策 + 中介免责 |
+| 9 | **ICON** | 单一图标 CDN（Iconify）|
+| 10 | **单文件自适应** | 强制，一份 HTML 覆盖 PC + H5 |
+
+---
+
+## 📐 技术边界（不可越界）
+
+**只写**：
+- 单文件 HTML（Vanilla + CSS + 极少 JS）
+- CDN 图 / SVG / CSS 变量
+- 跳转链接（`href` / `wa.me/...`）
+- 模拟交互（hover / 点击高亮 / 前端校验 / 弹窗）
+
+**绝对不写**：
+- ❌ 数据库 / 后端 API / 鉴权登录态
+- ❌ SSR / server 目录 / API routes
+- ❌ Docker / K8s / CI/CD / Nginx
+- ❌ 支付 / 订单 / 库存 / 退款逻辑
+- ❌ Webhook / 定时任务 / 消息队列
+- ❌ `fetch('/api/...')` 假装真接口
+- ❌ `package.json` / `requirements.txt` / `prisma` / `.vue` / `tailwind`
+
+**危险信号**（出现立即打断）：
+`package.json` · `mongoose.connect()` · `app.get('/api/...')` · `useSession()` · `fetch('https://api.xxx.com/...')` · `prisma` · `nuxt`
+
+---
+
+## 🗂 资源索引
+
+| 资源 | 何时用 |
+|------|--------|
+| `gallery.html` | 第一次接触 — 一页看全部 |
+| `tokens.md` | 所有 UI 设计第一步 |
+| `components/` | 复用已有组件（25 个）|
+| `components/cards/` | 列表/详情/搜索（5 张卡）|
+| `recipes/` | 真实页面流程（4 个 pattern）|
+| `FIGMA_MAP.md` | 看到 Figma 组件名 → 找 HTML |
+| `demo/product-detail-page.html` | 看整体怎么落地（集成 17 组件）|
+| `principles.md` | 7 条跨线硬规则 |
+
+---
+
+## 🛠️ 适配你的项目
+
+| 你的项目 | 改哪 |
+|----------|------|
+| 品牌色 | `tokens.md` CSS 变量块 `--yellow-500` |
+| 字体家族 | `tokens.md` `--font-sans` |
+| 触达工具 | `principles.md` §1 + 组件里的链接 |
+| 隐私合规 | `principles.md` §5 + 链接 |
+| 组件/页面 | 直接编辑 `components/` `demo/` |
+
+---
+
+**详细规则见 `SKILL.md`**（本文件是精简版，AI 加载 `SKILL.md` 拿完整版）

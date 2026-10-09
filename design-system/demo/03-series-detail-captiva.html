@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  车系页 Demo · Chevrolet Captiva
+  ════════════════════════════════════════════════════════════════════════
+  数据来源（全部真实抓取，无编造）：
+    source: https://www.autocava.com.mx/auto/series/107
+    env:    stable（?ac_ab=stable）
+    抓取日期: 2026-09-30
+    字段来源: 页内 JSON-LD（schema.org Car / Product / ItemList / Review）
+              + Nuxt SSR payload 的 msrp / currentPrice / monthlyPay
+
+  ⚠️ 数据缺口（不编造、不画假曲线）：
+    · 「Tendencia precio promedio」生产站图表共 18 个点位，但实际只有
+      1 个真实查询点（29/09，$546,125），其余 17 个为 0 次咨询。
+      按 AGENTS.md §2「平台已有维度禁止用示意曲线冒充真点位」，
+      本页只渲染这 1 个真实点 + 明确标注无数据区间，不补假曲线。
+    · 60 天价格走势属 canary 环境维度，stable 抓不到，故本页不做走势。
+
+  复用组件：06-topnav / 17-banner / 18-progress / 20-steps /
+            21-filter / 22-brand-grid / 23-ranking / 24-favorite /
+            25-footer / cards 05-product-card / cards 04-article-card
+  触达：WhatsApp（MX 合规）· 留资含 Política de Privacidad + 中介免责
+  断点：1024px（PC ≥1024 / H5 <1024）· 单文件自适应
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Chevrolet Captiva México | Precios, mensualidades y cotizaciones</title>
+<meta name="description" content="Chevrolet Captiva 2026: precio $500,800 - $584,000, mensualidad estimada desde $8,338. 4 versiones disponibles en México.">
+<style>
+/* ==========================================================================
+   Design Tokens · 生产实测值（与 01-autocava-news-home.html 同源）
+   ========================================================================== */
+:root{
+  --yellow-50:#FFFAED; --yellow-100:#FFF6DC; --yellow-400:#FFD04E;
+  --yellow-500:#FFCF20; --yellow-600:#E0A504; --yellow-700:#B59317;
+  --yellow-800:#8C7212; --yellow-900:#744500;
+  --blue-500:#0056FA; --red-500:#A8071A; --green-500:#7CB305;
+  --grey-900:#222; --grey-800:#444; --grey-700:#555; --grey-600:#666;
+  --grey-500:#888; --grey-400:#999; --grey-300:#BBB; --grey-200:#DDD;
+  --grey-100:#EEE; --grey-50:#F8F8F8;
+  --bg-page:#fff; --bg-card:#fff; --bg-soft:var(--grey-50);
+  --text-important:var(--grey-900); --text-regular:var(--grey-600);
+  --text-hint:var(--grey-400); --text-on-yellow:var(--yellow-800);
+  --border-line:var(--grey-200); --border-divider:var(--grey-100);
+  --color-f1:#f1f1f1;
+  --btn-primary:var(--yellow-500); --btn-primary-press:var(--yellow-700);
+  --overlay:rgba(0,0,0,.55);
+  --font-sans:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --medal-gold:#D4AF37; --medal-silver:#C0C0C0; --medal-bronze:#CD7F32;
+  --r-sm:4px; --r-md:6px; --r-lg:8px; --r-xl:12px; --r-full:9999px;
+  --r-media:10px;
+  --shadow-card:0 1px 3px rgba(0,0,0,.08);
+  --shadow-news:0 4px 12px rgba(255,207,32,.16);
+  --shadow-popup:0 20px 60px rgba(0,0,0,.45);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
+  --header-h:56px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-sans);background:var(--bg-page);color:var(--text-important);
+  line-height:1.5;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom);
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+:focus-visible{outline:2px solid var(--blue-500);outline-offset:2px;border-radius:var(--r-sm)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.container{width:100%;max-width:1280px;margin:0 auto;padding:0 var(--sp-4)}
+
+/* ==========================================================================
+   06-topnav + breadcrumb
+   ========================================================================== */
+.topnav{
+  position:sticky;top:0;z-index:80;background:var(--yellow-500);
+  border-bottom:1px solid var(--yellow-600);
+}
+.topnav-inner{
+  display:flex;align-items:center;gap:var(--sp-3);
+  max-width:1280px;margin:0 auto;padding:0 var(--sp-4);min-height:var(--header-h);
+}
+.logo{height:20px}
+.topnav-nav{display:flex;gap:var(--sp-4);margin-left:var(--sp-4)}
+.topnav-nav a{font-size:13px;font-weight:600;color:#0a1929;padding:var(--sp-2) 0;
+  border-bottom:2px solid transparent}
+.topnav-nav a:hover{border-bottom-color:var(--grey-900)}
+.topnav-actions{margin-left:auto;display:flex;align-items:center;gap:var(--sp-2)}
+.topnav-cta{
+  display:flex;align-items:center;height:36px;padding:0 var(--sp-4);border-radius:var(--r-md);
+  background:var(--grey-900);color:#fff;font-size:13px;font-weight:700;
+}
+.topnav-cta:hover{background:var(--grey-800)}
+.topnav-burger{display:none;width:40px;height:40px;place-items:center;color:#0a1929}
+
+.breadcrumb{display:flex;align-items:center;gap:var(--sp-2);padding:var(--sp-3) 0;
+  font-size:12px;color:var(--text-hint);flex-wrap:wrap}
+.breadcrumb a:hover{color:var(--text-important)}
+.breadcrumb span[aria-current]{color:var(--text-important);font-weight:600}
+
+/* ==========================================================================
+   车系 Hero（面包屑 → 标题 → 评分/榜单 → 价格区）
+   ========================================================================== */
+.series-hero{padding:var(--sp-2) 0 var(--sp-6)}
+.hero-grid{display:grid;grid-template-columns:1fr 380px;gap:var(--sp-6);align-items:start}
+.hero-left{min-width:0}
+.hero-title{display:flex;align-items:baseline;gap:var(--sp-3);flex-wrap:wrap;margin-bottom:var(--sp-2)}
+.hero-title h1{font-size:28px;font-weight:800;letter-spacing:-.02em}
+.hero-diff{font-size:12px;font-weight:600;color:var(--blue-500);
+  border:1px solid var(--grey-200);border-radius:var(--r-full);padding:3px 10px}
+.hero-diff:hover{border-color:var(--yellow-500)}
+
+.chips{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-bottom:var(--sp-4)}
+.chip{
+  display:inline-flex;align-items:center;gap:5px;height:28px;padding:0 var(--sp-3);
+  border:1px solid var(--grey-200);border-radius:var(--r-full);
+  font-size:12px;font-weight:600;color:var(--text-regular);background:var(--bg-card);
+}
+.chip-rating{gap:4px}
+.chip-rank{background:var(--yellow-50);border-color:var(--yellow-100);color:var(--yellow-800)}
+.chip-src{color:var(--text-hint);font-weight:500;border-style:dashed}
+.star{color:var(--yellow-500);font-size:13px}
+
+/* 价格区 */
+.price-box{background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-xl);padding:var(--sp-4);margin-bottom:var(--sp-4)}
+.price-row{display:flex;justify-content:space-between;align-items:baseline;
+  gap:var(--sp-3);padding:var(--sp-2) 0;border-bottom:1px dashed var(--border-line)}
+.price-row:last-of-type{border-bottom:0}
+.price-label{font-size:12px;color:var(--text-hint);flex-shrink:0}
+.price-val{font-size:16px;font-weight:800;font-variant-numeric:tabular-nums;text-align:right}
+.price-val.list{font-size:14px;font-weight:600;color:var(--text-regular)}
+.price-val.disc{color:var(--green-500);font-weight:800}
+.price-main{font-size:26px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+
+/* 金融月供 */
+.finance-box{background:var(--yellow-50);border:1px solid var(--yellow-100);
+  border-radius:var(--r-lg);padding:var(--sp-3) var(--sp-4);margin-bottom:var(--sp-4)}
+.fin-top{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-3);
+  flex-wrap:wrap;margin-bottom:var(--sp-2)}
+.fin-label{font-size:12px;color:var(--yellow-800);font-weight:600}
+.fin-val{font-size:22px;font-weight:800;color:var(--yellow-900);font-variant-numeric:tabular-nums}
+.fin-sub{font-size:11px;color:var(--yellow-800);line-height:1.5}
+.fin-tags{display:flex;gap:var(--sp-2);flex-wrap:wrap;margin-top:var(--sp-2)}
+.fin-tag{font-size:11px;font-weight:600;color:var(--yellow-800);
+  background:#fff;border:1px solid var(--yellow-100);border-radius:var(--r-sm);padding:2px 8px}
+
+/* Hero 主图 */
+.hero-media{position:relative;background:var(--grey-50);border:1px solid var(--border-divider);
+  border-radius:var(--r-xl);overflow:hidden;aspect-ratio:4/3}
+.hero-media img{width:100%;height:100%;object-fit:contain;padding:var(--sp-4)}
+.hero-thumbs{display:flex;gap:var(--sp-2);margin-top:var(--sp-2)}
+.hero-thumb{flex:1;aspect-ratio:4/3;border:1px solid var(--border-divider);border-radius:var(--r-md);
+  overflow:hidden;background:var(--grey-50);cursor:pointer;transition:border-color .2s}
+.hero-thumb img{width:100%;height:100%;object-fit:cover}
+.hero-thumb[aria-current="true"]{border-color:var(--yellow-500);border-width:2px}
+.hero-fav{position:absolute;top:var(--sp-3);right:var(--sp-3);width:36px;height:36px;
+  display:grid;place-items:center;border-radius:50%;background:#fff;
+  border:1px solid var(--border-divider);color:var(--grey-600)}
+.hero-fav:hover{border-color:var(--yellow-500);color:var(--yellow-600)}
+.hero-fav[aria-pressed="true"]{color:var(--yellow-600);border-color:var(--yellow-500);
+  background:var(--yellow-50)}
+
+/* CTA */
+.cta-wrap{margin-top:var(--sp-4)}
+.btn-primary{
+  display:flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  width:100%;min-height:48px;background:var(--yellow-500);color:#222;
+  border-radius:var(--r-lg);font-size:15px;font-weight:800;
+}
+.btn-primary:hover{background:var(--yellow-400)}
+.btn-primary:active{background:var(--yellow-600)}
+.btn-ghost{
+  display:flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  width:100%;min-height:44px;margin-top:var(--sp-2);
+  border:1px solid var(--grey-200);border-radius:var(--r-lg);
+  font-size:14px;font-weight:700;color:var(--text-important);
+}
+.btn-ghost:hover{border-color:var(--yellow-500);background:var(--yellow-50)}
+.btn-wa{background:#25D366;color:#06331a}
+.btn-wa:hover{filter:brightness(.95)}
+
+/* 留资隐私脚注（06-mx-lead-privacy 硬约束）*/
+.privacy{font-size:11px;line-height:1.6;color:var(--text-hint);margin-top:var(--sp-3)}
+.privacy a{text-decoration:underline;color:var(--text-regular)}
+.privacy a:hover{color:var(--blue-500)}
+
+/* ==========================================================================
+   20-steps · 购车 4 步
+   ========================================================================== */
+.section{padding:var(--sp-6) 0}
+.section-alt{background:var(--bg-soft)}
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;
+  gap:var(--sp-3);margin-bottom:var(--sp-4);flex-wrap:wrap}
+.section-title{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.section-sub{font-size:13px;color:var(--text-hint);margin-top:2px}
+.section-link{font-size:13px;font-weight:700;color:var(--blue-500);white-space:nowrap}
+.section-link:hover{text-decoration:underline}
+
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-3)}
+.step{background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-lg);padding:var(--sp-4);position:relative}
+.step-n{width:28px;height:28px;border-radius:50%;background:var(--yellow-500);
+  color:#222;display:grid;place-items:center;font-size:13px;font-weight:800;margin-bottom:var(--sp-2)}
+.step h3{font-size:14px;font-weight:700;margin-bottom:6px}
+.step p{font-size:12px;color:var(--text-regular);line-height:1.6}
+.step-note{font-size:11px;color:var(--text-hint);margin-top:var(--sp-2);
+  padding-top:var(--sp-2);border-top:1px dashed var(--border-divider)}
+
+/* ==========================================================================
+   版本选择（cards 05-product-card 形态）
+   ========================================================================== */
+.vers-list{display:grid;gap:var(--sp-3)}
+.vers{
+  display:grid;grid-template-columns:1fr auto;gap:var(--sp-3);align-items:center;
+  background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-lg);padding:var(--sp-4);
+  transition:border-color .2s,box-shadow .2s;
+}
+.vers:hover{border-color:var(--yellow-500);box-shadow:var(--shadow-news)}
+.vers-name{font-size:15px;font-weight:700;margin-bottom:var(--sp-1)}
+.vers-meta{display:flex;flex-wrap:wrap;gap:var(--sp-2);font-size:12px;color:var(--text-regular)}
+.vers-meta i{font-style:normal;color:var(--grey-300)}
+.vers-price{text-align:right}
+.vers-now{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.vers-was{font-size:12px;color:var(--text-hint);text-decoration:line-through;
+  font-variant-numeric:tabular-nums}
+.vers-off{display:inline-block;margin-top:2px;font-size:11px;font-weight:700;
+  color:var(--green-500);background:#EAF5E0;border-radius:var(--r-sm);padding:1px 6px}
+.vers-mo{margin-top:6px;font-size:12px;color:var(--yellow-800);font-weight:600}
+.vers-pick{
+  margin-top:var(--sp-2);display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:700;color:#222;background:var(--yellow-500);
+  border-radius:var(--r-sm);padding:6px 12px;
+}
+.vers-pick:hover{background:var(--yellow-400)}
+
+/* ==========================================================================
+   价格走势 —— 只画真实点位，缺口显式标注
+   ========================================================================== */
+.trend{background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-lg);padding:var(--sp-4)}
+.trend-head{display:flex;justify-content:space-between;align-items:baseline;
+  gap:var(--sp-3);flex-wrap:wrap;margin-bottom:var(--sp-4)}
+.trend-legend{display:flex;gap:var(--sp-4);font-size:12px;color:var(--text-regular)}
+.trend-legend span{display:inline-flex;align-items:center;gap:5px}
+.dot{width:9px;height:9px;border-radius:50%}
+.dot-price{background:var(--yellow-500)}
+.dot-msrp{background:var(--grey-300)}
+.trend-chart{position:relative;height:120px;margin-bottom:var(--sp-3)}
+.trend-line{position:absolute;left:0;right:0;height:1px;background:var(--border-divider)}
+.trend-pt{position:absolute;transform:translateX(-50%);text-align:center}
+.trend-pt .dot{width:11px;height:11px;margin:0 auto 5px;border:2px solid #fff;
+  box-shadow:0 0 0 2px var(--yellow-600)}
+.trend-pt b{display:block;font-size:12px;font-weight:800;font-variant-numeric:tabular-nums}
+.trend-pt small{display:block;font-size:10px;color:var(--text-hint)}
+.trend-nodata{position:absolute;top:0;bottom:0;display:flex;align-items:center;
+  justify-content:center;font-size:11px;color:var(--text-hint);text-align:center;
+  border:1px dashed var(--grey-200);border-radius:var(--r-sm);padding:var(--sp-2)}
+.trend-foot{font-size:11px;color:var(--text-hint);line-height:1.6;
+  padding-top:var(--sp-3);border-top:1px dashed var(--border-divider)}
+.trend-foot b{color:var(--text-regular)}
+
+/* ==========================================================================
+   规格表
+   ========================================================================== */
+.spec-table{width:100%;border-collapse:collapse;background:var(--bg-card);
+  border:1px solid var(--border-divider);border-radius:var(--r-lg);overflow:hidden}
+.spec-table th,.spec-table td{padding:var(--sp-3) var(--sp-4);text-align:left;
+  font-size:13px;border-bottom:1px solid var(--border-divider);vertical-align:top}
+.spec-table th{font-weight:700;background:var(--bg-soft);width:44%;color:var(--text-important)}
+.spec-table td{color:var(--text-regular)}
+.spec-table tr:last-child th,.spec-table tr:last-child td{border-bottom:0}
+
+/* ==========================================================================
+   成本（Costos de manejo）
+   ========================================================================== */
+.cost-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-3)}
+.cost-card{background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-lg);padding:var(--sp-4);text-align:center}
+.cost-val{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;margin-bottom:2px}
+.cost-lab{font-size:12px;color:var(--text-regular)}
+.cost-sub{font-size:11px;color:var(--text-hint);margin-top:4px}
+.cost-bar{height:8px;border-radius:var(--r-full);background:var(--grey-100);
+  overflow:hidden;margin-top:var(--sp-3);display:flex}
+.cost-bar i{display:block;height:100%}
+.cost-legend{display:flex;gap:var(--sp-4);justify-content:center;flex-wrap:wrap;
+  font-size:11px;color:var(--text-regular);margin-top:var(--sp-2)}
+.cost-legend span{display:inline-flex;align-items:center;gap:5px}
+
+/* ==========================================================================
+   评价（24-favorite 形态 + 真实用户名）
+   ========================================================================== */
+.rev-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-3)}
+.rev{background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-lg);padding:var(--sp-4)}
+.rev-top{display:flex;align-items:center;gap:var(--sp-2);margin-bottom:var(--sp-2)}
+.rev-ava{width:32px;height:32px;border-radius:50%;flex-shrink:0;
+  background:var(--yellow-50);color:var(--yellow-800);display:grid;place-items:center;
+  font-size:12px;font-weight:800;text-transform:uppercase}
+.rev-who{min-width:0;flex:1}
+.rev-name{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rev-score{font-size:13px;font-weight:800;color:var(--yellow-600);
+  font-variant-numeric:tabular-nums;flex-shrink:0}
+.rev-body{font-size:13px;color:var(--text-regular);line-height:1.65}
+
+/* ==========================================================================
+   Lo más visto（23-ranking 形态）
+   ========================================================================== */
+.rank-list{background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-lg);overflow:hidden}
+.rank-item{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) var(--sp-4);
+  border-bottom:1px solid var(--border-divider)}
+.rank-item:last-child{border-bottom:0}
+.rank-item:hover{background:var(--bg-soft)}
+.rank-badge{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;
+  font-size:12px;font-weight:800;background:var(--grey-100);color:var(--text-regular);
+  flex-shrink:0;font-variant-numeric:tabular-nums}
+.rank-badge.g1{background:var(--medal-gold);color:#3a2c00}
+.rank-badge.g2{background:var(--medal-silver);color:#333}
+.rank-badge.g3{background:var(--medal-bronze);color:#fff}
+.rank-name{font-size:14px;font-weight:600;flex:1;min-width:0}
+.rank-meta{font-size:12px;color:var(--text-hint);font-variant-numeric:tabular-nums;flex-shrink:0}
+
+/* ==========================================================================
+   Noticias（cards 04-article-card 形态）
+   ========================================================================== */
+.news-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-3)}
+.news-card{display:flex;flex-direction:column;background:var(--bg-card);
+  border:1px solid var(--color-f1);border-radius:var(--r-xl);overflow:hidden;
+  transition:border-color .2s,box-shadow .2s}
+.news-card:hover{border-color:var(--yellow-500);box-shadow:var(--shadow-news)}
+.news-media{height:160px;background:var(--grey-50);overflow:hidden;
+  border-radius:var(--r-media) var(--r-media) 0 0}
+.news-media img{width:100%;height:100%;object-fit:cover;transition:transform .5s ease-out}
+.news-card:hover .news-media img{transform:scale(1.05)}
+.news-body{padding:var(--sp-3);display:flex;flex-direction:column;gap:6px;flex:1}
+.news-title{font-size:14px;font-weight:700;line-height:1.4;color:var(--text-important);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.news-card:hover .news-title{color:var(--yellow-800)}
+.news-meta{font-size:12px;color:var(--grey-400);display:flex;align-items:center;
+  gap:6px;flex-wrap:wrap;margin-top:auto}
+.news-avatar{width:16px;height:16px;border-radius:12px;flex-shrink:0}
+.news-author{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.news-date{white-space:nowrap}
+
+/* ==========================================================================
+   25-footer
+   ========================================================================== */
+.footer{background:var(--grey-900);color:var(--grey-300);margin-top:var(--sp-8);padding:var(--sp-8) 0 var(--sp-6)}
+.footer-top{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:var(--sp-6);
+  padding-bottom:var(--sp-6);border-bottom:1px solid var(--grey-700)}
+.footer-logo{height:20px;margin-bottom:var(--sp-2);filter:brightness(0) invert(1)}
+.footer-tag{font-size:13px;color:var(--grey-400);line-height:1.6;max-width:280px}
+.footer-h{font-size:13px;font-weight:700;color:#fff;margin-bottom:var(--sp-3)}
+.footer-list{list-style:none;display:flex;flex-direction:column;gap:var(--sp-2)}
+.footer-list a{font-size:13px;color:var(--grey-300)}
+.footer-list a:hover{color:var(--yellow-500)}
+.footer-bottom{padding-top:var(--sp-4);display:flex;justify-content:space-between;
+  gap:var(--sp-3);flex-wrap:wrap;font-size:12px;color:var(--grey-400)}
+.footer-bottom a{color:var(--grey-400);text-decoration:underline}
+
+/* ==========================================================================
+   移动端底部导航（04-tabbar 形态）
+   ========================================================================== */
+.tabbar{display:none;position:fixed;left:0;right:0;bottom:0;z-index:90;
+  background:var(--bg-card);border-top:1px solid var(--border-divider);
+  padding:var(--sp-1) 0 calc(var(--sp-1) + env(safe-area-inset-bottom))}
+.tabbar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 0;font-size:11px;color:var(--text-hint);min-height:44px;justify-content:center}
+.tabbar-item[aria-current]{color:var(--yellow-600);font-weight:700}
+
+/* ==========================================================================
+   10-toast
+   ========================================================================== */
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));
+  transform:translate(-50%,16px);z-index:300;background:var(--grey-900);color:#fff;
+  padding:var(--sp-3) var(--sp-5);border-radius:var(--r-md);font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:var(--sp-2);opacity:0;pointer-events:none;
+  transition:opacity .2s,transform .2s;max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ==========================================================================
+   响应式：1024px 断点
+   ========================================================================== */
+@media (max-width:1023px){
+  .topnav-nav,.topnav-actions{display:none}
+  .topnav-burger{display:grid;margin-left:auto}
+  .hero-grid{grid-template-columns:1fr}
+  .hero-media{order:-1;aspect-ratio:16/10}
+  .steps{grid-template-columns:repeat(2,1fr)}
+  .cost-grid{grid-template-columns:1fr}
+  .rev-grid{grid-template-columns:1fr}
+  .news-grid{grid-template-columns:repeat(2,1fr)}
+  .news-media{height:125px}
+  .footer-top{grid-template-columns:1fr 1fr;gap:var(--sp-5)}
+  .tabbar{display:flex}
+  body{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
+}
+@media (max-width:480px){
+  .section-title{font-size:18px}
+  .hero-title h1{font-size:22px}
+  .price-main{font-size:22px}
+  .steps{grid-template-columns:1fr}
+  .vers{grid-template-columns:1fr;gap:var(--sp-2)}
+  .vers-price{text-align:left}
+  .footer-top{grid-template-columns:1fr}
+}
+/* MX 低端安卓 360×800 压测 */
+@media (max-width:360px){
+  .container{padding:0 12px}
+  .hero-title h1{font-size:20px}
+  .price-main{font-size:20px}
+  .fin-val{font-size:19px}
+  .news-grid{gap:6px}
+  .news-body{padding:8px}
+  .news-title{font-size:12px;line-height:1.35}
+  .news-meta{font-size:10px;gap:4px}
+  .trend-chart{height:100px}
+  .spec-table th,.spec-table td{padding:10px 12px;font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== 06-topnav ==================== -->
+<header class="topnav">
+  <div class="topnav-inner">
+    <img class="logo" src="https://cdn.autocava.com.mx/_nuxt/asset/logo.v3.mLItLIXo.svg" alt="Autocava">
+    <nav class="topnav-nav" aria-label="Principal">
+      <a href="#versiones">Autos</a>
+      <a href="#costos">Autos más vendidos</a>
+      <a href="#">Cavi</a>
+    </nav>
+    <div class="topnav-actions">
+      <a class="topnav-cta" href="#asesoria">Cotizar</a>
+    </div>
+    <button class="topnav-burger" aria-label="Abrir menú">
+      <span class="iconify" data-icon="lucide:menu" style="font-size:22px"></span>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- ==================== 面包屑 ==================== -->
+  <div class="container">
+    <nav class="breadcrumb" aria-label="Ruta de navegación">
+      <a href="https://www.autocava.com.mx/">Inicio</a>
+      <span aria-hidden="true">/</span>
+      <a href="https://www.autocava.com.mx/auto">Autos</a>
+      <span aria-hidden="true">/</span>
+      <a href="https://www.autocava.com.mx/auto/brand/13">Chevrolet</a>
+      <span aria-hidden="true">/</span>
+      <span aria-current="page">Captiva</span>
+    </nav>
+  </div>
+
+  <!-- ==================== 车系 Hero ==================== -->
+  <!-- source: 标题/评分/榜单/价格/优惠 全部取自生产 series 107 页面 -->
+  <section class="series-hero">
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-left">
+          <div class="hero-title">
+            <h1>Chevrolet Captiva</h1>
+            <a class="hero-diff" href="#versiones">Ver diferencias</a>
+          </div>
+
+          <!-- 评分 3.24 / Ranking SUV N.º2 INEGI / SUV / Hecho en China -->
+          <div class="chips">
+            <span class="chip chip-rating">
+              <span class="star" aria-hidden="true">★</span>
+              <strong>3.24</strong>
+            </span>
+            <span class="chip chip-rank">Ranking SUV ago. · N.º 2</span>
+            <span class="chip chip-src">Fuente: INEGI</span>
+            <span class="chip">SUV</span>
+            <span class="chip">Hecho en China</span>
+          </div>
+
+          <!-- 价格区：Precio actual / Precio de lista / Descuento -->
+          <div class="price-box">
+            <div class="price-row">
+              <span class="price-label">Precio actual</span>
+              <span class="price-val price-main">$500,800 – $584,000</span>
+            </div>
+            <div class="price-row">
+              <span class="price-label">Precio de lista</span>
+              <span class="price-val list">$530,800 – $614,000</span>
+            </div>
+            <div class="price-row">
+              <span class="price-label">Descuento</span>
+              <span class="price-val disc">$30,000</span>
+            </div>
+          </div>
+
+          <!-- 金融月供：Mensualidad estimada $8,338 · Enganche $150,240 -->
+          <div class="finance-box">
+            <div class="fin-top">
+              <span class="fin-label">Mensualidad estimada</span>
+              <span class="fin-val">$8,338 /mes</span>
+            </div>
+            <p class="fin-sub">
+              Enganche $150,240 · Estimación informativa basada en el precio del vehículo
+              y las condiciones seleccionadas.
+            </p>
+            <div class="fin-tags">
+              <span class="fin-tag">INEGI</span>
+              <span class="fin-tag">Buró de Crédito</span>
+            </div>
+          </div>
+
+          <!-- CTA：WhatsApp 是 MX 唯一合规触达通道 -->
+          <div class="cta-wrap" id="asesoria">
+            <a class="btn-primary" href="https://wa.me/525000000000?text=Hola%2C%20quiero%20informaci%C3%B3n%20sobre%20la%20Chevrolet%20Captiva" target="_blank" rel="noopener">
+              <span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:18px"></span>
+              Obtener propuesta de compra
+            </a>
+            <a class="btn-ghost" href="https://www.autocava.com.mx/finance/draft">
+              Consultar planes de financiamiento
+            </a>
+            <p class="privacy">
+              Un asesor de AutoCava te contactará por WhatsApp. Al continuar aceptas la
+              <a href="https://www.autocava.com.mx/legal/privacy" target="_blank" rel="noopener">Política de Privacidad</a>.
+              Autocava actúa como intermediario; la operación la realiza la agencia seleccionada.
+            </p>
+          </div>
+        </div>
+
+        <!-- 主图 + 缩略图切换（真实 CDN 图） -->
+        <div class="hero-media">
+          <img id="hero-img" src="https://cdn.autocava.com.mx/series/white/0107.png"
+               alt="Chevrolet Captiva 2026 — vista de producto" width="750" height="562">
+          <button class="hero-fav" id="fav" aria-pressed="false" aria-label="Agregar a favoritos">
+            <span class="iconify" data-icon="lucide:heart" style="font-size:18px"></span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 缩略图：切换主图（交互模拟，不写后端） -->
+      <div class="hero-thumbs" role="group" aria-label="Galería de imágenes">
+        <button class="hero-thumb" aria-current="true" data-src="https://cdn.autocava.com.mx/series/white/0107.png" aria-label="Vista de producto">
+          <img src="https://cdn.autocava.com.mx/series/white/0107.png" alt="" loading="lazy" width="200" height="150">
+        </button>
+        <button class="hero-thumb" aria-current="false" data-src="https://cdn.autocava.com.mx/car/serial/wg/0604298ae8cf4406bea30a2ebd58545f.jpg" aria-label="Captiva foto 1">
+          <img src="https://cdn.autocava.com.mx/car/serial/wg/0604298ae8cf4406bea30a2ebd58545f.jpg" alt="" loading="lazy" width="200" height="150">
+        </button>
+        <button class="hero-thumb" aria-current="false" data-src="https://cdn.autocava.com.mx/car/serial/wg/26cf0a991fc34dc38ad5dd984317c1d4.jpg" aria-label="Captiva foto 2">
+          <img src="https://cdn.autocava.com.mx/car/serial/wg/26cf0a991fc34dc38ad5dd984317c1d4.jpg" alt="" loading="lazy" width="200" height="150">
+        </button>
+        <button class="hero-thumb" aria-current="false" data-src="https://cdn.autocava.com.mx/car/serial/kj/0f0b1e28cdd94c67b8e5123d89c5e291.jpg" aria-label="Captiva foto 3">
+          <img src="https://cdn.autocava.com.mx/car/serial/kj/0f0b1e28cdd94c67b8e5123d89c5e291.jpg" alt="" loading="lazy" width="200" height="150">
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 20-steps · 购车 4 步 ==================== -->
+  <!-- source: 生产站「¿Te interesa comprar un auto?」4 步文案，原文照搬 -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">¿Te interesa comprar un auto?</h2>
+          <p class="section-sub">Recibe asesoría y decide si quieres continuar.</p>
+        </div>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <h3>Recibe asesoría</h3>
+          <p>Un asesor de AutoCava te contactará por WhatsApp para resolver tus dudas.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <h3>Cuéntanos qué buscas</h3>
+          <p>Conoceremos tu presupuesto, fecha de compra y forma de pago.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <h3>Te conectamos con una agencia</h3>
+          <p>Si decides avanzar, te ayudaremos a encontrar una agencia adecuada.</p>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <h3>Completa tu compra</h3>
+          <p>Visita la agencia, confirma las condiciones y recibe tu auto.</p>
+          <p class="step-note">Solo te conectaremos con una agencia cuando confirmes tu intención de compra.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 版本选择 ==================== -->
+  <!-- source: 4 个版本的 msrp / currentPrice / monthlyPay 取自生产 Nuxt SSR payload -->
+  <section class="section" id="versiones">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Versiones disponibles</h2>
+          <p class="section-sub">4 versiones · Todas 2026 · Gasolina</p>
+        </div>
+        <a class="section-link" href="https://www.autocava.com.mx/auto/series/107">Ver en Autocava →</a>
+      </div>
+
+      <div class="vers-list">
+        <div class="vers">
+          <div>
+            <h3 class="vers-name">LT 5 pasajeros</h3>
+            <div class="vers-meta">
+              <span>Compacto SUV</span><i>·</i><span>5 pasajeros</span><i>·</i>
+              <span>15 km/l combinado</span><i>·</i><span>2WD</span>
+            </div>
+            <a class="vers-pick" href="#asesoria">Elegir esta versión</a>
+          </div>
+          <div class="vers-price">
+            <div class="vers-now">$500,800</div>
+            <div class="vers-was">$530,800</div>
+            <div class="vers-off">-$30,000</div>
+            <div class="vers-mo">Desde $8,338/mes</div>
+          </div>
+        </div>
+
+        <div class="vers">
+          <div>
+            <h3 class="vers-name">LT 7 pasajeros</h3>
+            <div class="vers-meta">
+              <span>Compacto SUV</span><i>·</i><span>7 pasajeros</span><i>·</i>
+              <span>14.5 km/l combinado</span><i>·</i><span>2WD</span>
+            </div>
+            <a class="vers-pick" href="#asesoria">Elegir esta versión</a>
+          </div>
+          <div class="vers-price">
+            <div class="vers-now">$527,800</div>
+            <div class="vers-was">$557,800</div>
+            <div class="vers-off">-$30,000</div>
+            <div class="vers-mo">Desde $8,788/mes</div>
+          </div>
+        </div>
+
+        <div class="vers">
+          <div>
+            <h3 class="vers-name">Premier</h3>
+            <div class="vers-meta">
+              <span>Compacto SUV</span><i>·</i><span>7 pasajeros</span><i>·</i>
+              <span>14.5 km/l combinado</span><i>·</i><span>2WD</span>
+            </div>
+            <a class="vers-pick" href="#asesoria">Elegir esta versión</a>
+          </div>
+          <div class="vers-price">
+            <div class="vers-now">$571,900</div>
+            <div class="vers-was">$601,900</div>
+            <div class="vers-off">-$30,000</div>
+            <div class="vers-mo">Desde $9,522/mes</div>
+          </div>
+        </div>
+
+        <div class="vers">
+          <div>
+            <h3 class="vers-name">Premier Black Edition</h3>
+            <div class="vers-meta">
+              <span>Compacto SUV</span><i>·</i><span>7 pasajeros</span><i>·</i>
+              <span>14.5 km/l combinado</span><i>·</i><span>2WD</span>
+            </div>
+            <a class="vers-pick" href="#asesoria">Elegir esta versión</a>
+          </div>
+          <div class="vers-price">
+            <div class="vers-now">$584,000</div>
+            <div class="vers-was">$614,000</div>
+            <div class="vers-off">-$30,000</div>
+            <div class="vers-mo">Desde $9,724/mes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 价格走势（只画真实点位）==================== -->
+  <!-- ⚠️ 生产图表 18 个点位，实际仅 1 个真实查询点（29/09）。
+       按 AGENTS.md §2 禁止用示意曲线补齐，故只渲染真实点 + 显式标注缺口。 -->
+  <section class="section section-alt" id="costos">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Tendencia precio promedio</h2>
+          <p class="section-sub">Precio promedio de la línea Captiva</p>
+        </div>
+        <a class="section-link" href="https://www.autocava.com.mx/auto/series/107">Ver más →</a>
+      </div>
+
+      <div class="trend">
+        <div class="trend-head">
+          <div class="trend-legend">
+            <span><i class="dot dot-price"></i>Precio promedio</span>
+            <span><i class="dot dot-msrp"></i>MSRP promedio</span>
+          </div>
+        </div>
+
+        <div class="trend-chart">
+          <div class="trend-line" style="top:34%"></div>
+          <div class="trend-line" style="top:67%"></div>
+          <!-- 唯一真实点位 -->
+          <div class="trend-pt" style="left:6%;top:34%">
+            <i class="dot dot-price"></i>
+            <b>$546,125</b>
+            <small>29/09</small>
+          </div>
+          <div class="trend-pt" style="left:6%;top:67%">
+            <i class="dot dot-msrp"></i>
+            <b>$576,125</b>
+            <small>MSRP</small>
+          </div>
+          <!-- 17/18 点位无真实数据，显式留白，不画假曲线 -->
+          <div class="trend-nodata" style="left:11%;right:0">
+            17 de 18 puntos sin datos de consulta reales<br>
+            (0 consultas registradas) — no se dibuja curva
+          </div>
+        </div>
+
+        <p class="trend-foot">
+          <b>Fuente:</b> Autocava · capturado 2026-09-30 (entorno stable).
+          La serie de 60 días es una dimensión de <b>canary</b>; en stable solo existe
+          1 punto de consulta real, por lo que no se traza una línea de tendencia
+          (requisito: nunca usar curvas ilustrativas como datos reales).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 规格表 ==================== -->
+  <!-- source: JSON-LD ItemList → Captiva LT 5 pasajeros (model 1710) 全部字段 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Ficha técnica</h2>
+          <p class="section-sub">Chevrolet Captiva LT 5 pasajeros 2026 · 4WD no aplica</p>
+        </div>
+      </div>
+
+      <table class="spec-table">
+        <tbody>
+          <tr><th scope="row">Año modelo</th><td>2026</td></tr>
+          <tr><th scope="row">Versión</th><td>LT 5 pasajeros</td></tr>
+          <tr><th scope="row">Segmento / Nivel</th><td>Compacto SUV</td></tr>
+          <tr><th scope="row">Tipo de vehículo</th><td>SUV</td></tr>
+          <tr><th scope="row">Tipo de motorización</th><td>Gasolina</td></tr>
+          <tr><th scope="row">Origen</th><td>China</td></tr>
+          <tr><th scope="row">Tipo de tracción</th><td>2WD (FWD)</td></tr>
+          <tr><th scope="row">Rendimiento en ciudad</th><td>12.6 km/l</td></tr>
+          <tr><th scope="row">Rendimiento en ruta</th><td>19.4 km/l</td></tr>
+          <tr><th scope="row">Rendimiento en combinado</th><td>15 km/l</td></tr>
+          <tr><th scope="row">Capacidad de pasajeros</th><td>5</td></tr>
+          <tr><th scope="row">Número de puertas</th><td>5</td></tr>
+          <tr><th scope="row">Número de asientos</th><td>5</td></tr>
+          <tr><th scope="row">Largo</th><td>4670 mm</td></tr>
+          <tr><th scope="row">Ancho</th><td>1835 mm</td></tr>
+          <tr><th scope="row">Alto con rieles</th><td>1750 mm</td></tr>
+          <tr><th scope="row">Distancia entre ejes</th><td>2750 mm</td></tr>
+          <tr><th scope="row">Peso en orden de marcha</th><td>1950 kg</td></tr>
+          <tr><th scope="row">Garantía</th><td>3 años o 60000 km</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ==================== 成本 ==================== -->
+  <!-- source: 生产站「Costos de manejo」Captiva 2026 LT 5 pasajeros
+       15,000 km/año · $31,803/año · Total Costo $30,178（Gasolina $23,680 + Servicio $6,498）
+       另有 $33,427 档（Gasolina $23,680 + Servicio $9,747） -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Costos de manejo</h2>
+          <p class="section-sub">Captiva 2026 LT 5 pasajeros · Estimación a 15,000 km/año</p>
+        </div>
+      </div>
+
+      <div class="cost-grid">
+        <div class="cost-card">
+          <div class="cost-val">$31,803</div>
+          <div class="cost-lab">Costo anual promedio</div>
+          <div class="cost-sub">MXN / año · 15,000 km</div>
+        </div>
+        <div class="cost-card">
+          <div class="cost-val">$30,178</div>
+          <div class="cost-lab">Total Costo</div>
+          <div class="cost-sub">Gasolina $23,680 + Servicio $6,498</div>
+          <div class="cost-bar" aria-hidden="true">
+            <i style="width:78.4%;background:var(--yellow-500)"></i>
+            <i style="width:21.6%;background:var(--grey-300)"></i>
+          </div>
+          <div class="cost-legend">
+            <span><i class="dot dot-price"></i>Gasolina</span>
+            <span><i class="dot dot-msrp"></i>Servicio</span>
+          </div>
+        </div>
+        <div class="cost-card">
+          <div class="cost-val">$33,427</div>
+          <div class="cost-lab">Total Costo (servicio mayor)</div>
+          <div class="cost-sub">Gasolina $23,680 + Servicio $9,747</div>
+          <div class="cost-bar" aria-hidden="true">
+            <i style="width:70.8%;background:var(--yellow-500)"></i>
+            <i style="width:29.2%;background:var(--grey-300)"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 评价 ==================== -->
+  <!-- source: 页内 JSON-LD Review × 5，用户名/评分/正文全部真实照搬 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Reseñas de usuarios</h2>
+          <p class="section-sub">Calificación general 3.24 / 5</p>
+        </div>
+      </div>
+
+      <div class="rev-grid">
+        <article class="rev">
+          <div class="rev-top">
+            <span class="rev-ava" aria-hidden="true">AB</span>
+            <span class="rev-who"><span class="rev-name">adrix_barrio</span></span>
+            <span class="rev-score">3.1</span>
+          </div>
+          <p class="rev-body">Para mí, la Captiva tiene muchísimo sentido para familias grandes que necesitan espacio sin irse a un presupuesto demasiado alto. Su valor es muy directo y bastante fácil de entender desde el primer vistazo.</p>
+        </article>
+
+        <article class="rev">
+          <div class="rev-top">
+            <span class="rev-ava" aria-hidden="true">FR</span>
+            <span class="rev-who"><span class="rev-name">fabiola_rodas</span></span>
+            <span class="rev-score">4.7</span>
+          </div>
+          <p class="rev-body">No es un SUV que te apasione, pero te deja pensando “qué bien resuelve llevar gente y cargar cosas”. Si tu día a día gira alrededor de la familia, esa utilidad es un punto fuertísimo.</p>
+        </article>
+
+        <article class="rev">
+          <div class="rev-top">
+            <span class="rev-ava" aria-hidden="true">BC</span>
+            <span class="rev-who"><span class="rev-name">betillo_city</span></span>
+            <span class="rev-score">3.8</span>
+          </div>
+          <p class="rev-body">Si de verdad necesitas la tercera fila, la Captiva tiene mucho más sentido que varios SUV de cinco plazas. Si no la necesitas, parte de su atractivo desaparece rápido. Es un vehículo muy claro en su propuesta.</p>
+        </article>
+
+        <article class="rev">
+          <div class="rev-top">
+            <span class="rev-ava" aria-hidden="true">MD</span>
+            <span class="rev-who"><span class="rev-name">maxdeltrafico</span></span>
+            <span class="rev-score">3.6</span>
+          </div>
+          <p class="rev-body">Después de un tiempo con ella, mi mejor resumen sería que es un SUV que sabe cuidar bien a la familia. Tal vez no sea el mejor para quien ama manejar, pero sí uno de los más fáciles de agradecer cuando lo importante es mover gente cómoda y sin dramas.</p>
+        </article>
+
+        <article class="rev">
+          <div class="rev-top">
+            <span class="rev-ava" aria-hidden="true">LV</span>
+            <span class="rev-who"><span class="rev-name">laflaca_vibes</span></span>
+            <span class="rev-score">4.0</span>
+          </div>
+          <p class="rev-body">Si volviera a elegir y siguiera necesitando siete plazas, uso familiar y un presupuesto razonable, sí volvería a poner a la Captiva entre mis opciones. No será el SUV con más personalidad, pero sí de los más prácticos para ese tipo de vida.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Lo más visto ==================== -->
+  <!-- source: 生产站「Lo más visto」区块，车型名取自页面文本 -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Lo más visto</h2>
+          <p class="section-sub">Series destacadas en Autocava</p>
+        </div>
+        <a class="section-link" href="https://www.autocava.com.mx/auto/library">Ver todos →</a>
+      </div>
+      <div class="rank-list">
+        <a class="rank-item" href="https://www.autocava.com.mx/auto/series/510">
+          <span class="rank-badge g1">1</span>
+          <span class="rank-name">BAIC X55 II</span>
+          <span class="rank-meta">$469,900 MXN</span>
+        </a>
+        <a class="rank-item" href="https://www.autocava.com.mx/auto/series/519">
+          <span class="rank-badge g2">2</span>
+          <span class="rank-name">Nissan X-Trail</span>
+          <span class="rank-meta">desde $8,116/mes</span>
+        </a>
+        <a class="rank-item" href="https://www.autocava.com.mx/auto/series/31">
+          <span class="rank-badge g3">3</span>
+          <span class="rank-name">Toyota Avanza</span>
+          <span class="rank-meta">$367,300 MXN</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== Noticias ==================== -->
+  <!-- source: 生产站「Noticias destacadas」，与 01 首页同一批真实文章 -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Noticias destacadas</h2>
+          <p class="section-sub">Reseñas de Autocava</p>
+        </div>
+        <a class="section-link" href="https://www.autocava.com.mx/blog">Ver más →</a>
+      </div>
+      <div class="news-grid">
+        <a class="news-card" href="https://www.autocava.com.mx/article/2850" target="_blank" rel="noopener">
+          <div class="news-media">
+            <img src="https://cdn.autocava.com.mx/img/news/ebc5cdbcb1e8478f954a11c098aea3b6.jpg" alt="Volkswagen ID.3 GTI llega con 326 hp y tracción trasera" loading="lazy" width="960" height="750">
+          </div>
+          <div class="news-body">
+            <h3 class="news-title">Volkswagen ID.3 GTI llega con 326 hp y tracción trasera: es el GTI más potente de la historia</h3>
+            <div class="news-meta">
+              <img class="news-avatar" src="https://cdn.autocava.com.mx/_nuxt/asset/avatar.v3.-qQORZq6.svg" alt="" width="16" height="16" loading="lazy">
+              <span class="news-author">Autocava Editorial Team</span>
+              <time class="news-date" datetime="2026-09-22">22 sep 2026</time>
+            </div>
+          </div>
+        </a>
+        <a class="news-card" href="https://www.autocava.com.mx/article/2830" target="_blank" rel="noopener">
+          <div class="news-media">
+            <img src="https://cdn.autocava.com.mx/img/news/f43ac1e76e564efda2c6cee2977baee1.jpg" alt="Mercedes-Benz CLA llega a México con versiones híbrida y eléctrica" loading="lazy" width="960" height="750">
+          </div>
+          <div class="news-body">
+            <h3 class="news-title">Mercedes-Benz CLA llega a México con versiones híbrida y eléctrica</h3>
+            <div class="news-meta">
+              <img class="news-avatar" src="https://cdn.autocava.com.mx/_nuxt/asset/avatar.v3.-qQORZq6.svg" alt="" width="16" height="16" loading="lazy">
+              <span class="news-author">Autocava Editorial Team</span>
+              <time class="news-date" datetime="2026-09-09">09 sep 2026</time>
+            </div>
+          </div>
+        </a>
+        <a class="news-card" href="https://www.autocava.com.mx/article/2819" target="_blank" rel="noopener">
+          <div class="news-media">
+            <img src="https://cdn.autocava.com.mx/img/news/4c8c946a5d5148769a9e7c777a261508.jpg" alt="BYD Mako: la nueva pickup híbrida que quiere conquistar Brasil" loading="lazy" width="960" height="750">
+          </div>
+          <div class="news-body">
+            <h3 class="news-title">BYD Mako: la nueva pickup híbrida que quiere conquistar Brasil</h3>
+            <div class="news-meta">
+              <img class="news-avatar" src="https://cdn.autocava.com.mx/_nuxt/asset/avatar.v3.-qQORZq6.svg" alt="" width="16" height="16" loading="lazy">
+              <span class="news-author">Autocava Editorial Team</span>
+              <time class="news-date" datetime="2026-08-31">31 ago 2026</time>
+            </div>
+          </div>
+        </a>
+        <a class="news-card" href="https://www.autocava.com.mx/article/2823" target="_blank" rel="noopener">
+          <div class="news-media">
+            <img src="https://cdn.autocava.com.mx/img/news/6223c10657504d62a5009c008f004395.jpg" alt="Honda podría frenar una nueva planta en Norteamérica si cambia el T-MEC" loading="lazy" width="960" height="750">
+          </div>
+          <div class="news-body">
+            <h3 class="news-title">Honda podría frenar una nueva planta en Norteamérica si cambia el T-MEC</h3>
+            <div class="news-meta">
+              <img class="news-avatar" src="https://cdn.autocava.com.mx/_nuxt/asset/avatar.v3.-qQORZq6.svg" alt="" width="16" height="16" loading="lazy">
+              <span class="news-author">Autocava Editorial Team</span>
+              <time class="news-date" datetime="2026-09-01">01 sep 2026</time>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 底部 CTA ==================== -->
+  <section class="section section-alt">
+    <div class="container">
+      <div style="background:var(--grey-900);border-radius:var(--r-xl);padding:var(--sp-6);color:#fff;
+                  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-4);flex-wrap:wrap">
+        <div>
+          <h2 style="font-size:20px;font-weight:800;margin-bottom:6px">Encuentra la mejor opción para comprar auto</h2>
+          <p style="font-size:13px;color:var(--grey-300);max-width:460px">
+            Conoce diferentes opciones con ayuda de un asesor de Autocava.
+          </p>
+        </div>
+        <a href="https://wa.me/525000000000?text=Hola%2C%20quiero%20asesor%C3%ADa%20para%20la%20Chevrolet%20Captiva" target="_blank" rel="noopener"
+           style="background:var(--yellow-500);color:#222;padding:14px 28px;border-radius:var(--r-lg);
+                  font-weight:800;font-size:15px;white-space:nowrap;display:inline-flex;align-items:center;gap:8px">
+          <span class="iconify" data-icon="simple-icons:whatsapp" style="font-size:17px"></span>
+          Consultar planes
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ==================== 25-footer ==================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <img class="footer-logo" src="https://cdn.autocava.com.mx/_nuxt/asset/logo.v3.mLItLIXo.svg" alt="Autocava" loading="lazy">
+        <p class="footer-tag">Compra y vende autos en México con precios reales y financiamiento a tu medida.</p>
+      </div>
+      <div>
+        <h3 class="footer-h">Comprar</h3>
+        <ul class="footer-list">
+          <li><a href="https://www.autocava.com.mx/auto">Autos nuevos</a></li>
+          <li><a href="https://www.autocava.com.mx/rank">Autos más vendidos</a></li>
+          <li><a href="https://www.autocava.com.mx/finance/draft">Financiamiento</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-h">Vender</h3>
+        <ul class="footer-list">
+          <li><a href="https://www.autocava.com.mx/">Vender mi auto</a></li>
+          <li><a href="https://www.autocava.com.mx/">Cotizar en línea</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-h">Autocava</h3>
+        <ul class="footer-list">
+          <li><a href="https://www.autocava.com.mx/about">Sobre nosotros</a></li>
+          <li><a href="https://www.autocava.com.mx/legal/privacy">Política de Privacidad</a></li>
+          <li><a href="https://www.autocava.com.mx/legal/declaration">Aviso de privacidad</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Autocava · Datos capturados 2026-09-30 (entorno stable)</span>
+      <span>74 marcas · 595 líneas · 1542 versiones disponibles</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ==================== 04-tabbar ==================== -->
+<nav class="tabbar" aria-label="Navegación principal">
+  <a class="tabbar-item" aria-current="page" href="#">
+    <span class="iconify" data-icon="lucide:house" style="font-size:20px"></span>Inicio
+  </a>
+  <a class="tabbar-item" href="#versiones">
+    <span class="iconify" data-icon="lucide:car-front" style="font-size:20px"></span>Autos
+  </a>
+  <a class="tabbar-item" href="https://www.autocava.com.mx/rank">
+    <span class="iconify" data-icon="lucide:trophy" style="font-size:20px"></span>Ranking
+  </a>
+  <a class="tabbar-item" href="#">
+    <span class="iconify" data-icon="lucide:heart" style="font-size:20px"></span>Favoritos
+  </a>
+  <a class="tabbar-item" href="#">
+    <span class="iconify" data-icon="lucide:user" style="font-size:20px"></span>Mi cuenta
+  </a>
+</nav>
+
+<!-- ==================== 10-toast ==================== -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  var toast=document.getElementById('toast'),t=null;
+  function show(msg){
+    toast.textContent=msg;toast.classList.add('show');
+    clearTimeout(t);t=setTimeout(function(){toast.classList.remove('show');},2200);
+  }
+
+  // 24-favorite 交互（前端模拟，不落库）
+  var fav=document.getElementById('fav');
+  fav.addEventListener('click',function(){
+    var on=fav.getAttribute('aria-pressed')==='true';
+    fav.setAttribute('aria-pressed',String(!on));
+    show(on?'Quitado de favoritos':'Agregado a favoritos');
+  });
+
+  // 主图切换（前端模拟）
+  var hero=document.getElementById('hero-img');
+  Array.prototype.forEach.call(document.querySelectorAll('.hero-thumb'),function(t){
+    t.addEventListener('click',function(){
+      hero.src=t.getAttribute('data-src');
+      hero.alt=t.getAttribute('aria-label')||'Chevrolet Captiva';
+      Array.prototype.forEach.call(document.querySelectorAll('.hero-thumb'),function(x){
+        x.setAttribute('aria-current',String(x===t));
+      });
+    });
+  });
+
+  // 版本 CTA（演示：不真提交，跳 WhatsApp）
+  Array.prototype.forEach.call(document.querySelectorAll('.vers-pick'),function(a){
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      var n=a.closest('.vers').querySelector('.vers-name').textContent.trim();
+      show('Versión seleccionada: '+n);
+    });
+  });
+})();
+</script>
+</body>
+</html>

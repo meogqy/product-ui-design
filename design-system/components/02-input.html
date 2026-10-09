@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<!--
+  Input 组件 reference
+  来源：参考组件库（4 个 variant）
+  共 4 个 variant（已填写 × Title 标签）
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Input Component · Autocava Design System</title>
+<style>
+:root {
+  --blue-50: #E6EEFF;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-900: #222222;
+  --red-required: #F5212F;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background: #F8F8F8;
+  color: #222222;
+  padding: 24px 16px;
+  line-height: 1.5;
+}
+.header {
+  max-width: 800px;
+  margin: 0 auto 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #FFCF20;
+}
+.header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+.header .meta { font-size: 14px; color: #666; }
+.header .meta code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+
+.container { max-width: 800px; margin: 0 auto; }
+
+/* === 输入框样式 === */
+.field {
+  width: 343px;
+  margin: 0 auto 16px;
+}
+.field-label {
+  font-size: 14px;
+  font-weight: 400;
+  color: #222222;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.field-label .required {
+  color: #F5212F;
+  font-size: 14px;
+}
+.input-box {
+  height: 44px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 400;
+  border-radius: 6px;
+}
+.input-box.filled { background: #E6EEFF; color: #222222; }
+.input-box.empty { background: #F8F8F8; color: #999999; }
+
+.demo-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.demo-grid h2 { font-size: 18px; font-weight: 600; margin-bottom: 12px; color: #222; }
+
+/* spec detail block */
+.spec-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.spec-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #222; }
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+.spec-item {
+  padding: 12px;
+  background: #F8F8F8;
+  border-radius: 8px;
+}
+.spec-item .label { font-size: 12px; color: #666; margin-bottom: 4px; }
+.spec-item .value { font-size: 14px; font-weight: 600; color: #222; }
+
+.token-swatch {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  vertical-align: middle;
+  margin-right: 6px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+.usage-rules {
+  background: #FFF8E1;
+  border-left: 4px solid #FFCF20;
+  padding: 16px 20px;
+  border-radius: 8px;
+}
+.usage-rules h3 { font-size: 16px; margin-bottom: 8px; color: #222; }
+.usage-rules ul { list-style: none; padding: 0; font-size: 14px; }
+.usage-rules li { padding: 4px 0; }
+.usage-rules li::before { content: "→ "; color: #FFCF20; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Input · 输入框组件</h1>
+  <p class="meta">
+    来源：参考组件库（4 个 variant）· 同步 2026-09-29 ·
+    共 <strong>4 个 variant</strong>（已填写 × Title 标签）
+  </p>
+</div>
+
+<div class="container">
+
+  <!-- 4 个变体 -->
+  <div class="demo-grid">
+    <h2>🎨 4 个 variant</h2>
+
+    <!-- filled + title -->
+    <div>
+      <div style="font-size:12px;color:#888;margin-bottom:8px">已填写=true · Title=true（已填 + 有标签）</div>
+      <div class="field">
+        <div class="field-label">Nombre<span class="required">*</span></div>
+        <div class="input-box filled">Ej. Juan Pérez</div>
+      </div>
+    </div>
+
+    <!-- filled + no title -->
+    <div>
+      <div style="font-size:12px;color:#888;margin-bottom:8px">已填写=true · Title=false（已填 + 无标签）</div>
+      <div class="field">
+        <div class="input-box filled">Ej. Juan Pérez</div>
+      </div>
+    </div>
+
+    <!-- empty + title -->
+    <div>
+      <div style="font-size:12px;color:#888;margin-bottom:8px">已填写=false · Title=true（空 + 有标签）</div>
+      <div class="field">
+        <div class="field-label">Nombre<span class="required">*</span></div>
+        <div class="input-box empty">Ej. Juan Pérez</div>
+      </div>
+    </div>
+
+    <!-- empty + no title -->
+    <div>
+      <div style="font-size:12px;color:#888;margin-bottom:8px">已填写=false · Title=false（空 + 无标签）</div>
+      <div class="field">
+        <div class="input-box empty">Ej. Juan Pérez</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Spec 详情 -->
+  <div class="spec-section">
+    <h2>📐 Spec Details</h2>
+    <div class="spec-grid">
+      <div class="spec-item">
+        <div class="label">Width</div>
+        <div class="value">343px</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Height（仅 input）</div>
+        <div class="value">44px</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Total Height（含 Title）</div>
+        <div class="value">74px</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Border Radius</div>
+        <div class="value">6px</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Padding H</div>
+        <div class="value">12px</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Font Size</div>
+        <div class="value">14px / 400</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 颜色 token 对照 -->
+  <div class="spec-section">
+    <h2>🎨 Token 映射</h2>
+    <table style="width:100%;border-collapse:collapse;font-size:14px">
+      <thead>
+        <tr style="background:#F8F8F8;text-align:left">
+          <th style="padding:10px 12px">场景</th><th style="padding:10px 12px">Token</th><th style="padding:10px 12px">Hex</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1">已填写 input 背景</td><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1"><code>Blue/blue-50</code></td><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1"><span class="token-swatch" style="background:#E6EEFF"></span>#E6EEFF</td></tr>
+        <tr><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1">未填写 input 背景</td><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1"><code>Background/color-50-页面背景</code></td><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1"><span class="token-swatch" style="background:#F8F8F8"></span>#F8F8F8</td></tr>
+        <tr><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1">已填写文字</td><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1"><code>Text/color-900-重要</code></td><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1"><span class="token-swatch" style="background:#222222"></span>#222222</td></tr>
+        <tr><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1">未填写 / 占位文字</td><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1"><code>Text/color-400-提示</code></td><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1"><span class="token-swatch" style="background:#999999"></span>#999999</td></tr>
+        <tr><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1">Title 标签文字</td><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1"><code>Text/color-900-重要</code></td><td style="padding:10px 12px;border-bottom:1px solid #F1F1F1"><span class="token-swatch" style="background:#222222"></span>#222222</td></tr>
+        <tr><td style="padding:10px 12px">必填星号</td><td style="padding:10px 12px"><code>Red/red-500-告警</code></td><td style="padding:10px 12px"><span class="token-swatch" style="background:#F5212F"></span>#F5212F</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 使用规则 -->
+  <div class="usage-rules">
+    <h3>🎯 何时用哪种配置</h3>
+    <ul>
+      <li><strong>Title=true</strong>：表单字段（姓名 / 电话 / 邮箱 等需要明确标识的字段）</li>
+      <li><strong>Title=false</strong>：搜索框 / 短输入（标题隐含在 placeholder 里）</li>
+      <li><strong>已填写=true</strong>（蓝底 #E6EEFF）：用户已输入内容，标识为"激活态"</li>
+      <li><strong>已填写=false</strong>（灰底 #F8F8F8）：占位状态，等待输入</li>
+      <li><strong>必填字段</strong>：Title 后加 <code style="color:#F5212F">*</code> 红色星号（Red/red-500-告警）</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>

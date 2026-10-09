@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<!--
+  Article Card · 文章 / 资讯卡（通用化）
+  来源：Figma 「车资讯」「资讯」实例抽取
+  通用化为"文章卡片"组件
+  共 4 个 view：横版大卡 / 竖版标准 / 紧凑列表 / 视频缩略图
+  适用：新闻列表、博客、品牌故事、行业报告
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Article Card Component · UI Design System</title>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+:root {
+  --yellow-50: #FFFAED;
+  --yellow-500: #FFCF20;
+  --blue-500: #0056FA;
+  --green-500: #7CB305;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-700: #555555;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-card: 0 4px 16px rgba(10,25,41,0.06);
+  --font-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--grey-50);
+  color: var(--grey-900);
+  padding: 32px 16px;
+  line-height: 1.5;
+}
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  background: var(--white);
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.lead {
+  color: var(--grey-600);
+  font-size: 14px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--grey-100);
+}
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 32px 0 16px;
+}
+.demo-box {
+  background: var(--grey-50);
+  padding: 24px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+.section-desc {
+  color: var(--grey-600);
+  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--yellow-50);
+  border-left: 3px solid var(--yellow-500);
+  border-radius: 4px;
+}
+
+/* ========================================================
+   ① Article Horizontal · 横版大卡
+   ===================================================== */
+.article-h {
+  display: flex;
+  gap: 16px;
+  background: var(--white);
+  border: 1px solid var(--grey-100);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.article-h:hover {
+  border-color: var(--yellow-500);
+  box-shadow: var(--shadow-card);
+}
+.article-h-thumb {
+  width: 240px;
+  height: 160px;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, var(--grey-200), var(--grey-300));
+  position: relative;
+  overflow: hidden;
+}
+.article-h-thumb-emoji {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 64px;
+}
+.article-h-content {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+.article-h-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+.article-cat {
+  background: var(--yellow-50);
+  color: var(--grey-900);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 11px;
+}
+.article-time { color: var(--grey-400); }
+.article-h-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--grey-900);
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+.article-h-desc {
+  font-size: 13px;
+  color: var(--grey-600);
+  line-height: 1.6;
+  margin-bottom: 12px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.article-h-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--grey-400);
+}
+.article-author { display: flex; align-items: center; gap: 6px; }
+.article-author-avatar {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--grey-300);
+}
+.article-stats {
+  display: flex;
+  gap: 12px;
+}
+.article-stats span { display: flex; align-items: center; gap: 4px; }
+
+/* ========================================================
+   ② Article Vertical · 竖版标准
+   ===================================================== */
+.article-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+@media (max-width: 768px) {
+  .article-grid { grid-template-columns: 1fr; }
+}
+.article-v {
+  background: var(--white);
+  border: 1px solid var(--grey-100);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.article-v:hover {
+  border-color: var(--yellow-500);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card);
+}
+.article-v-thumb {
+  height: 160px;
+  background: linear-gradient(135deg, var(--grey-200), var(--grey-300));
+  position: relative;
+}
+.article-v-thumb-emoji {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 56px;
+}
+.article-v-body {
+  padding: 16px;
+}
+.article-v-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 11px;
+}
+.article-v-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--grey-900);
+  line-height: 1.4;
+  margin-bottom: 8px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.article-v-desc {
+  font-size: 12px;
+  color: var(--grey-600);
+  line-height: 1.5;
+  margin-bottom: 12px;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.article-v-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--grey-400);
+  padding-top: 12px;
+  border-top: 1px solid var(--grey-100);
+}
+
+/* ========================================================
+   ③ Article Compact · 紧凑列表
+   ===================================================== */
+.article-c {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.15s;
+  border-bottom: 1px solid var(--grey-100);
+}
+.article-c:last-child { border-bottom: none; }
+.article-c:hover { background: var(--grey-50); }
+.article-c-thumb {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--grey-200), var(--grey-300));
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+}
+.article-c-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.article-c-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--grey-900);
+  line-height: 1.4;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.article-c-meta {
+  font-size: 11px;
+  color: var(--grey-400);
+  display: flex;
+  gap: 8px;
+}
+
+/* ========================================================
+   ④ Article Video · 视频缩略图
+   ===================================================== */
+.article-video {
+  background: var(--white);
+  border: 1px solid var(--grey-100);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.article-video:hover {
+  border-color: var(--yellow-500);
+  box-shadow: var(--shadow-card);
+}
+.article-video-thumb {
+  height: 180px;
+  background: linear-gradient(135deg, var(--grey-700), var(--grey-900));
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.video-play {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: var(--grey-900);
+  margin-left: 4px;
+}
+.video-duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: rgba(0,0,0,0.75);
+  color: var(--white);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.video-live {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: var(--red-500, #A8071A);
+  color: var(--white);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.video-live::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--white);
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.article-video-body {
+  padding: 12px 16px;
+}
+.article-video-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--grey-900);
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+table.variants {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+table.variants th, table.variants td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-100);
+  text-align: left;
+}
+table.variants th {
+  background: var(--grey-50);
+  color: var(--grey-600);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1><span class="iconify" data-icon="lucide:newspaper"></span> Article Card · 文章卡片</h>
+  <p class="lead">
+    来源：Figma 「车资讯」「资讯」实例抽取<br>
+    通用化为"文章卡片"组件 · 4 个 view · 横版大卡 / 竖版标准 / 紧凑列表 / 视频缩略图
+  </p>
+
+  <h2>① Article Horizontal · 横版大卡</h2>
+  <p class="section-desc">详情页 / 推荐位的横版文章卡。240px 缩略图 + 标题 + 摘要 + 作者 + 浏览量。</p>
+  <div class="demo-box">
+    <div class="article-h">
+      <div class="article-h-thumb">
+        <div class="article-h-thumb-emoji"><span class="iconify" data-icon="lucide:newspaper" style="font-size:40px"></span></div>
+      </div>
+      <div class="article-h-content">
+        <div>
+          <div class="article-h-meta">
+            <span class="article-cat">市场分析</span>
+            <span class="article-time">3 天前</span>
+          </div>
+          <h3 class="article-h-title">2026 年墨西哥汽车市场报告：电动车销量首次突破 8%</h3>
+          <p class="article-h-desc">根据 Autocava 研究院最新数据，墨西哥市场电动车销量占比从 2025 年的 5.2% 上升至 8.4%，主要由 MG ZS EV 与 XPENG G6 推动。</p>
+        </div>
+        <div class="article-h-foot">
+          <div class="article-author">
+            <div class="article-author-avatar"></div>
+            <span>叶启刚</span>
+          </div>
+          <div class="article-stats">
+            <span><span class="iconify" data-icon="lucide:eye" style="font-size:13px"></span> 3.2k</span>
+            <span><span class="iconify" data-icon="lucide:message-circle" style="font-size:13px"></span> 24</span>
+            <span><span class="iconify" data-icon="lucide:heart" style="font-size:13px"></span> 86</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>② Article Vertical · 竖版标准（网格布局）</h2>
+  <p class="section-desc">首页 / 列表页的 3 列网格。悬停时上移 2px + 黄边 + 阴影。</p>
+  <div class="demo-box">
+    <div class="article-grid">
+      <div class="article-v">
+        <div class="article-v-thumb"><div class="article-v-thumb-emoji"><span class="iconify" data-icon="lucide:bar-chart-3" style="font-size:30px"></span></div></div>
+        <div class="article-v-body">
+          <div class="article-v-meta">
+            <span class="article-cat">销量</span>
+            <span class="article-time">1 天前</span>
+          </div>
+          <h3 class="article-v-title">8 月销量榜：Nissan 蝉联榜首</h3>
+          <p class="article-v-desc">2026 年 8 月墨西哥新车销量数据出炉，Nissan Versa 连续 6 个月居榜首。</p>
+          <div class="article-v-foot">
+            <span><span class="iconify" data-icon="lucide:eye" style="font-size:13px"></span> 1.8k</span>
+            <span><span class="iconify" data-icon="lucide:message-circle" style="font-size:13px"></span> 12</span>
+          </div>
+        </div>
+      </div>
+      <div class="article-v">
+        <div class="article-v-thumb"><div class="article-v-thumb-emoji"><span class="iconify" data-icon="lucide:zap" style="font-size:30px"></span></div></div>
+        <div class="article-v-body">
+          <div class="article-v-meta">
+            <span class="article-cat">技术</span>
+            <span class="article-time">2 天前</span>
+          </div>
+          <h3 class="article-v-title">电动车电池技术新突破：续航突破 600km</h3>
+          <p class="article-v-desc">新一代固态电池即将量产，将解决电动车续航焦虑。</p>
+          <div class="article-v-foot">
+            <span><span class="iconify" data-icon="lucide:eye" style="font-size:13px"></span> 2.4k</span>
+            <span><span class="iconify" data-icon="lucide:message-circle" style="font-size:13px"></span> 18</span>
+          </div>
+        </div>
+      </div>
+      <div class="article-v">
+        <div class="article-v-thumb"><div class="article-v-thumb-emoji"><span class="iconify" data-icon="lucide:lightbulb" style="font-size:30px"></span></div></div>
+        <div class="article-v-body">
+          <div class="article-v-meta">
+            <span class="article-cat">购车指南</span>
+            <span class="article-time">5 天前</span>
+          </div>
+          <h3 class="article-v-title">新手买车必看：3 步确定预算</h3>
+          <p class="article-v-desc">从收入到贷款，教你科学计算购车预算。</p>
+          <div class="article-v-foot">
+            <span><span class="iconify" data-icon="lucide:eye" style="font-size:13px"></span> 956</span>
+            <span><span class="iconify" data-icon="lucide:message-circle" style="font-size:13px"></span> 6</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>③ Article Compact · 紧凑列表</h2>
+  <p class="section-desc">侧边栏 / 嵌入式列表。小缩略图 80×80 + 标题 2 行省略。</p>
+  <div class="demo-box">
+    <div class="article-c">
+      <div class="article-c-thumb"><span class="iconify" data-icon="lucide:trending-up" style="font-size:26px"></span></div>
+      <div class="article-c-body">
+        <h4 class="article-c-title">9 月汽车金融政策更新：多家银行下调利率</h4>
+        <div class="article-c-meta">
+          <span>金融</span>
+          <span>·</span>
+          <span>2 小时前</span>
+          <span>·</span>
+          <span>1.2k 阅读</span>
+        </div>
+      </div>
+    </div>
+    <div class="article-c">
+      <div class="article-c-thumb"><span class="iconify" data-icon="lucide:trophy" style="font-size:26px"></span></div>
+      <div class="article-c-body">
+        <h4 class="article-c-title">XPENG G6 评测：墨西哥市场的搅局者</h4>
+        <div class="article-c-meta">
+          <span>评测</span>
+          <span>·</span>
+          <span>5 小时前</span>
+          <span>·</span>
+          <span>3.4k 阅读</span>
+        </div>
+      </div>
+    </div>
+    <div class="article-c">
+      <div class="article-c-thumb"><span class="iconify" data-icon="lucide:wrench" style="font-size:26px"></span></div>
+      <div class="article-c-body">
+        <h4 class="article-c-title">汽车保养指南：每 5000km 必做 3 件事</h4>
+        <div class="article-c-meta">
+          <span>保养</span>
+          <span>·</span>
+          <span>1 天前</span>
+          <span>·</span>
+          <span>892 阅读</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>④ Article Video · 视频缩略图</h2>
+  <p class="section-desc">支持"播放"按钮 + 时长 + 直播标识 + 自动脉动。深色背景突出视频属性。</p>
+  <div class="demo-box">
+    <div class="article-grid">
+      <div class="article-video">
+        <div class="article-video-thumb">
+          <div class="video-play">▶</div>
+          <div class="video-duration">12:34</div>
+        </div>
+        <div class="article-video-body">
+          <h3 class="article-video-title">Nissan Versa 2026 试驾体验</h3>
+          <div class="article-c-meta">
+            <span>视频</span>
+            <span>·</span>
+            <span>3 天前</span>
+          </div>
+        </div>
+      </div>
+      <div class="article-video">
+        <div class="article-video-thumb">
+          <div class="video-play">▶</div>
+          <div class="video-live">LIVE</div>
+        </div>
+        <div class="article-video-body">
+          <h3 class="article-video-title">新车型现场发布会直播</h3>
+          <div class="article-c-meta">
+            <span>直播</span>
+            <span>·</span>
+            <span>2,341 人观看</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>🎨 对应 Design Tokens</h2>
+  <table class="variants">
+    <thead><tr><th>元素</th><th>用 Token</th></tr></thead>
+    <tbody>
+      <tr><td>卡片背景</td><td><code>--white</code></td></tr>
+      <tr><td>卡片边框</td><td><code>--grey-100</code> 默认 / <code>--yellow-500</code> hover</td></tr>
+      <tr><td>缩略图占位</td><td>渐变 <code>--grey-200</code> → <code>--grey-300</code></td></tr>
+      <tr><td>视频缩略图</td><td>渐变 <code>--grey-700</code> → <code>--grey-900</code></td></tr>
+      <tr><td>分类标签</td><td><code>--yellow-50</code> 背景 + <code>--grey-900</code> 文字</td></tr>
+      <tr><td>播放按钮</td><td>56×56px 圆 + <code>rgba(255,255,255,0.9)</code></td></tr>
+      <tr><td>时长标签</td><td><code>rgba(0,0,0,0.75)</code> + 白字</td></tr>
+      <tr><td>直播标识</td><td><code>--red-500</code> + 脉动动画</td></tr>
+      <tr><td>正文文字</td><td><code>--grey-600</code> 13/12px</td></tr>
+      <tr><td>标题</td><td><code>--grey-900</code> 700</td></tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

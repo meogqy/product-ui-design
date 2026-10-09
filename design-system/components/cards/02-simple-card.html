@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card 02 · 简洁卡（单 CTA）· UI Design System</title>
+<!--
+  Card 02 · 简洁卡（单 CTA + 2x2 网格）
+  适用场景：榜单 · 同产品多版本紧凑展示 / 列表 / 搜索结果
+  Iconify CDN: https://code.iconify.design/3/3.1.0/iconify.min.js
+  单文件自适应：PC ≥1024px / Mobile <1024px
+
+  ⚠️ 当前数据是 Mstar / AutoCava 平台示例，请按 cards/README.md 的指南替换为你自己的：
+  - 标题 / 价格 / 图片 URL / CTA 文案 / 链接
+
+  数据示例：
+  - 标题：Mazda CX-30（4 个 trim）
+  - 价格：MXN $451,900 / $585,900
+  - 图源：autocava.com.mx CDN
+-->
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+  :root {
+    --card-bg: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.06);
+    --card-shadow: 0 4px 16px rgba(10, 25, 41, 0.06);
+    --text-primary: #0a1929;
+    --text-secondary: #6b7280;
+    --price-emphasis: #f57c00;
+    --badge-bg: #f3f4f6;
+    --badge-text: #6b7280;
+    --gradient-brand: linear-gradient(135.81deg,
+      #65c9ec 0%, #825aff 24.21%,
+      #d750e8 48.42%, #f25ec7 72.63%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background: #f5f6f8;
+    color: var(--text-primary);
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  /* === 2x2 grid · 同卡型紧凑排列 === */
+  .demo-grid {
+    max-width: 960px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* === Card === */
+  .car-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    padding: 20px;
+    position: relative;
+    transition: box-shadow .2s ease, transform .2s ease;
+  }
+  .car-card:hover {
+    box-shadow: 0 8px 24px rgba(10, 25, 41, 0.10);
+    transform: translateY(-1px);
+  }
+
+  .ranking-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+
+  .car-card__main {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .car-image {
+    width: 88px;
+    height: 88px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #f3f4f6;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .car-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .car-card__body {
+    flex: 1;
+    min-width: 0;
+    padding-top: 2px;
+  }
+  .car-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .car-price {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.3;
+  }
+  .car-price .price-emphasis {
+    color: var(--price-emphasis);
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 2px;
+  }
+
+  /* Full-width gradient CTA · Ver detalles */
+  .car-card__actions {
+    display: block;
+  }
+  .btn-gradient {
+    width: 100%;
+    height: 44px;
+    background: var(--card-bg);
+    color: var(--text-primary);   /* 实心深色文字 · 保证可见 */
+    border: 1.5px solid transparent;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    z-index: 0;
+    transition: opacity .15s ease;
+    font-family: inherit;
+  }
+  .btn-gradient:hover { opacity: .85; }
+  .btn-gradient::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    padding: 1.5px;
+    background: var(--gradient-brand);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .demo-title {
+    max-width: 960px;
+    margin: 0 auto 24px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .demo-title strong {
+    color: var(--text-primary);
+    font-weight: 700;
+  }
+
+  /* === Mobile <1024px === */
+  @media (max-width: 1023px) {
+    .demo-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .car-card { padding: 16px; }
+    .car-price .price-emphasis { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<p class="demo-title">
+  <strong>Card 02 · Ranking 2x2 + Ver detalles</strong> · 同车系多 trim 紧凑展示 · PC ≥1024px
+</p>
+
+<div class="demo-grid">
+
+  <!-- #1 Mazda CX-30 2026 I TA -->
+  <div class="car-card">
+    <span class="ranking-badge">#1</span>
+    <div class="car-card__main">
+      <div class="car-image">
+        <!-- source: __NUXT_DATA__ imageWhiteUrl（车系级白底图，逐 trim 图未接口验证）· ac_ab=stable · 2026-09-21 -->
+        <img src="https://cdn.autocava.com.mx/series/white/0302.png" alt="Mazda CX-30">
+      </div>
+      <div class="car-card__body">
+        <!-- source: __NUXT_DATA__ seriesMinMonthlyPay=7524 ✅ 与车系最低月供一致 · ac_ab=stable -->
+        <div class="car-name">Mazda CX-30 2026 I TA</div>
+        <div class="car-price">Desde: <span class="price-emphasis">$7,524</span>/mes</div>
+      </div>
+    </div>
+    <!-- source: [待PM确认] · 线上真实 CTA 为「Planes de compra N versiones」bg-ffcf20 实心按钮，此处渐变描边为设计探索变体 -->
+    <div class="car-card__actions">
+      <button class="btn-gradient">Ver detalles</button>
+    </div>
+  </div>
+
+  <!-- #2 Mazda CX-30 2026 I SPORT -->
+  <div class="car-card">
+    <span class="ranking-badge">#2</span>
+    <div class="car-card__main">
+      <div class="car-image">
+        <!-- source: __NUXT_DATA__ imageWhiteUrl（车系级白底图，逐 trim 图未接口验证）· ac_ab=stable · 2026-09-21 -->
+        <img src="https://cdn.autocava.com.mx/series/white/0302.png" alt="Mazda CX-30">
+      </div>
+      <div class="car-card__body">
+        <!-- source: [待PM确认] · 逐 trim 月供未在 /rank 接口验证，需查询车系详情页确认 -->
+        <div class="car-name">Mazda CX-30 2026 I SPORT</div>
+        <div class="car-price">Desde: <span class="price-emphasis">$8,024</span>/mes</div>
+      </div>
+    </div>
+    <div class="car-card__actions">
+      <button class="btn-gradient">Ver detalles</button>
+    </div>
+  </div>
+
+  <!-- #3 Mazda CX-30 2026 I GRAND TOURING -->
+  <div class="car-card">
+    <span class="ranking-badge">#3</span>
+    <div class="car-card__main">
+      <div class="car-image">
+        <!-- source: __NUXT_DATA__ imageWhiteUrl（车系级白底图，逐 trim 图未接口验证）· ac_ab=stable · 2026-09-21 -->
+        <img src="https://cdn.autocava.com.mx/series/white/0302.png" alt="Mazda CX-30">
+      </div>
+      <div class="car-card__body">
+        <!-- source: [待PM确认] · 逐 trim 月供未在 /rank 接口验证，需查询车系详情页确认 -->
+        <div class="car-name">Mazda CX-30 2026 I GRAND TOURING</div>
+        <div class="car-price">Desde: <span class="price-emphasis">$8,756</span>/mes</div>
+      </div>
+    </div>
+    <div class="car-card__actions">
+      <button class="btn-gradient">Ver detalles</button>
+    </div>
+  </div>
+
+  <!-- #4 Mazda CX-30 2026 SIGNATURE TA -->
+  <div class="car-card">
+    <span class="ranking-badge">#4</span>
+    <div class="car-card__main">
+      <div class="car-image">
+        <!-- source: __NUXT_DATA__ imageWhiteUrl（车系级白底图，逐 trim 图未接口验证）· ac_ab=stable · 2026-09-21 -->
+        <img src="https://cdn.autocava.com.mx/series/white/0302.png" alt="Mazda CX-30">
+      </div>
+      <div class="car-card__body">
+        <!-- source: __NUXT_DATA__ seriesMaxMonthlyPay=9755 ✅ 与车系最高月供一致 · ac_ab=stable -->
+        <div class="car-name">Mazda CX-30 2026 SIGNATURE TA</div>
+        <div class="car-price">Desde: <span class="price-emphasis">$9,755</span>/mes</div>
+      </div>
+    </div>
+    <div class="car-card__actions">
+      <button class="btn-gradient">Ver detalles</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+---
+description: MX 留资/要手机号表单必须带隐私政策脚注与中介免责（强制）
+globs: "**/*.{html,md}"
+alwaysApply: false
+---
+
+<!-- ⚠️ 来源说明：本文件含项目特定示例（品牌名 / 市场 / 平台专有参数）。
+     作为通用方法论可用，但**其中的具体值（品牌色、市场法规、平台域名、埋点参数）
+     是示例性质的，用到别的项目/市场时必须按SITE-CONFIG.md 替换**。
+     原路径：Mstar 工作区 .cursor/rules/ · 随包分发于 product-ui-design v2.0 -->
+
+
+# MX 留资合规：隐私脚注 + 中介免责（强制）
+
+凡原型 / PRD / 交付物出现**向用户索要手机号 / WhatsApp / 姓名等联系方式**的表单（留资、订阅、转人工、Consultar experto、购车报告、Planes 等），**提交按钮旁必须有隐私同意说明**。缺脚注 = 交付未完成。
+
+权威线上口径：CAVI「Consultar experto」弹层（`https://www.autocava.com.mx/cavi?ac_ab=stable`）。落地页：`https://www.autocava.com.mx/legal/privacy`。
+
+## 1. 何时必须出现
+
+| 触发 | 是否要脚注 |
+|------|------------|
+| `input type="tel"` / WhatsApp o celular / celular / teléfono 留资字段 | ✅ 必须 |
+| Nombre completo + 手机 组合表单 | ✅ 必须 |
+| 订阅优惠 / 转人工 / Planes / 购车报告 / 价格提醒等任何「提交联系方式」 | ✅ 必须 |
+| 仅 `wa.me` 外链、站内不收号 | ❌ 不需要表单脚注 |
+| 登录 OTP / 验证码输入（已在登录步同意过） | 按线上登录弹层自带条款；**新留资表单仍要脚注** |
+| AI 气泡口头要号（「¿Me compartes tu número?」） | ⚠️ 不得只靠气泡收号；应引导到带脚注的表单 / 弹层 |
+
+## 2. 标准文案（照抄 · 勿自造缩短）
+
+**西语（C 端默认 · 对齐线上 Consultar experto）**
+
+```
+Al enviar, aceptas nuestra Política de Privacidad. Tu información podrá compartirse con agencias automotrices y entidades financieras autorizadas. Autocava actúa únicamente como plataforma de intermediación y no participa en el otorgamiento ni aprobación de financiamiento o crédito.
+```
+
+- `Política de Privacidad` 必须是可点击链接
+- **href 固定**：`https://www.autocava.com.mx/legal/privacy`
+- `target="_blank" rel="noopener"`
+
+**中文对照帧（若页面有中西对照）**
+
+```
+提交即表示同意我们的隐私政策。你的信息可能与授权的汽车经销商及金融机构共享。Autocava 仅作为中介平台，不参与融资 / 信贷的发放或审批。
+```
+
+- 「隐私政策」同样链到 `https://www.autocava.com.mx/legal/privacy`
+
+**位置**：提交 / Confirmar / Continuar / Suscribirme 等主 CTA **下方**（不要塞进按钮文案里）。
+
+**样式建议**（可复用）：
+
+```css
+.lead-legal { margin: 10px 0 0; font-size: 10.5px; color: var(--weak); line-height: 1.4; }
+.lead-legal a { color: #b8860b; text-decoration: underline; font-weight: 600; }
+```
+
+**溯源注释**（HTML 内嵌）：
+
+```html
+<!-- source: autocava 线上合规脚注 · https://www.autocava.com.mx/legal/privacy · 对齐 /cavi Consultar experto -->
+```
+
+## 3. 禁止
+
+- ❌ 留资表单无任何隐私 / Aviso / Política 说明
+- ❌ 链接写成 `href="#"` 或省略 URL
+- ❌ 只写「同意隐私政策」而不写中介免责（agencias / financieras / intermediación）
+- ❌ 用页脚「Aviso de Privacidad」代替表单旁同意脚注
+- ❌ 为塞进小屏而删掉中介免责句
+- ❌ 西语帧用「Aviso」、中文帧用「Política」混称时不统一链接（链接必须都指向 `/legal/privacy`）
+
+> 说明：线上购车报告页用「Aviso de Privacidad」短版、登录用条款+Aviso；**新做的 CAVI / 订阅 / 转人工 / Planes 留资原型统一用本节长版「Política de Privacidad」**，避免再分裂出口径。
+
+## 4. 交付自检（有表单时必填）
+
+- [ ] 每个含手机号的表单，CTA 下都有 `.lead-legal`（或等价）脚注
+- [ ] 链接 = `https://www.autocava.com.mx/legal/privacy`
+- [ ] 含「compartirse con agencias…」+「intermediación…」两句免责
+- [ ] 有 `<!-- source: ... legal/privacy -->` 注释
+- [ ] 中西对照页：两帧都有对应脚注
+
+**验证命令示例**：
+
+```bash
+# 有 tel 输入却无 privacy 链接 → 不合格
+rg -l 'type="tel"|WhatsApp o celular' 交付.html
+rg -n 'legal/privacy|lead-legal|intermediación|中介平台' 交付.html
+```
+
+## 5. 立即打断信号
+
+AI 交付 HTML / 写留资 PRD 时出现以下任一项 → 立即补脚注再交付：
+
+- 出现 `type="tel"` / `WhatsApp o celular` / `Nombre completo` 留资，但全文无 `legal/privacy`
+- 隐私链接为 `href="#"`
+- 只有「同意隐私」四字、无中介免责句
+- 自检报告未勾选「留资隐私脚注」
+
+本地对齐样例：
+
+- `CAVI首页新价值导向调整/订阅卡片样式-不错过.html`
+- `CAVI首页新价值导向调整/转人工样式-Hablar-con-asesor.html`
+- `CAVI首页新价值导向调整/榜单落地方案/B-Planes方案卡.html`
+

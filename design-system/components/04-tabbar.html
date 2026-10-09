@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!--
+  Tabbar 底部标签栏组件 reference
+  来源：参考组件库（2 个 variant）
+  共 2 个 variant（首页 / 预审）· H5 专用（375×64）
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tabbar Component · Autocava Design System</title>
+<style>
+:root {
+  --white: #FFFFFF;
+  --black: #000000;
+  --text-regular: #666666;
+  --text-important: #222222;
+  --grey-100: #F1F1F1;
+  --yellow-500: #FFCF20;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background: #F8F8F8;
+  color: #222222;
+  padding: 24px 16px;
+  line-height: 1.5;
+}
+.header { max-width: 800px; margin: 0 auto 24px; padding-bottom: 16px; border-bottom: 2px solid #FFCF20; }
+.header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+.header .meta { font-size: 14px; color: #666; }
+.header .meta code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+.container { max-width: 800px; margin: 0 auto; }
+
+.demo-grid {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.demo-grid h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #222; }
+
+.demo-row { margin-bottom: 32px; }
+.demo-row:last-child { margin-bottom: 0; }
+.demo-label { font-size: 12px; color: #888; margin-bottom: 8px; }
+
+/* === Tabbar 样式 === */
+.tabbar {
+  width: 375px;
+  height: 64px;
+  background: #FFFFFF;
+  border-top: 1px solid #F1F1F1;
+  display: flex;
+  align-items: stretch;
+  position: relative;
+}
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #666666;
+  cursor: pointer;
+  position: relative;
+}
+.tab .iconify { font-size: 22px; }
+.tab.active { color: #222222; font-weight: 600; }
+.tab.active::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 3px;
+  background: #FFCF20;
+  border-radius: 0 0 3px 3px;
+}
+
+.spec-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.spec-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.spec-item { padding: 12px; background: #F8F8F8; border-radius: 8px; }
+.spec-item .label { font-size: 12px; color: #666; margin-bottom: 4px; }
+.spec-item .value { font-size: 14px; font-weight: 600; }
+
+.usage-rules { background: #FFF8E1; border-left: 4px solid #FFCF20; padding: 16px 20px; border-radius: 8px; }
+.usage-rules h3 { font-size: 16px; margin-bottom: 8px; }
+.usage-rules ul { list-style: none; padding: 0; font-size: 14px; }
+.usage-rules li { padding: 4px 0; }
+.usage-rules li::before { content: "→ "; color: #FFCF20; font-weight: 700; }
+</style>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+</head>
+<body>
+
+<div class="header">
+  <h1>Tabbar · H5 底部标签栏</h1>
+  <p class="meta">
+    来源：参考组件库（2 个 variant）· 同步 2026-09-29 ·
+    共 <strong>2 个 variant</strong>（首页 / 预审） · H5 专用 <strong>375×64</strong>
+  </p>
+</div>
+
+<div class="container">
+
+  <div class="demo-grid">
+    <h2>🎨 4 个 Tab（Início / Financiamiento / Autos / Mi cuenta）</h2>
+
+    <div class="demo-row">
+      <div class="demo-label">类型=首页 · 第 1 个 Tab 激活（Início）</div>
+      <div class="tabbar">
+        <div class="tab active">
+          <span class="iconify" data-icon="lucide:home"></span>
+          <span>Inicio</span>
+        </div>
+        <div class="tab">
+          <span class="iconify" data-icon="lucide:dollar-sign"></span>
+          <span>Financiamiento</span>
+        </div>
+        <div class="tab">
+          <span class="iconify" data-icon="lucide:car"></span>
+          <span>Autos</span>
+        </div>
+        <div class="tab">
+          <span class="iconify" data-icon="lucide:user"></span>
+          <span>Mi cuenta</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-row">
+      <div class="demo-label">类型=预审 · 第 2 个 Tab 激活（Financiamiento）</div>
+      <div class="tabbar">
+        <div class="tab">
+          <span class="iconify" data-icon="lucide:home"></span>
+          <span>Inicio</span>
+        </div>
+        <div class="tab active">
+          <span class="iconify" data-icon="lucide:dollar-sign"></span>
+          <span>Financiamiento</span>
+        </div>
+        <div class="tab">
+          <span class="iconify" data-icon="lucide:car"></span>
+          <span>Autos</span>
+        </div>
+        <div class="tab">
+          <span class="iconify" data-icon="lucide:user"></span>
+          <span>Mi cuenta</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-section">
+    <h2>📐 Spec Details</h2>
+    <div class="spec-grid">
+      <div class="spec-item"><div class="label">Width</div><div class="value">375px（H5 viewport）</div></div>
+      <div class="spec-item"><div class="label">Height</div><div class="value">64px</div></div>
+      <div class="spec-item"><div class="label">Tab 数</div><div class="value">4 个（均分宽度）</div></div>
+      <div class="spec-item"><div class="label">背景</div><div class="value">#FFFFFF</div></div>
+      <div class="spec-item"><div class="label">顶部边框</div><div class="value">1px solid #F1F1F1</div></div>
+      <div class="spec-item"><div class="label">Tab 默认色</div><div class="value">#666666 / 500</div></div>
+      <div class="spec-item"><div class="label">Tab 激活色</div><div class="value">#222222 / 600</div></div>
+      <div class="spec-item"><div class="label">激活指示条</div><div class="value">28×3 顶部居中 / #FFCF20</div></div>
+      <div class="spec-item"><div class="label">Icon 字号</div><div class="value">22px</div></div>
+      <div class="spec-item"><div class="label">Tab 文字</div><div class="value">11px / 500-600</div></div>
+    </div>
+  </div>
+
+  <div class="usage-rules">
+    <h3>🎯 使用规则</h3>
+    <ul>
+      <li><strong>H5 专用</strong>：本组件仅用于移动端 H5；PC 端用 [`pc-顶部导航`](../components/)</li>
+      <li><strong>4 个 Tab</strong>：示例 Início / Financiamiento / Autos / Mi cuenta（西语 — 根据你的市场改）</li>
+      <li><strong>激活态</strong>：文字加重 + 顶部 28×3 黄色指示条</li>
+      <li><strong>Iconify</strong>：用 <code>lucide:</code> 图标库（home / dollar-sign / car / user）</li>
+      <li><strong>常驻底部</strong>：用 <code>position: fixed; bottom: 0</code>，不要 absolute</li>
+      <li><strong>安全区</strong>：iOS 底部要加 <code>env(safe-area-inset-bottom)</code></li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>

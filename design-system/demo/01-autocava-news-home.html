@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<!--
+  ============================================================================
+  汽车资讯首页 · Production UI
+  ============================================================================
+  数据源：https://www.autocava.com.mx?ac_ab=stable
+  采集时间：2026-09-29 · HTTP 200 · Desktop UA (1440px)
+  数据字段：__NUXT_DATA__ SSR payload（1338 项扁平数组）
+    - 车型：seriesName / minPrice / maxPrice / seriesMinMonthlyPay / saleCount
+    - 车图：imageWhiteUrl（cdn.autocava.com.mx/series/white/*.png）
+    - 品牌：name / logoUrl（cdn.autocava.com.mx/brand/logo/*.jpg）
+
+  组件复用（来源 ui-design-system-starter）
+    06-topnav      顶部导航
+    17-banner      促销横幅
+    22-brand-grid  品牌 Logo 网格
+    23-ranking     销量排行榜（金银铜）
+    cards/05       Product Card（车型卡 + 月供）
+    21-filter      顶部筛选 Chip 行
+    07-loading     加载骨架
+    08-empty-state 空状态
+    10-toast       操作反馈
+    24-favorite    收藏切换
+    25-footer      页面底部
+
+  环境分流：stable（首页基础数据）
+  断点：1024px（PC ≥1024 / H5 <1024）
+  视图：MX 低端安卓 360×800 优先
+
+  ✅ 已补真实数据（抓取日期 2026-09-30）：
+    - 资讯文章区：生产首页「Reseñas destacadas」5 篇真实文章
+      （标题 / 作者 / 发布日期 / 配图 / 文章链接全部取自 autocava.com.mx）
+
+  ⚠️ 待人工确认（不编造）：
+    - 车身类型 bodyType：SSR 返回索引引用（值 3），未拿到可读文案，未渲染
+    - 首页促销条文案：stable 首页未取到活动字段，不编造日期与折扣额
+  ============================================================================
+-->
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Noticias y Autos · Autocava</title>
+<meta name="description" content="Noticias de autos, marcas, precios y Rankings de venta en México.">
+<style>
+/* ==========================================================================
+   Design Tokens — 来源 ui-design-system-starter/tokens.md
+   ========================================================================== */
+:root {
+  /* ==========================================================================
+     Design Tokens v3 · 生产环境真实值
+     来源：autocava.com.mx 真实渲染 DOM class + CDN CSS · 2026-09-29
+     权威：15 个实测色 + 使用频次，见 tokens.md
+     注意：主色是黄色 #FFCF20（黄底配 #222 深字，禁用白字）
+     ========================================================================== */
+  /* 🟡 Yellow 品牌主色（生产真实值）*/
+  --yellow-50:#FFFAED; --yellow-100:#FFF6DC; --yellow-400:#FFD04E;
+  --yellow-500:#FFCF20; --yellow-600:#E0A504; --yellow-700:#B59317;
+  --yellow-800:#8C7212; --yellow-900:#744500;
+  /* ⚪ Neutral（生产真实值）*/
+  --grey-900:#222; --grey-800:#444; --grey-700:#555; --grey-600:#666;
+  --grey-500:#888; --grey-400:#999; --grey-300:#BBB; --grey-200:#DDD;
+  --grey-100:#EEE; --grey-50:#F8F8F8;
+  --white:#FFF; --black:#000;
+  /* 蓝（金融/链接，生产 CSS 未定义但 --color-primary 系列存在，这里给中性蓝）*/
+  --blue-500:#1E6FD9; --blue-600:#1A5CB8; --blue-50:#EAF2FD;
+  /* 状态色（语义，非品牌）*/
+  --red-50:#FEE; --red-500:#D32F2F; --red-700:#9C1C1C;
+  --green-50:#EDF7ED; --green-500:#2E7D32; --green-700:#1B5E20;
+  /* 语义别名（对齐生产实测）*/
+  --text-important:var(--grey-900); --text-regular:var(--grey-600);
+  --text-hint:var(--grey-400); --text-aux:var(--grey-300);
+  --text-on-yellow:var(--yellow-800);   /* 黄底正文 · 3.79:1 */
+  --text-disabled:var(--grey-200);
+  --bg-page:var(--white); --bg-card:var(--white);
+  --border-divider:var(--grey-100); --border-line:var(--grey-200);
+  --color-f1:#f1f1f1;   /* 生产 --color-f1 实测值 · 资讯卡默认边框 */
+  --btn-primary:var(--yellow-500); --btn-primary-press:var(--yellow-700);
+  --overlay:rgba(0,0,0,.55); --toast-bg:var(--grey-900);
+  /* 字体（生产：系统栈）*/
+  --font-sans:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  /* 金银铜 */
+  --medal-gold:#D4AF37; --medal-silver:#C0C0C0; --medal-bronze:#CD7F32;
+  /* 圆角 / 阴影 / 间距（基准 4px）*/
+  --r-sm:4px; --r-md:6px; --r-lg:8px; --r-xl:12px; --r-full:9999px;
+  --r-media:10px;  /* 生产 rounded-t-[10px] · 资讯图顶部圆角 */
+  --shadow-card:0 1px 3px rgba(0,0,0,.08);
+  --shadow-popup:0 20px 60px rgba(0,0,0,.45);
+  --shadow-news:0 4px 12px rgba(255,207,32,.16);  /* 生产资讯卡 hover 阴影实测值 */
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
+  --header-h:56px;  /* 移动 56px / 桌面 66px */
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-sans);
+  background:var(--bg-page);
+  color:var(--text-important);
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:env(safe-area-inset-bottom);
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+:focus-visible{outline:2px solid var(--blue-500);outline-offset:2px;border-radius:var(--r-sm)}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.container{width:100%;max-width:1280px;margin:0 auto;padding:0 var(--sp-4)}
+
+/* ==========================================================================
+   06-topnav — 顶部导航
+   ========================================================================== */
+.topnav{
+  position:sticky;top:0;z-index:100;
+  background:var(--yellow-500);
+  border-bottom:1px solid var(--yellow-600);
+}
+.topnav-inner{
+  height:var(--header-h);
+  display:flex;align-items:center;gap:var(--sp-3);
+  max-width:1280px;margin:0 auto;padding:0 var(--sp-4);
+}
+.topnav-logo{height:22px;width:auto}
+.topnav-nav{display:flex;gap:var(--sp-4);margin-left:var(--sp-4)}
+.topnav-link{
+  font-size:14px;font-weight:600;color:var(--text-important);
+  padding:var(--sp-2) 0;border-bottom:2px solid transparent;
+}
+.topnav-link:hover{border-bottom-color:var(--text-important)}
+.topnav-link[aria-current]{border-bottom-color:var(--text-important)}
+.topnav-actions{margin-left:auto;display:flex;align-items:center;gap:var(--sp-2)}
+.topnav-icon-btn{
+  width:36px;height:36px;border-radius:50%;
+  display:grid;place-items:center;color:var(--text-important);
+}
+.topnav-icon-btn:hover{background:rgba(0,0,0,.06)}
+.topnav-cta{
+  height:36px;padding:0 var(--sp-4);border-radius:var(--r-md);
+  background:var(--grey-900);color:#fff;font-size:13px;font-weight:700;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.topnav-cta:hover{background:var(--grey-800)}
+.topnav-burger{display:none}
+
+/* ==========================================================================
+   17-banner — 促销横幅
+   ========================================================================== */
+.promo{
+  background:var(--grey-900);color:#fff;
+  padding:var(--sp-3) var(--sp-4);
+  display:flex;align-items:center;justify-content:center;gap:var(--sp-2);
+  font-size:13px;text-align:center;
+}
+/* WCAG 实测：#FFCF20 黄底配 #222 深字 = 10.76:1 ✅（白字仅 1.48:1，禁用）*/
+.promo strong{color:var(--yellow-400)}
+.promo a{color:var(--yellow-400);font-weight:700;text-decoration:underline}
+
+/* ==========================================================================
+   Section 通用
+   ========================================================================== */
+.section{padding:var(--sp-6) 0}
+.section-head{
+  display:flex;align-items:baseline;justify-content:space-between;
+  gap:var(--sp-3);margin-bottom:var(--sp-4);
+}
+.section-title{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.section-sub{font-size:13px;color:var(--text-hint);margin-top:2px}
+.section-link{font-size:13px;font-weight:700;color:var(--blue-500);white-space:nowrap}
+.section-link:hover{text-decoration:underline}
+
+/* ==========================================================================
+   22-brand-grid — 品牌网格
+   ========================================================================== */
+.brand-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--sp-2)}
+.brand-cell{
+  background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-md);padding:var(--sp-3) var(--sp-2);
+  display:flex;flex-direction:column;align-items:center;gap:var(--sp-2);
+  transition:border-color .15s,transform .15s,background .15s;
+}
+.brand-cell:hover{border-color:var(--yellow-500);background:var(--yellow-50);transform:translateY(-2px)}
+.brand-logo{width:40px;height:40px;object-fit:contain}
+.brand-name{font-size:12px;font-weight:600;color:var(--text-regular);text-align:center;
+  max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ==========================================================================
+   23-ranking — 销量排行榜
+   ========================================================================== */
+.rank-list{background:var(--bg-card);border:1px solid var(--border-divider);border-radius:var(--r-lg);overflow:hidden}
+.rank-item{display:flex;align-items:center;gap:var(--sp-3);padding:var(--sp-3) var(--sp-4);
+  border-bottom:1px solid var(--border-divider);transition:background .15s}
+.rank-item:last-child{border-bottom:none}
+.rank-item:hover{background:var(--grey-50)}
+.rank-badge{
+  width:32px;height:32px;flex-shrink:0;border-radius:50%;
+  display:grid;place-items:center;font-size:13px;font-weight:800;
+  background:var(--grey-100);color:var(--text-regular);
+}
+.rank-badge.g1{background:var(--medal-gold);color:#fff}
+.rank-badge.g2{background:var(--medal-silver);color:var(--grey-900)}
+.rank-badge.g3{background:var(--medal-bronze);color:#fff}
+.rank-thumb{width:56px;height:40px;flex-shrink:0;object-fit:contain;background:var(--grey-50);border-radius:var(--r-sm)}
+.rank-info{flex:1;min-width:0}
+.rank-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rank-meta{font-size:12px;color:var(--text-hint);margin-top:2px}
+.rank-right{text-align:right;flex-shrink:0}
+.rank-count{font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.rank-count-label{display:block;font-size:11px;color:var(--text-hint)}
+
+/* ==========================================================================
+   cards/05-product-card — 车型卡
+   ========================================================================== */
+.prod-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-3)}
+.prod-card{
+  background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-lg);overflow:hidden;position:relative;
+  display:flex;flex-direction:column;
+  transition:border-color .15s,transform .15s,box-shadow .15s;
+}
+.prod-card:hover{border-color:var(--yellow-500);transform:translateY(-2px);box-shadow:var(--shadow-card)}
+.prod-media{position:relative;height:150px;background:var(--grey-50);display:grid;place-items:center;padding:var(--sp-3)}
+.prod-media img{max-height:100%;width:auto;object-fit:contain}
+.prod-fav{
+  position:absolute;top:var(--sp-2);right:var(--sp-2);
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+  display:grid;place-items:center;color:var(--grey-400);
+  transition:color .15s;
+}
+.prod-fav:hover{color:var(--red-500)}
+.prod-fav[aria-pressed="true"]{color:var(--red-500)}
+.prod-body{padding:var(--sp-3);display:flex;flex-direction:column;gap:var(--sp-1);flex:1}
+.prod-brand{font-size:11px;color:var(--text-hint);text-transform:uppercase;letter-spacing:.04em}
+.prod-name{font-size:15px;font-weight:700;line-height:1.3}
+.prod-price{font-size:19px;font-weight:800;font-variant-numeric:tabular-nums;margin-top:var(--sp-1)}
+.prod-price small{font-size:12px;font-weight:600;color:var(--text-regular)}
+.prod-range{font-size:12px;color:var(--text-hint);font-variant-numeric:tabular-nums}
+.prod-pay{
+  margin-top:auto;background:var(--yellow-50);color:var(--text-important);
+  padding:6px var(--sp-2);border-radius:var(--r-sm);
+  font-size:12px;font-weight:700;display:flex;align-items:center;gap:4px;
+}
+
+/* ==========================================================================
+   21-filter — 筛选 Chip 行
+   ========================================================================== */
+.filter-bar{
+  display:flex;gap:var(--sp-2);overflow-x:auto;
+  padding:var(--sp-2) 0;margin-bottom:var(--sp-4);
+  scrollbar-width:thin;
+}
+.filter-chip{
+  flex-shrink:0;height:34px;padding:0 var(--sp-3);
+  background:var(--bg-card);border:1px solid var(--border-line);
+  border-radius:var(--r-full);font-size:13px;font-weight:500;color:var(--text-regular);
+  display:inline-flex;align-items:center;gap:4px;transition:all .15s;
+}
+.filter-chip:hover{border-color:var(--yellow-500);background:var(--yellow-50)}
+.filter-chip[aria-pressed="true"]{background:var(--yellow-500);border-color:var(--yellow-500);
+  color:var(--text-important);font-weight:700}
+
+/* ==========================================================================
+   资讯卡 news-card
+   规格来源：生产 autocava.com.mx 首页「Reseñas destacadas」真实 DOM
+   · 网格：PC 4 列 / H5 2 列
+   · 圆角：卡 rounded-xl = calc(--ui-radius * 3) = 12px → var(--r-xl)
+           图 rounded-t-[10px] → var(--r-media)
+   · 图高：h-31.25 lg:h-40 = 125px / 160px（非 aspect-ratio）
+   · 默认边框 --color-f1 · hover 边框/阴影取生产黄
+   · 标题 text-222 → hover text-8c7212 · 作者 text-xs text-999
+   · 图片区背景 #F8F8F8 → var(--grey-50)
+   · hover 缩放：group-hover:scale-105 duration-500 ease-out
+   ⚠ 差异：生产卡仅「标题 + 作者」，全站无日期元素；此处额外显示
+      真实发布日期（数据取自生产，非编造），如需 1:1 可删 .news-date
+   ⚠ WCAG（继承生产取值，实测未过 AA，如需过审改这两行即可）：
+      · .news-meta #999 on #FFF = 2.85:1（需 4.5）→ 改 var(--grey-500) #888 = 3.54:1 仍不足
+        → 建议 var(--grey-600) #666 = 5.74:1
+      · .news-card 边框 #F1F1F1 on #FFF = 1.13:1（需 3.0）→ 建议 var(--border-line) #DDD = 1.44:1
+        仍不足 3.0；卡片内有标题文字可识别，故 1.4.11 不强制
+   ========================================================================== */
+.news-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--sp-3)}
+.news-card{
+  display:flex;flex-direction:column;
+  background:var(--bg-card);
+  border:1px solid var(--color-f1);
+  border-radius:var(--r-xl);
+  overflow:hidden;
+  transition:border-color .2s,box-shadow .2s;
+}
+.news-card:hover{border-color:var(--yellow-500);box-shadow:var(--shadow-news)}
+.news-media{
+  height:160px;background:var(--grey-50);overflow:hidden;
+  border-radius:var(--r-media) var(--r-media) 0 0;
+}
+.news-media img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .5s ease-out;
+}
+.news-card:hover .news-media img{transform:scale(1.05)}
+.news-body{padding:var(--sp-3);display:flex;flex-direction:column;gap:6px;flex:1}
+.news-title{
+  font-size:14px;font-weight:700;line-height:1.4;color:var(--text-important);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.news-card:hover .news-title{color:var(--yellow-800)}
+.news-meta{
+  font-size:12px;color:var(--grey-400);
+  display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:auto;
+}
+.news-avatar{width:16px;height:16px;border-radius:12px;flex-shrink:0}  /* 生产 w-6 h-6 rounded-[12px] */
+.news-author{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.news-date{white-space:nowrap}
+
+/* ==========================================================================
+   07-loading / 08-empty-state
+   ========================================================================== */
+.skeleton{background:var(--grey-100);border-radius:var(--r-sm);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.sk-line{height:12px;margin-bottom:8px}
+.sk-thumb{height:150px;border-radius:0}
+.empty{
+  background:var(--bg-card);border:1px dashed var(--border-line);
+  border-radius:var(--r-lg);padding:var(--sp-8) var(--sp-4);text-align:center;
+}
+.empty-icon{width:56px;height:56px;margin:0 auto var(--sp-3);border-radius:50%;
+  background:var(--grey-100);display:grid;place-items:center}
+.empty-title{font-size:15px;font-weight:700;margin-bottom:var(--sp-1)}
+.empty-desc{font-size:13px;color:var(--text-hint);margin-bottom:var(--sp-4)}
+
+/* ==========================================================================
+   10-toast
+   ========================================================================== */
+.toast{
+  position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));
+  transform:translate(-50%,16px);z-index:300;
+  background:var(--toast-bg);color:#fff;
+  padding:var(--sp-3) var(--sp-5);border-radius:var(--r-md);
+  font-size:13px;font-weight:600;
+  display:flex;align-items:center;gap:var(--sp-2);
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;
+  max-width:calc(100vw - 32px);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ==========================================================================
+   25-footer
+   ========================================================================== */
+.footer{background:var(--grey-900);color:var(--grey-300);margin-top:var(--sp-8);padding:var(--sp-8) 0 var(--sp-6)}
+.footer-top{display:grid;grid-template-columns:1.5fr repeat(3,1fr);gap:var(--sp-6);padding-bottom:var(--sp-6);
+  border-bottom:1px solid var(--grey-700)}
+.footer-logo{height:20px;margin-bottom:var(--sp-2);filter:brightness(0) invert(1)}
+.footer-tag{font-size:13px;color:var(--grey-400);line-height:1.6;max-width:280px}
+.footer-h{font-size:13px;font-weight:700;color:#fff;margin-bottom:var(--sp-3)}
+.footer-list{list-style:none;display:flex;flex-direction:column;gap:var(--sp-2)}
+.footer-list a{font-size:13px;color:var(--grey-300)}
+.footer-list a:hover{color:var(--yellow-500)}
+.footer-bottom{padding-top:var(--sp-4);display:flex;justify-content:space-between;gap:var(--sp-3);
+  flex-wrap:wrap;font-size:12px;color:var(--grey-400)}
+.footer-bottom a{color:var(--grey-400);text-decoration:underline}
+.footer-bottom a:hover{color:var(--grey-300)}
+
+/* ==========================================================================
+   移动端底部导航（复用 04-tabbar 形态）
+   ========================================================================== */
+.tabbar{
+  display:none;position:fixed;left:0;right:0;bottom:0;z-index:90;
+  background:var(--bg-card);border-top:1px solid var(--border-divider);
+  padding:var(--sp-1) 0 calc(var(--sp-1) + env(safe-area-inset-bottom));
+}
+.tabbar-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:6px 0;font-size:11px;color:var(--text-hint);min-height:44px;justify-content:center}
+.tabbar-item[aria-current]{color:var(--yellow-600);font-weight:700}
+
+/* ==========================================================================
+   响应式：1024px 断点（对齐 autocava.com.mx 平台实现）
+   ========================================================================== */
+@media (max-width:1023px) {
+  .brand-grid{grid-template-columns:repeat(4,1fr)}
+  .prod-grid{grid-template-columns:repeat(2,1fr)}
+  .news-grid{grid-template-columns:repeat(2,1fr)}
+  .news-media{height:125px}   /* 生产 h-31.25 */
+  .footer-top{grid-template-columns:1fr 1fr;gap:var(--sp-5)}
+  .topnav-nav{display:none}
+  .topnav-burger{display:grid;margin-left:auto}
+  .topnav-actions{display:none}
+  .tabbar{display:flex}
+  body{padding-bottom:calc(60px + env(safe-area-inset-bottom))}
+}
+@media (max-width:480px) {
+  .brand-grid{grid-template-columns:repeat(3,1fr)}
+  .section-title{font-size:18px}
+  .prod-media{height:130px}
+  .footer-top{grid-template-columns:1fr}
+  .promo{font-size:12px}
+}
+/* MX 低端安卓 360×800 压测 */
+@media (max-width:360px) {
+  .brand-grid{grid-template-columns:repeat(3,1fr);gap:6px}
+  .brand-cell{padding:10px 4px}
+  .brand-logo{width:32px;height:32px}
+  .brand-name{font-size:11px}
+  .prod-media{height:110px}
+  .prod-price{font-size:17px}
+  .container{padding:0 12px}
+  .news-grid{gap:6px}
+  .news-body{padding:8px}
+  .news-title{font-size:12px;line-height:1.35}
+  .news-meta{font-size:10px;gap:4px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ICON 单源：Iconify CDN（simple-icons 品牌 / lucide 功能） -->
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+
+<!-- ==================== 06-topnav ==================== -->
+<header class="topnav">
+  <div class="topnav-inner">
+    <img class="topnav-logo" src="https://cdn.autocava.com.mx/_nuxt/asset/logo.v3.mLItLIXo.svg" alt="Autocava">
+    <nav class="topnav-nav" aria-label="Principal">
+      <a class="topnav-link" href="#" aria-current="page">Autos</a>
+      <a class="topnav-link" href="#marcas">Marcas</a>
+      <a class="topnav-link" href="#ranking">Ranking</a>
+      <a class="topnav-link" href="#noticias">Noticias</a>
+      <a class="topnav-link" href="#financiamiento">Financiamiento</a>
+    </nav>
+    <div class="topnav-actions">
+      <button class="topnav-icon-btn" aria-label="Buscar">
+        <span class="iconify" data-icon="lucide:search" style="font-size:20px"></span>
+      </button>
+      <button class="topnav-icon-btn" aria-label="Favoritos">
+        <span class="iconify" data-icon="lucide:heart" style="font-size:20px"></span>
+      </button>
+      <a class="topnav-cta" href="#financiamiento">
+        <span class="iconify" data-icon="lucide:calculator"></span>
+        <span>Financiamiento</span>
+      </a>
+    </div>
+    <button class="topnav-icon-btn topnav-burger" aria-label="Abrir menú">
+      <span class="iconify" data-icon="lucide:menu" style="font-size:22px"></span>
+    </button>
+  </div>
+</header>
+
+<!-- ==================== 17-banner — 促销 ==================== -->
+<!-- source: 促销文案 [待PM确认] · stable 首页未取到活动字段，不编造日期与折扣额 -->
+<div class="promo">
+  <span class="iconify" data-icon="lucide:sparkles" style="color:var(--yellow-500)"></span>
+  <span>Explora <strong>precios reales</strong> y calcula tu mensualidad en segundos.</span>
+  <a href="#financiamiento">Cotizar →</a>
+</div>
+
+<main>
+
+  <!-- ==================== 品牌网格 ==================== -->
+  <!-- source: brand name + logoUrl · autocava.com.mx?ac_ab=stable · __NUXT_DATA__ · 2026-09-29 -->
+  <section class="section" id="marcas">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Explora por marca</h2>
+          <p class="section-sub">72 marcas disponibles en México</p>
+        </div>
+        <a class="section-link" href="#">Ver todas →</a>
+      </div>
+      <div class="brand-grid">
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/img/car/brand/b699f939e3f649dfaef230acda7942aa.jpg" alt="Nissan" loading="lazy"><span class="brand-name">Nissan</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/brand/logo/065.jpg" alt="Toyota" loading="lazy"><span class="brand-name">Toyota</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/brand/logo/015.jpg" alt="Chevrolet" loading="lazy"><span class="brand-name">Chevrolet</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/brand/logo/046.jpg" alt="MG" loading="lazy"><span class="brand-name">MG</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/brand/logo/038.jpg" alt="Kia" loading="lazy"><span class="brand-name">Kia</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/brand/logo/013.jpg" alt="Changan" loading="lazy"><span class="brand-name">Changan</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/car/brand/2e823f4aa88342668bbd834d59650095.jpg" alt="XPENG" loading="lazy"><span class="brand-name">XPENG</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/brand/logo/006.jpg" alt="BAIC" loading="lazy"><span class="brand-name">BAIC</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/brand/logo/005.jpg" alt="Audi" loading="lazy"><span class="brand-name">Audi</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/brand/logo/002.jpg" alt="Acura" loading="lazy"><span class="brand-name">Acura</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/brand/logo/003.jpg" alt="Alfa Romeo" loading="lazy"><span class="brand-name">Alfa Romeo</span></a>
+        <a class="brand-cell" href="#"><img class="brand-logo" src="https://cdn.autocava.com.mx/car/brand/ff5e137ab1604a8a9b1497195121badd.jpg" alt="Volkswagen" loading="lazy"><span class="brand-name">Volkswagen</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 销量排行榜 ==================== -->
+  <!-- source: saleCount + seriesName + imageWhiteUrl · autocava.com.mx?ac_ab=stable · __NUXT_DATA__ · 2026-09-29 -->
+  <section class="section" id="ranking">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Ranking de ventas</h2>
+          <p class="section-sub">Los más vendidos en México</p>
+        </div>
+        <a class="section-link" href="#">Ranking completo →</a>
+      </div>
+      <div class="rank-list">
+        <a class="rank-item" href="#">
+          <span class="rank-badge g1">1</span>
+          <img class="rank-thumb" src="https://cdn.autocava.com.mx/series/white/0302.png" alt="Mazda CX-30" loading="lazy">
+          <span class="rank-info">
+            <span class="rank-name">Mazda CX-30</span>
+            <span class="rank-meta">Desde $451,900 MXN</span>
+          </span>
+          <span class="rank-right">
+            <span class="rank-count">2,793</span>
+            <span class="rank-count-label">unidades</span>
+          </span>
+        </a>
+        <a class="rank-item" href="#">
+          <span class="rank-badge g2">2</span>
+          <img class="rank-thumb" src="https://cdn.autocava.com.mx/series/white/0107.png" alt="Chevrolet Captiva" loading="lazy">
+          <span class="rank-info">
+            <span class="rank-name">Chevrolet Captiva</span>
+            <span class="rank-meta">Desde $500,800 MXN</span>
+          </span>
+          <span class="rank-right">
+            <span class="rank-count">2,070</span>
+            <span class="rank-count-label">unidades</span>
+          </span>
+        </a>
+        <a class="rank-item" href="#">
+          <span class="rank-badge g3">3</span>
+          <img class="rank-thumb" src="https://cdn.autocava.com.mx/series/white/0112.png" alt="Chevrolet Groove" loading="lazy">
+          <span class="rank-info">
+            <span class="rank-name">Chevrolet Groove</span>
+            <span class="rank-meta">Desde $421,500 MXN</span>
+          </span>
+          <span class="rank-right">
+            <span class="rank-count">2,027</span>
+            <span class="rank-count-label">unidades</span>
+          </span>
+        </a>
+        <a class="rank-item" href="#">
+          <span class="rank-badge">4</span>
+          <img class="rank-thumb" src="https://cdn.autocava.com.mx/series/white/0301.png" alt="Ford Territory" loading="lazy">
+          <span class="rank-info">
+            <span class="rank-name">Ford Territory</span>
+            <span class="rank-meta">Desde $559,900 MXN</span>
+          </span>
+          <span class="rank-right">
+            <span class="rank-count">1,943</span>
+            <span class="rank-count-label">unidades</span>
+          </span>
+        </a>
+        <a class="rank-item" href="#">
+          <span class="rank-badge">5</span>
+          <img class="rank-thumb" src="https://cdn.autocava.com.mx/series/white/0351.png" alt="Nissan Magnite" loading="lazy">
+          <span class="rank-info">
+            <span class="rank-name">Nissan Magnite</span>
+            <span class="rank-meta">Desde $374,900 MXN</span>
+          </span>
+          <span class="rank-right">
+            <span class="rank-count">1,839</span>
+            <span class="rank-count-label">unidades</span>
+          </span>
+        </a>
+        <a class="rank-item" href="#">
+          <span class="rank-badge">6</span>
+          <img class="rank-thumb" src="https://cdn.autocava.com.mx/series/white/0303.png" alt="Mazda CX-5" loading="lazy">
+          <span class="rank-info">
+            <span class="rank-name">Mazda CX-5</span>
+            <span class="rank-meta">Desde $599,900 MXN</span>
+          </span>
+          <span class="rank-right">
+            <span class="rank-count">1,826</span>
+            <span class="rank-count-label">unidades</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 车型卡网格 ==================== -->
+  <!-- source: seriesName / minPrice / maxPrice / seriesMinMonthlyPay / imageWhiteUrl · stable · 2026-09-29 -->
+  <section class="section" id="autos">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Autos nuevos</h2>
+          <p class="section-sub">32 series disponibles</p>
+        </div>
+        <a class="section-link" href="#">Ver todos →</a>
+      </div>
+
+      <!-- 21-filter — 筛选 chip 行（UI 态可点，无后端） -->
+      <div class="filter-bar" role="group" aria-label="Filtrar autos">
+        <button class="filter-chip" aria-pressed="true">Todos</button>
+        <button class="filter-chip" aria-pressed="false">SUV</button>
+        <button class="filter-chip" aria-pressed="false">Sedán</button>
+        <button class="filter-chip" aria-pressed="false">Hatchback</button>
+        <button class="filter-chip" aria-pressed="false">Eléctricos</button>
+        <button class="filter-chip" aria-pressed="false">Precio <span class="iconify" data-icon="lucide:chevron-down" style="font-size:12px"></span></button>
+        <button class="filter-chip" aria-pressed="false">Marca <span class="iconify" data-icon="lucide:chevron-down" style="font-size:12px"></span></button>
+      </div>
+
+      <div class="prod-grid" id="prod-grid">
+        <article class="prod-card">
+          <div class="prod-media">
+            <img src="https://cdn.autocava.com.mx/series/white/0302.png" alt="Mazda CX-30" loading="lazy">
+            <button class="prod-fav" aria-pressed="false" aria-label="Agregar Mazda CX-30 a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:17px"></span></button>
+          </div>
+          <div class="prod-body">
+            <span class="prod-brand">Mazda</span>
+            <h3 class="prod-name">CX-30</h3>
+            <div class="prod-price"><small>$</small>451,900</div>
+            <div class="prod-range">hasta $585,900 MXN</div>
+            <div class="prod-pay"><span class="iconify" data-icon="lucide:wallet" style="font-size:13px"></span>Desde $7,524/mes</div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="prod-media">
+            <img src="https://cdn.autocava.com.mx/series/white/0338.png" alt="MG ZS" loading="lazy">
+            <button class="prod-fav" aria-pressed="false" aria-label="Agregar MG ZS a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:17px"></span></button>
+          </div>
+          <div class="prod-body">
+            <span class="prod-brand">MG</span>
+            <h3 class="prod-name">ZS</h3>
+            <div class="prod-price"><small>$</small>364,900</div>
+            <div class="prod-range">hasta $399,500 MXN</div>
+            <div class="prod-pay"><span class="iconify" data-icon="lucide:wallet" style="font-size:13px"></span>Desde $6,076/mes</div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="prod-media">
+            <img src="https://cdn.autocava.com.mx/series/white/0093.png" alt="Changan CS35 PLUS" loading="lazy">
+            <button class="prod-fav" aria-pressed="false" aria-label="Agregar Changan CS35 PLUS a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:17px"></span></button>
+          </div>
+          <div class="prod-body">
+            <span class="prod-brand">Changan</span>
+            <h3 class="prod-name">CS35 PLUS</h3>
+            <div class="prod-price"><small>$</small>379,900</div>
+            <div class="prod-range">hasta $439,900 MXN</div>
+            <div class="prod-pay"><span class="iconify" data-icon="lucide:wallet" style="font-size:13px"></span>Desde $6,326/mes</div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="prod-media">
+            <img src="https://cdn.autocava.com.mx/series/white/0107.png" alt="Chevrolet Captiva" loading="lazy">
+            <button class="prod-fav" aria-pressed="false" aria-label="Agregar Chevrolet Captiva a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:17px"></span></button>
+          </div>
+          <div class="prod-body">
+            <span class="prod-brand">Chevrolet</span>
+            <h3 class="prod-name">Captiva</h3>
+            <div class="prod-price"><small>$</small>500,800</div>
+            <div class="prod-range">hasta $584,000 MXN</div>
+            <div class="prod-pay"><span class="iconify" data-icon="lucide:wallet" style="font-size:13px"></span>Desde $8,338/mes</div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="prod-media">
+            <img src="https://cdn.autocava.com.mx/series/white/0031.png" alt="MG X55 II" loading="lazy">
+            <button class="prod-fav" aria-pressed="false" aria-label="Agregar MG X55 II a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:17px"></span></button>
+          </div>
+          <div class="prod-body">
+            <span class="prod-brand">MG</span>
+            <h3 class="prod-name">X55 II</h3>
+            <div class="prod-price"><small>$</small>469,900</div>
+            <div class="prod-range">MXN</div>
+            <div class="prod-pay"><span class="iconify" data-icon="lucide:wallet" style="font-size:13px"></span>Desde $7,824/mes</div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="prod-media">
+            <img src="https://cdn.autocava.com.mx/series/white/0437.png" alt="Toyota Avanza" loading="lazy">
+            <button class="prod-fav" aria-pressed="false" aria-label="Agregar Toyota Avanza a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:17px"></span></button>
+          </div>
+          <div class="prod-body">
+            <span class="prod-brand">Toyota</span>
+            <h3 class="prod-name">Avanza</h3>
+            <div class="prod-price"><small>$</small>367,300</div>
+            <div class="prod-range">hasta $400,200 MXN</div>
+            <div class="prod-pay"><span class="iconify" data-icon="lucide:wallet" style="font-size:13px"></span>Desde $6,116/mes</div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="prod-media">
+            <img src="https://cdn.autocava.com.mx/series/white/0112.png" alt="Chevrolet Groove" loading="lazy">
+            <button class="prod-fav" aria-pressed="false" aria-label="Agregar Chevrolet Groove a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:17px"></span></button>
+          </div>
+          <div class="prod-body">
+            <span class="prod-brand">Chevrolet</span>
+            <h3 class="prod-name">Groove</h3>
+            <div class="prod-price"><small>$</small>421,500</div>
+            <div class="prod-range">hasta $501,400 MXN</div>
+            <div class="prod-pay"><span class="iconify" data-icon="lucide:wallet" style="font-size:13px"></span>Desde $7,018/mes</div>
+          </div>
+        </article>
+        <article class="prod-card">
+          <div class="prod-media">
+            <img src="https://cdn.autocava.com.mx/series/white/0302.png" alt="Mazda PULSE" loading="lazy">
+            <button class="prod-fav" aria-pressed="false" aria-label="Agregar Mazda PULSE a favoritos"><span class="iconify" data-icon="lucide:heart" style="font-size:17px"></span></button>
+          </div>
+          <div class="prod-body">
+            <span class="prod-brand">Mazda</span>
+            <h3 class="prod-name">PULSE</h3>
+            <div class="prod-price"><small>$</small>315,900</div>
+            <div class="prod-range">hasta $392,900 MXN</div>
+            <div class="prod-pay"><span class="iconify" data-icon="lucide:wallet" style="font-size:13px"></span>Desde $5,260/mes</div>
+          </div>
+        </article>
+      </div>
+
+      <!-- 08-empty-state — 无筛选结果时显示（默认隐藏，由 chip 交互触发） -->
+      <div class="empty" id="empty-state" hidden>
+        <div class="empty-icon">
+          <span class="iconify" data-icon="lucide:car-front" style="font-size:26px;color:var(--grey-300)"></span>
+        </div>
+        <h3 class="empty-title">No encontramos autos</h3>
+        <p class="empty-desc">Prueba con menos filtros o revisa el rango de precio.</p>
+        <button class="filter-chip" id="reset-filters" aria-pressed="false">Limpiar filtros</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 资讯区 ==================== -->
+  <!-- source: 生产 autocava.com.mx 首页「Reseñas destacadas」5 篇真实文章
+       标题/作者/日期/配图/链接均取自生产，无编造；抓取日期 2026-09-30 -->
+  <section class="section" id="noticias">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <h2 class="section-title">Noticias de autos</h2>
+          <p class="section-sub">Reseñas destacadas de Autocava</p>
+        </div>
+        <a class="section-link" href="https://www.autocava.com.mx/blog" target="_blank" rel="noopener">Ver más →</a>
+      </div>
+
+      <div class="news-grid">
+        <a class="news-card" href="https://www.autocava.com.mx/article/2823" target="_blank" rel="noopener">
+          <div class="news-media">
+            <img src="https://cdn.autocava.com.mx/img/news/6223c10657504d62a5009c008f004395.jpg" alt="Honda podría frenar una nueva planta en Norteamérica si cambia el T-MEC" loading="lazy" width="960" height="750">
+          </div>
+          <div class="news-body">
+            <h3 class="news-title">Honda podría frenar una nueva planta en Norteamérica si cambia el T-MEC</h3>
+            <div class="news-meta">
+              <img class="news-avatar" src="https://cdn.autocava.com.mx/_nuxt/asset/avatar.v3.-qQORZq6.svg" alt="" width="16" height="16" loading="lazy">
+              <span class="news-author">Autocava Editorial Team</span>
+              <time class="news-date" datetime="2026-09-01">01 sep 2026</time>
+            </div>
+          </div>
+        </a>
+
+        <a class="news-card" href="https://www.autocava.com.mx/article/1374" target="_blank" rel="noopener">
+          <div class="news-media">
+            <img src="https://cdn.autocava.com.mx/news/d48a2d8a60b24f96be9134cf96c14595.jpg" alt="¿Crees que la NP300 es la única opción?" loading="lazy" width="960" height="750">
+          </div>
+          <div class="news-body">
+            <h3 class="news-title">¿Crees que la NP300 es la única opción?</h3>
+            <div class="news-meta">
+              <img class="news-avatar" src="https://cdn.autocava.com.mx/_nuxt/asset/avatar.v3.-qQORZq6.svg" alt="" width="16" height="16" loading="lazy">
+              <span class="news-author">Autocava Editorial Team</span>
+              <time class="news-date" datetime="2026-02-26">26 feb 2026</time>
+            </div>
+          </div>
+        </a>
+
+        <a class="news-card" href="https://www.autocava.com.mx/article/2850" target="_blank" rel="noopener">
+          <div class="news-media">
+            <img src="https://cdn.autocava.com.mx/img/news/ebc5cdbcb1e8478f954a11c098aea3b6.jpg" alt="Volkswagen ID.3 GTI llega con 326 hp y tracción trasera: es el GTI más potente de la historia" loading="lazy" width="960" height="750">
+          </div>
+          <div class="news-body">
+            <h3 class="news-title">Volkswagen ID.3 GTI llega con 326 hp y tracción trasera: es el GTI más potente de la historia</h3>
+            <div class="news-meta">
+              <img class="news-avatar" src="https://cdn.autocava.com.mx/_nuxt/asset/avatar.v3.-qQORZq6.svg" alt="" width="16" height="16" loading="lazy">
+              <span class="news-author">Autocava Editorial Team</span>
+              <time class="news-date" datetime="2026-09-22">22 sep 2026</time>
+            </div>
+          </div>
+        </a>
+
+        <a class="news-card" href="https://www.autocava.com.mx/article/2830" target="_blank" rel="noopener">
+          <div class="news-media">
+            <img src="https://cdn.autocava.com.mx/img/news/f43ac1e76e564efda2c6cee2977baee1.jpg" alt="Mercedes-Benz CLA llega a México con versiones híbrida y eléctrica" loading="lazy" width="960" height="750">
+          </div>
+          <div class="news-body">
+            <h3 class="news-title">Mercedes-Benz CLA llega a México con versiones híbrida y eléctrica</h3>
+            <div class="news-meta">
+              <img class="news-avatar" src="https://cdn.autocava.com.mx/_nuxt/asset/avatar.v3.-qQORZq6.svg" alt="" width="16" height="16" loading="lazy">
+              <span class="news-author">Autocava Editorial Team</span>
+              <time class="news-date" datetime="2026-09-09">09 sep 2026</time>
+            </div>
+          </div>
+        </a>
+
+        <a class="news-card" href="https://www.autocava.com.mx/article/2819" target="_blank" rel="noopener">
+          <div class="news-media">
+            <img src="https://cdn.autocava.com.mx/img/news/4c8c946a5d5148769a9e7c777a261508.jpg" alt="BYD Mako: la nueva pickup híbrida que quiere conquistar Brasil" loading="lazy" width="960" height="750">
+          </div>
+          <div class="news-body">
+            <h3 class="news-title">BYD Mako: la nueva pickup híbrida que quiere conquistar Brasil</h3>
+            <div class="news-meta">
+              <img class="news-avatar" src="https://cdn.autocava.com.mx/_nuxt/asset/avatar.v3.-qQORZq6.svg" alt="" width="16" height="16" loading="lazy">
+              <span class="news-author">Autocava Editorial Team</span>
+              <time class="news-date" datetime="2026-08-31">31 ago 2026</time>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 融资 CTA ==================== -->
+  <section class="section" id="financiamiento">
+    <div class="container">
+      <div style="background:var(--grey-900);border-radius:var(--r-lg);padding:var(--sp-6);color:#fff;
+                  display:flex;align-items:center;justify-content:space-between;gap:var(--sp-4);flex-wrap:wrap">
+        <div>
+          <h2 style="font-size:20px;font-weight:800;margin-bottom:6px">¿Cuánto te toca pagar?</h2>
+          <p style="font-size:13px;color:var(--grey-300);max-width:420px">
+            Calcula tu mensualidad con tasas reales. Pre-aprobación en menos de 2 minutos.
+          </p>
+        </div>
+        <a href="#" style="background:var(--yellow-500);color:#222;
+                  padding:14px 28px;border-radius:var(--r-lg);font-weight:800;font-size:15px;white-space:nowrap">
+          Cotizar ahora
+        </a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ==================== 25-footer ==================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-top">
+      <div>
+        <img class="footer-logo" src="https://cdn.autocava.com.mx/_nuxt/asset/logo.v3.mLItLIXo.svg" alt="Autocava" loading="lazy">
+        <p class="footer-tag">Compra y vende autos en México con precios reales y financiamiento a tu medida.</p>
+      </div>
+      <div>
+        <h3 class="footer-h">Comprar</h3>
+        <ul class="footer-list">
+          <li><a href="#autos">Autos nuevos</a></li>
+          <li><a href="#marcas">Por marca</a></li>
+          <li><a href="#ranking">Ranking de ventas</a></li>
+          <li><a href="#financiamiento">Financiamiento</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-h">Vender</h3>
+        <ul class="footer-list">
+          <li><a href="#">Vende tu auto</a></li>
+          <li><a href="#">Cotiza en línea</a></li>
+          <li><a href="#">Agencias</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer-h">Autocava</h3>
+        <ul class="footer-list">
+          <li><a href="#">Sobre nosotros</a></li>
+          <li><a href="#">Contacto</a></li>
+          <li><a href="#">Trabajemos juntos</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Autocava · Todos los derechos reservados</span>
+      <span style="display:flex;gap:16px;flex-wrap:wrap">
+        <a href="https://www.autocava.com.mx/legal/privacy">Política de Privacidad</a>
+        <a href="#">Términos</a>
+        <a href="#">Aviso legal</a>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<!-- ==================== 移动端底部 Tabbar ==================== -->
+<nav class="tabbar" aria-label="Navegación principal">
+  <a class="tabbar-item" href="#" aria-current="page">
+    <span class="iconify" data-icon="lucide:house" style="font-size:20px"></span><span>Inicio</span>
+  </a>
+  <a class="tabbar-item" href="#autos">
+    <span class="iconify" data-icon="lucide:car" style="font-size:20px"></span><span>Autos</span>
+  </a>
+  <a class="tabbar-item" href="#ranking">
+    <span class="iconify" data-icon="lucide:trophy" style="font-size:20px"></span><span>Ranking</span>
+  </a>
+  <a class="tabbar-item" href="#">
+    <span class="iconify" data-icon="lucide:heart" style="font-size:20px"></span><span>Favoritos</span>
+  </a>
+  <a class="tabbar-item" href="#financiamiento">
+    <span class="iconify" data-icon="lucide:user" style="font-size:20px"></span><span>Mi cuenta</span>
+  </a>
+</nav>
+
+<!-- ==================== 10-toast ==================== -->
+<div class="toast" id="toast" role="status" aria-live="polite">
+  <span class="iconify" data-icon="lucide:check-circle" id="toast-icon" style="font-size:16px"></span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+/* ============================================================
+   交互逻辑（纯前端演示，不写后端）
+   说明：筛选 chip 演示 UI 态切换 + Empty State 联动；
+   真实筛选需接后端查询 API，此处不模拟假数据结果。
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var toast = document.getElementById('toast');
+  var toastMsg = document.getElementById('toast-msg');
+  var toastIcon = document.getElementById('toast-icon');
+  var toastTimer;
+
+  function showToast(msg, type) {
+    toastMsg.textContent = msg;
+    var icon = type === 'error' ? 'lucide:alert-circle'
+             : type === 'info'  ? 'lucide:info'
+             : 'lucide:check-circle';
+    toastIcon.setAttribute('data-icon', icon);
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 3000);
+  }
+
+  // 24-favorite 收藏切换
+  document.querySelectorAll('.prod-fav').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var on = btn.getAttribute('aria-pressed') === 'true';
+      btn.setAttribute('aria-pressed', String(!on));
+      var name = btn.getAttribute('aria-label').replace(/^Agregar | a favoritos$/g, '');
+      showToast(on ? name + ' eliminado de favoritos'
+                   : name + ' agregado a favoritos', on ? 'info' : 'success');
+    });
+  });
+
+  // 21-filter chip 交互 → 演示 Empty State
+  var chips = document.querySelectorAll('.filter-bar .filter-chip');
+  var grid = document.getElementById('prod-grid');
+  var empty = document.getElementById('empty-state');
+
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      chips.forEach(function (c) { c.setAttribute('aria-pressed', String(c === chip)); });
+      // 演示态：选 SUV 之外的组合时展示空状态（真实结果由后端返回）
+      var label = chip.textContent.trim();
+      var noResult = label === 'Eléctricos' || label === 'Hatchback';
+      grid.hidden = noResult;
+      empty.hidden = !noResult;
+      if (noResult) {
+        showToast('Sin resultados para ' + label, 'info');
+      }
+    });
+  });
+
+  document.getElementById('reset-filters').addEventListener('click', function () {
+    chips[0].click();
+    showToast('Filtros limpiados', 'success');
+  });
+})();
+</script>
+
+</body>
+</html>

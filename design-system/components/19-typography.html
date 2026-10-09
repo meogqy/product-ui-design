@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<!--
+  Typography · 大标题 / 标题 / 字组 typography 集合展示
+  来源：Figma 「大标题 (93)」+「标题 (19)」+「字组 (1)」共 113 次实例抽取
+  用途：把散落的 typography 集合化展示（H1-H6、Big Title、Display、数字大字、强调数字、辅助文字、Group）
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Typography Component · UI Design System</title>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+:root {
+  --yellow-50: #FFFAED;
+  --yellow-500: #FFCF20;
+  --blue-500: #0056FA;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-700: #555555;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--grey-50);
+  color: var(--grey-900);
+  padding: 32px 16px;
+  line-height: 1.5;
+}
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  background: var(--white);
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 16px rgba(10,25,41,0.06);
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.lead {
+  color: var(--grey-600);
+  font-size: 14px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--grey-100);
+}
+
+/* Typography demo row */
+.t-row {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 16px 0;
+  border-bottom: 1px dashed var(--grey-100);
+}
+.t-sample {
+  flex: 1;
+  min-width: 0;
+}
+.t-meta {
+  flex-shrink: 0;
+  width: 200px;
+  font-size: 12px;
+  color: var(--grey-400);
+  font-family: 'SF Mono', monospace;
+}
+
+/* Display & Hero */
+.t-display-1 {
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--grey-900);
+}
+.t-display-2 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--grey-900);
+}
+.t-h1 { font-size: 32px; font-weight: 700; line-height: 1.2; color: var(--grey-900); }
+.t-h2 { font-size: 24px; font-weight: 700; line-height: 1.25; color: var(--grey-900); }
+.t-h3 { font-size: 20px; font-weight: 600; line-height: 1.3; color: var(--grey-900); }
+.t-h4 { font-size: 18px; font-weight: 600; line-height: 1.4; color: var(--grey-900); }
+.t-h5 { font-size: 16px; font-weight: 600; line-height: 1.5; color: var(--grey-900); }
+.t-h6 { font-size: 14px; font-weight: 600; line-height: 1.5; color: var(--grey-700); }
+.t-body-lg { font-size: 18px; font-weight: 400; line-height: 1.6; color: var(--grey-700); }
+.t-body { font-size: 16px; font-weight: 400; line-height: 1.6; color: var(--grey-700); }
+.t-body-sm { font-size: 14px; font-weight: 400; line-height: 1.6; color: var(--grey-600); }
+.t-caption { font-size: 12px; font-weight: 400; line-height: 1.5; color: var(--grey-400); }
+.t-overline {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+}
+
+/* 字组 · 数字 + 单位 */
+.t-number-block { display: flex; align-items: baseline; gap: 8px; }
+.t-number-xg { font-size: 56px; font-weight: 700; line-height: 1; color: var(--grey-900); font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.t-number-lg { font-size: 32px; font-weight: 700; line-height: 1; color: var(--grey-900); font-variant-numeric: tabular-nums; }
+.t-number-md { font-size: 20px; font-weight: 700; line-height: 1; color: var(--grey-900); font-variant-numeric: tabular-nums; }
+.t-unit { font-size: 14px; font-weight: 500; color: var(--grey-400); }
+
+/* 强调数字 · 价格 */
+.t-price-block { display: flex; align-items: baseline; gap: 6px; }
+.t-price-main { font-size: 28px; font-weight: 700; color: var(--grey-900); font-variant-numeric: tabular-nums; }
+.t-price-currency { font-size: 14px; font-weight: 600; color: var(--grey-600); }
+.t-price-original {
+  font-size: 14px;
+  color: var(--grey-400);
+  text-decoration: line-through;
+}
+
+/* 字组 · 标题 + 副标题 */
+.t-title-group { display: flex; flex-direction: column; gap: 4px; }
+.t-title-group .t-h2 { margin: 0; }
+.t-title-group .t-sub { font-size: 14px; color: var(--grey-400); }
+.t-title-group .t-tag-row { display: flex; gap: 6px; margin-top: 4px; }
+.t-title-tag {
+  background: var(--yellow-50);
+  color: var(--grey-900);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Demo boxes */
+.demo-box {
+  background: var(--grey-50);
+  padding: 24px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+}
+.section-desc {
+  color: var(--grey-600);
+  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--yellow-50);
+  border-left: 3px solid var(--yellow-500);
+  border-radius: 4px;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 32px 0 16px;
+}
+
+table.variants {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+table.variants th, table.variants td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-100);
+  text-align: left;
+}
+table.variants th {
+  background: var(--grey-50);
+  color: var(--grey-600);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🔤 Typography · 字体层级 / 大标题 / 字组</h1>
+  <p class="lead">
+    来源：Figma 「大标题 (93)」+「标题 (19)」+「字组 (1)」共 113 次实例抽取<br>
+    14 个 variant · 覆盖 H1-H6 + Display + Body + Caption + 数字大字 + 字组组合
+  </p>
+
+  <h2>Display & Hero · 营销大标题</h2>
+  <div class="demo-box">
+    <div class="t-row">
+      <div class="t-sample"><div class="t-display-1">$389,900 MXN</div></div>
+      <div class="t-meta">display-1 · 64px / 700<br>letter-spacing -0.02em</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample"><div class="t-display-2">Compra inteligente</div></div>
+      <div class="t-meta">display-2 · 48px / 700<br>letter-spacing -0.01em</div>
+    </div>
+  </div>
+
+  <h2>Heading · H1-H6</h2>
+  <div class="demo-box">
+    <div class="t-row">
+      <div class="t-sample"><h1 class="t-h1">H1 · 模块主标题</h1></div>
+      <div class="t-meta">h1 · 32px / 700<br>line-height 1.2</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample"><h2 class="t-h2">H2 · 区块标题</h2></div>
+      <div class="t-meta">h2 · 24px / 700<br>line-height 1.25</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample"><h3 class="t-h3">H3 · 卡片标题</h3></div>
+      <div class="t-meta">h3 · 20px / 600<br>line-height 1.3</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample"><h4 class="t-h4">H4 · 子标题</h4></div>
+      <div class="t-meta">h4 · 18px / 600<br>line-height 1.4</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample"><h5 class="t-h5">H5 · 强调正文</h5></div>
+      <div class="t-meta">h5 · 16px / 600<br>line-height 1.5</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample"><h6 class="t-h6">H6 · 小标题</h6></div>
+      <div class="t-meta">h6 · 14px / 600<br>line-height 1.5</div>
+    </div>
+  </div>
+
+  <h2>Body & Caption · 正文层级</h2>
+  <div class="demo-box">
+    <div class="t-row">
+      <div class="t-sample"><p class="t-body-lg">Body-lg · 大正文，用于产品详情描述、报告摘要。</p></div>
+      <div class="t-meta">body-lg · 18px / 400<br>color grey-700</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample"><p class="t-body">Body · 默认正文，用于段落文字、说明文案。</p></div>
+      <div class="t-meta">body · 16px / 400<br>color grey-700</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample"><p class="t-body-sm">Body-sm · 小正文，用于辅助说明、二级信息。</p></div>
+      <div class="t-meta">body-sm · 14px / 400<br>color grey-600</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample"><span class="t-caption">Caption · 极小辅助文字</span></div>
+      <div class="t-meta">caption · 12px / 400<br>color grey-400</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample"><span class="t-overline">Overline · 顶部标识</span></div>
+      <div class="t-meta">overline · 11px / 700<br>letter-spacing 0.08em</div>
+    </div>
+  </div>
+
+  <h2>数字大字 · 价格 / 统计 / 续航</h2>
+  <p class="section-desc">数字独立展示场景（价格、里程、评分）。tabular-nums 保证数字等宽对齐。</p>
+  <div class="demo-box">
+    <div class="t-row">
+      <div class="t-sample">
+        <div class="t-number-block">
+          <span class="t-number-xg">450</span>
+          <span class="t-unit">km</span>
+        </div>
+      </div>
+      <div class="t-meta">number-xg · 56px / 700<br>续航 / 距离</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample">
+        <div class="t-number-block">
+          <span class="t-number-lg">8.7</span>
+          <span class="t-unit">/10</span>
+        </div>
+      </div>
+      <div class="t-meta">number-lg · 32px / 700<br>评分</div>
+    </div>
+    <div class="t-row">
+      <div class="t-sample">
+        <div class="t-price-block">
+          <span class="t-price-currency">$</span>
+          <span class="t-price-main">389,900</span>
+          <span class="t-unit">MXN</span>
+          <span class="t-price-original">$429,900</span>
+        </div>
+      </div>
+      <div class="t-meta">price · 28px / 700<br>价格 + 原价</div>
+    </div>
+  </div>
+
+  <h2>字组 · Title + Sub + Tags 组合</h2>
+  <p class="section-desc">从 Figma 「字组」抽取的标题组合模式，强调信息层级打包展示。</p>
+  <div class="demo-box">
+    <div class="t-title-group">
+      <div class="t-overline">2026 新款</div>
+      <h2 class="t-h2">Nissan Versa Exclusive</h2>
+      <div class="t-sub">紧凑型轿车 · 1.6L · CVT · 4 门</div>
+      <div class="t-tag-row">
+        <span class="t-title-tag"><span class="iconify" data-icon="lucide:flame" style="font-size:13px"></span> 销量 #1</span>
+        <span class="t-title-tag"><span class="iconify" data-icon="lucide:zap" style="font-size:13px"></span> 节能</span>
+        <span class="t-title-tag"><span class="iconify" data-icon="lucide:gem" style="font-size:13px"></span> 8.7/10</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-box">
+    <div class="t-title-group">
+      <h2 class="t-h3">购车流程</h2>
+      <div class="t-sub">5 步即可提车，全程平均 3 天</div>
+    </div>
+  </div>
+
+  <h2>🎨 对应 Design Tokens</h2>
+  <table class="variants">
+    <thead><tr><th>类型</th><th>size / weight</th><th>color token</th></tr></thead>
+    <tbody>
+      <tr><td>Display 1-2</td><td>64/48 · 700</td><td>--grey-900</td></tr>
+      <tr><td>H1-H2</td><td>32/24 · 700</td><td>--grey-900</td></tr>
+      <tr><td>H3-H5</td><td>20/18/16 · 600</td><td>--grey-900</td></tr>
+      <tr><td>H6</td><td>14 · 600</td><td>--grey-700</td></tr>
+      <tr><td>Body-lg</td><td>18 · 400</td><td>--grey-700</td></tr>
+      <tr><td>Body / Body-sm</td><td>16/14 · 400</td><td>--grey-700 / --grey-600</td></tr>
+      <tr><td>Caption</td><td>12 · 400</td><td>--grey-400</td></tr>
+      <tr><td>Overline</td><td>11 · 700 uppercase</td><td>--grey-400</td></tr>
+      <tr><td>Number xg/lg/md</td><td>56/32/20 · 700</td><td>--grey-900 · tabular-nums</td></tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<!--
+  Modal · 模态对话框组件 reference
+  来源：参考组件库（3 个 variant：信息提示 / 确认操作 / 自定义内容）
+  同步：2026-09-29
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Modal Component · UI Design System</title>
+<style>
+:root {
+  --yellow-500: #FFCF20;
+  --yellow-600: #E0A504;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+  --red-500: #A8071A;
+  --green-500: #7CB305;
+  --blue-500: #0056FA;
+
+  --font-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --fs-h1: 24px; --fs-h2: 20px; --fs-h3: 18px;
+  --fs-body: 14px; --fs-small: 12px;
+
+  --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px;
+
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-card: 0 4px 16px rgba(10, 25, 41, 0.06);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.45);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--grey-50);
+  color: var(--grey-900);
+  padding: 24px 16px;
+  line-height: 1.5;
+}
+.header {
+  max-width: 1000px;
+  margin: 0 auto 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--yellow-500);
+}
+.header h1 { font-size: var(--fs-h1); font-weight: 600; margin-bottom: 8px; }
+.header .meta { font-size: var(--fs-body); color: var(--grey-600); }
+.header .meta code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: var(--fs-small); }
+.container { max-width: 1000px; margin: 0 auto; }
+
+/* === Modal Overlay（遮罩） === */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 16px;
+}
+
+/* === Modal 容器 === */
+.modal {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modal-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes modal-in {
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--grey-100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.modal-title {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  color: var(--grey-900);
+}
+.modal-close {
+  width: 32px; height: 32px;
+  border: none;
+  background: var(--grey-50);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: var(--grey-600);
+}
+.modal-body {
+  padding: 24px;
+  font-size: var(--fs-body);
+  color: var(--grey-600);
+  line-height: 1.6;
+}
+.modal-body .icon-wrap {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--grey-50);
+  color: var(--grey-600);
+  font-size: 28px;
+}
+.modal-body.danger .icon-wrap {
+  background: #F6E6E8;
+  color: var(--red-500);
+}
+.modal-body.success .icon-wrap {
+  background: #F2F7E6;
+  color: var(--green-500);
+}
+.modal-body .title {
+  font-size: var(--fs-h3);
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+  color: var(--grey-900);
+}
+.modal-body .desc {
+  text-align: center;
+}
+.modal-footer {
+  padding: 16px 24px 20px;
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+/* === Button 复用 === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: var(--radius-md);
+  white-space: nowrap;
+  text-align: center;
+  text-decoration: none;
+}
+.btn.size-44 {
+  height: 44px;
+  padding: 0 var(--space-4);
+  font-size: var(--fs-body);
+  font-weight: 500;
+}
+.btn.color-yellow { background: var(--yellow-500); color: var(--grey-900); }
+.btn.color-grey { background: var(--grey-100); color: var(--grey-900); }
+.btn.color-red { background: var(--red-500); color: var(--white); }
+.btn.color-outline {
+  background: transparent;
+  border: 1px solid var(--grey-200);
+  color: var(--grey-900);
+}
+.btn.flex-1 { flex: 1; }
+
+.demo-section {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
+}
+.demo-section h2 { font-size: var(--fs-h2); font-weight: 600; margin-bottom: 16px; }
+.demo-label { font-size: var(--fs-small); color: #888; margin-bottom: 12px; }
+
+.spec-section {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-card);
+}
+.spec-section h2 { font-size: var(--fs-h2); font-weight: 600; margin-bottom: 16px; }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.spec-item { padding: 12px; background: var(--grey-50); border-radius: var(--radius-md); }
+.spec-item .label { font-size: var(--fs-small); color: var(--grey-600); margin-bottom: 4px; }
+.spec-item .value { font-size: var(--fs-body); font-weight: 600; }
+
+.usage-rules {
+  background: #FFF8E1;
+  border-left: 4px solid var(--yellow-500);
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+}
+.usage-rules h3 { font-size: var(--fs-h3); margin-bottom: 8px; }
+.usage-rules ul { list-style: none; padding: 0; font-size: var(--fs-body); }
+.usage-rules li { padding: 4px 0; }
+.usage-rules li::before { content: "→ "; color: var(--yellow-500); font-weight: 700; }
+</style>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+</head>
+<body>
+
+<div class="header">
+  <h1>Modal · 模态对话框</h1>
+  <p class="meta">
+    来源：参考组件库（3 个 variant：信息提示 / 确认操作 / 自定义内容）· 同步 2026-09-29 ·
+    用于阻断用户主流程的弹窗（确认 / 警告 / 表单）
+  </p>
+</div>
+
+<div class="container">
+
+  <div class="demo-section">
+    <h2>🎨 3 个 variant</h2>
+
+    <!-- Variant 1: 信息提示 -->
+    <div style="margin-bottom:32px">
+      <div class="demo-label">Variant 1 · 信息提示（成功 / 普通通知）</div>
+      <div class="modal-overlay" style="position:relative; background:var(--grey-100); border-radius:var(--radius-lg); padding:24px;">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-1">
+          <div class="modal-header">
+            <h3 class="modal-title" id="modal-title-1">Success notification</h3>
+            <button class="modal-close" aria-label="Close">
+              <span class="iconify" data-icon="lucide:x"></span>
+            </button>
+          </div>
+          <div class="modal-body success">
+            <div class="icon-wrap">
+              <span class="iconify" data-icon="lucide:check-circle"></span>
+            </div>
+            <h4 class="title">Action completed</h4>
+            <p class="desc">Your changes were applied successfully. You can now continue.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn size-44 color-grey flex-1">Cancel</button>
+            <button class="btn size-44 color-yellow flex-1">Got it</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variant 2: 确认操作（危险） -->
+    <div style="margin-bottom:32px">
+      <div class="demo-label">Variant 2 · 确认操作（危险 / 删除 / 不可逆）</div>
+      <div class="modal-overlay" style="position:relative; background:var(--grey-100); border-radius:var(--radius-lg); padding:24px;">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-2">
+          <div class="modal-header">
+            <h3 class="modal-title" id="modal-title-2">Confirm deletion</h3>
+            <button class="modal-close" aria-label="Close">
+              <span class="iconify" data-icon="lucide:x"></span>
+            </button>
+          </div>
+          <div class="modal-body danger">
+            <div class="icon-wrap">
+              <span class="iconify" data-icon="lucide:alert-triangle"></span>
+            </div>
+            <h4 class="title">Delete this item?</h4>
+            <p class="desc">This will permanently delete the item. This action cannot be undone.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn size-44 color-grey flex-1">Cancel</button>
+            <button class="btn size-44 color-red flex-1">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variant 3: 自定义内容（表单） -->
+    <div>
+      <div class="demo-label">Variant 3 · 自定义内容（表单 / 长内容）</div>
+      <div class="modal-overlay" style="position:relative; background:var(--grey-100); border-radius:var(--radius-lg); padding:24px;">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title-3">
+          <div class="modal-header">
+            <h3 class="modal-title" id="modal-title-3">Edit profile</h3>
+            <button class="modal-close" aria-label="Close">
+              <span class="iconify" data-icon="lucide:x"></span>
+            </button>
+          </div>
+          <div class="modal-body" style="padding-top:20px">
+            <!-- source: 样例字段值（非真实用户数据）· Edit profile 表单状态演示用 -->
+            <div style="margin-bottom:16px">
+              <label style="display:block; margin-bottom:6px; font-size:var(--fs-body); color:var(--grey-900)">Name</label>
+              <input type="text" value="Sample Name" placeholder="John Doe" style="width:100%; padding:10px 12px; border:1px solid var(--grey-200); border-radius:var(--radius-md); font-family:inherit; font-size:var(--fs-body);">
+            </div>
+            <div>
+              <label style="display:block; margin-bottom:6px; font-size:var(--fs-body); color:var(--grey-900)">Email</label>
+              <input type="email" value="sample@example.com" placeholder="name@example.com" style="width:100%; padding:10px 12px; border:1px solid var(--grey-200); border-radius:var(--radius-md); font-family:inherit; font-size:var(--fs-body);">
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn size-44 color-grey">Cancel</button>
+            <button class="btn size-44 color-yellow">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-section">
+    <h2>📐 Spec Details</h2>
+    <div class="spec-grid">
+      <div class="spec-item"><div class="label">Overlay 背景</div><div class="value">rgba(0,0,0,0.5) + backdrop-blur</div></div>
+      <div class="spec-item"><div class="label">Modal 最大宽度</div><div class="value">420px</div></div>
+      <div class="spec-item"><div class="label">Modal 最大高度</div><div class="value">90vh</div></div>
+      <div class="spec-item"><div class="label">圆角</div><div class="value">12px</div></div>
+      <div class="spec-item"><div class="label">阴影</div><div class="value">0 20px 60px rgba(0,0,0,0.45)</div></div>
+      <div class="spec-item"><div class="label">进入动画</div><div class="value">scale + opacity 0.3s</div></div>
+      <div class="spec-item"><div class="label">z-index</div><div class="value">1100</div></div>
+      <div class="spec-item"><div class="label">Padding header</div><div class="value">20px 24px</div></div>
+      <div class="spec-item"><div class="label">Padding body</div><div class="value">24px</div></div>
+      <div class="spec-item"><div class="label">Padding footer</div><div class="value">16px 24px 20px</div></div>
+    </div>
+  </div>
+
+  <div class="usage-rules">
+    <h3>🎯 使用规则</h3>
+    <ul>
+      <li><strong>信息提示</strong>：操作成功 / 普通通知 · 用 Yellow 主 CTA</li>
+      <li><strong>确认操作（危险）</strong>：删除 / 不可逆操作 · 用 Red 主 CTA + danger body</li>
+      <li><strong>自定义内容</strong>：表单 / 长内容 / 多步骤</li>
+      <li><strong>必须阻断主操作</strong>：点击 overlay 关闭 OR 主 CTA 触发</li>
+      <li><strong>ARIA</strong>：<code>role="dialog"</code> + <code>aria-modal="true"</code> + <code>aria-labelledby</code></li>
+      <li><strong>键盘</strong>：ESC 关闭 · Tab focus trap</li>
+      <li><strong>滚动</strong>：body 锁定滚动，避免背景跟随</li>
+      <li><strong>不要嵌套</strong>：modal 里不要再开 modal</li>
+    </ul>
+  </div>
+
+  <!-- ==================== Modal · Header / Footer slots ==================== -->
+  <div class="usage-rules">
+    <h2>🪟 Modal · Header / Footer slots</h2>
+    <p class="section-desc">从 Figma 「弹窗顶部导航」「弹窗底部输入框」共 28 次实例抽取。带 header navigation 与 footer input slot 的复合型 Modal。</p>
+
+    <h3>① 弹窗带顶部导航</h3>
+    <div class="demo-grid">
+      <div class="modal-with-header" role="dialog" aria-modal="true">
+        <div class="m-header">
+          <button class="m-header-back" aria-label="back">←</button>
+          <div class="m-header-title">选择车型</div>
+          <button class="m-header-close" aria-label="close">×</button>
+        </div>
+        <div class="m-body">
+          <div class="m-list">
+            <div class="m-list-item"><span class="iconify" data-icon="lucide:car"></span> <strong>Nissan Versa</strong> 2026</div>
+            <div class="m-list-item"><span class="iconify" data-icon="lucide:car-front"></span> <strong>MG ZS</strong> 2025</div>
+            <div class="m-list-item"><span class="iconify" data-icon="lucide:car"></span> <strong>Kia Rio</strong> 2025</div>
+            <div class="m-list-item"><span class="iconify" data-icon="lucide:flag"></span> <strong>Hyundai GRAND i10 HATCHBACK</strong> 2024</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>② 弹窗带底部输入框</h3>
+    <div class="demo-grid">
+      <div class="modal-with-footer" role="dialog" aria-modal="true">
+        <div class="m-body">
+          <div class="m-message">
+            <div class="m-avatar"><span class="iconify" data-icon="lucide:bot"></span></div>
+            <div class="m-bubble">您好，我是 CAVA 购车助手。<br>请告诉我您的预算范围？</div>
+          </div>
+        </div>
+        <div class="m-footer-input">
+          <input type="text" placeholder="输入您的预算…">
+          <button class="m-send-btn" aria-label="send"><span class="iconify" data-icon="lucide:send"></span></button>
+        </div>
+      </div>
+    </div>
+
+    <h3>③ 全功能型 · Header + Footer</h3>
+    <div class="demo-grid">
+      <div class="modal-full" role="dialog" aria-modal="true">
+        <div class="m-header">
+          <button class="m-header-back" aria-label="back">←</button>
+          <div class="m-header-title">填写联系信息</div>
+          <button class="m-header-close" aria-label="close">×</button>
+        </div>
+        <div class="m-body">
+          <label class="m-form-label">姓名</label>
+          <input class="m-form-input" type="text" placeholder="请输入您的姓名">
+          <label class="m-form-label">手机号</label>
+          <input class="m-form-input" type="tel" placeholder="10 位墨西哥手机号">
+          <p class="m-form-foot">
+            📋 点击「提交」即同意 <a href="#">Política de Privacidad</a> 与中介免责条款
+          </p>
+        </div>
+        <div class="m-footer-action">
+          <button class="m-btn-grey">稍后</button>
+          <button class="m-btn-yellow">提交</button>
+        </div>
+      </div>
+    </div>
+
+    <h4>📐 规范</h4>
+    <div class="spec-list">
+      <div class="spec-item"><div class="label">Header 高度</div><div class="value">48px · 标题居中 · 字号 16/Semi Bold</div></div>
+      <div class="spec-item"><div class="label">Footer 高度</div><div class="value">input 区 56px · action 区 64px</div></div>
+      <div class="spec-item"><div class="label">Header 分割</div><div class="value">1px Border-Divider</div></div>
+      <div class="spec-item"><div class="label">Footer 安全区</div><div class="value">移动端底部 + env(safe-area-inset-bottom)</div></div>
+    </div>
+  </div>
+
+  <style>
+  /* ===== Modal with Header/Footer slots (P1 新增) ===== */
+  .modal-with-header, .modal-with-footer, .modal-full {
+    max-width: 380px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: var(--radius-lg, 12px);
+    overflow: hidden;
+    box-shadow: var(--shadow-popup, 0 20px 60px rgba(0,0,0,0.45));
+  }
+  .m-header {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--grey-100, #F1F1F1);
+    background: #FFFFFF;
+  }
+  .m-header-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-important, #222222);
+  }
+  .m-header-back, .m-header-close {
+    background: transparent;
+    border: none;
+    width: 32px;
+    height: 32px;
+    color: var(--text-regular, #666666);
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 50%;
+  }
+  .m-header-back:hover, .m-header-close:hover { background: var(--grey-100, #F1F1F1); }
+
+  .m-body {
+    padding: 16px;
+    background: #FFFFFF;
+  }
+
+  .m-list-item {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--grey-100, #F1F1F1);
+    font-size: 14px;
+    color: var(--text-important, #222222);
+  }
+  .m-list-item:last-child { border-bottom: none; }
+
+  .m-message { display: flex; gap: 12px; align-items: flex-start; }
+  .m-avatar {
+    width: 36px;
+    height: 36px;
+    background: var(--yellow-50, #FFFAED);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+  .m-bubble {
+    background: var(--grey-100, #F1F1F1);
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text-important, #222222);
+  }
+
+  .m-footer-input {
+    display: flex;
+    gap: 8px;
+    padding: 10px 12px;
+    border-top: 1px solid var(--grey-100, #F1F1F1);
+    background: #FFFFFF;
+  }
+  .m-footer-input input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--grey-200, #DDDDDD);
+    border-radius: 20px;
+    font-size: 14px;
+    background: var(--grey-50, #F8F8F8);
+  }
+  .m-footer-input input:focus { outline: none; border-color: var(--yellow-500, #FFCF20); }
+  .m-send-btn {
+    width: 40px;
+    height: 40px;
+    background: var(--yellow-500, #FFCF20);
+    color: var(--text-important, #222222);
+    border: none;
+    border-radius: 50%;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .m-form-label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-hint, #999999);
+    margin: 12px 0 6px;
+  }
+  .m-form-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--grey-200, #DDDDDD);
+    border-radius: 8px;
+    font-size: 14px;
+    background: #FFFFFF;
+  }
+  .m-form-input:focus { outline: none; border-color: var(--yellow-500, #FFCF20); }
+  .m-form-foot {
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--text-hint, #999999);
+    line-height: 1.5;
+  }
+  .m-form-foot a { color: var(--blue-500, #0056FA); text-decoration: none; }
+
+  .m-footer-action {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    border-top: 1px solid var(--grey-100, #F1F1F1);
+    background: #FFFFFF;
+  }
+  .m-btn-grey, .m-btn-yellow {
+    flex: 1;
+    height: 44px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .m-btn-grey { background: var(--grey-100, #F1F1F1); color: var(--text-important, #222222); }
+  .m-btn-yellow { background: var(--yellow-500, #FFCF20); color: var(--text-important, #222222); }
+  </style>
+
+</div>
+
+</body>
+</html>

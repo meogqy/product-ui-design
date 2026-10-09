@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<!--
+  Button 组件 reference
+  来源：从生产项目整理 + 设计稿同步
+  共 22 个 variant（2 尺寸 × 3 颜色 × 4 状态）
+
+  设计 token 引用：../tokens.md
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Button Component · Autocava Design System</title>
+<!-- ICON 规范：功能图标走 Iconify CDN（lucide），禁止 emoji / 字体图标 -->
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+:root {
+  /* Yellow 品牌主色 */
+  --yellow-500: #FFCF20;
+  --yellow-600: #E0A504;
+
+  /* Blue 信任色 */
+  --blue-500: #0056FA;
+  --blue-600: #004EE4;
+
+  /* Grey 中性 */
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-400: #999999;
+  --grey-900: #222222;
+
+  /* Text */
+  --white: #FFFFFF;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background: #F8F8F8;
+  color: #222222;
+  padding: 24px 16px;
+  line-height: 1.5;
+}
+
+.header {
+  max-width: 1200px;
+  margin: 0 auto 24px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #FFCF20;
+}
+.header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+.header .meta { font-size: 14px; color: #666; }
+.header .meta code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* === 一张表展示所有变体 === */
+table.variants {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  margin-bottom: 32px;
+}
+
+table.variants th,
+table.variants td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #F1F1F1;
+}
+
+table.variants th {
+  background: #F8F8F8;
+  font-size: 14px;
+  font-weight: 600;
+  color: #666;
+}
+
+table.variants td {
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+/* === 通用按钮样式 === */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 8px;
+  transition: filter 0.15s ease;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+}
+
+/* Size 44 — H5 / mobile */
+.btn.size-44 {
+  height: 44px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Size 48 — PC / desktop */
+.btn.size-48 {
+  height: 48px;
+  padding: 0 24px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Color: Yellow 主色 */
+.btn.color-yellow.status-default { background: #FFCF20; color: #222222; }
+.btn.color-yellow.status-press   { background: #E0A504; color: #222222; }
+.btn.color-yellow.status-disable{ background: #F1F1F1; color: #999999; }
+.btn.color-yellow.status-disable-2 { background: #FFCF20; color: #222222; opacity: 0.5; }
+
+/* Color: Blue 信任 */
+.btn.color-blue.status-default   { background: #0056FA; color: #FFFFFF; }
+.btn.color-blue.status-press     { background: #004EE4; color: #FFFFFF; }
+.btn.color-blue.status-disable  { background: #F1F1F1; color: #999999; }
+.btn.color-blue.status-disable-2 { background: #0056FA; color: #FFFFFF; opacity: 0.5; }
+
+/* Color: Grey 中性 */
+.btn.color-grey.status-default   { background: #F1F1F1; color: #222222; }
+.btn.color-grey.status-press     { background: #DDDDDD; color: #222222; }
+.btn.color-grey.status-disable   { background: #F1F1F1; color: #999999; }
+
+/* Width = 343 (Figma 设计稿宽度)，演示用；实际使用时 width: 100% 或 auto */
+.btn.demo-343 { min-width: 343px; }
+
+/* === Spec details === */
+.spec-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.spec-section h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #222222;
+}
+
+.spec-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+.spec-item {
+  padding: 12px;
+  background: #F8F8F8;
+  border-radius: 8px;
+}
+.spec-item .label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+.spec-item .value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222;
+}
+
+.token-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  vertical-align: middle;
+  margin-right: 6px;
+  border: 1px solid rgba(0,0,0,0.1);
+}
+
+/* === 使用规则 === */
+.usage-rules {
+  background: #FFF8E1;
+  border-left: 4px solid #FFCF20;
+  padding: 16px 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+}
+.usage-rules h3 {
+  font-size: 16px;
+  margin-bottom: 12px;
+  color: #222;
+}
+.usage-rules ul {
+  list-style: none;
+  padding-left: 0;
+}
+.usage-rules li {
+  padding: 4px 0;
+  font-size: 14px;
+  color: #444;
+}
+.usage-rules li::before {
+  content: "→ ";
+  color: #FFCF20;
+  font-weight: 700;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Button · 按钮组件</h1>
+  <p class="meta">
+    来源：参考组件库（22 个 variant）· 同步 2026-09-29 ·
+    共 <strong>22 个 variant</strong>（2 尺寸 × 3 颜色 × 4 状态）
+  </p>
+</div>
+
+<div class="container">
+
+  <!-- 使用规则 -->
+  <div class="usage-rules">
+    <h3>🎯 何时用哪种 Button</h3>
+    <ul>
+      <li><strong>Size 44</strong>（H5 / 移动端）：所有移动端 CTA</li>
+      <li><strong>Size 48</strong>（PC / 桌面端）：所有桌面端 CTA，**禁止**移动端混用</li>
+      <li><strong>Yellow 主色</strong>：品牌主行动 CTA（购买 / 订阅 / 立即联系）</li>
+      <li><strong>Blue 信任</strong>：金融 / 信用 / 安全相关（申请贷款 / 实名认证）</li>
+      <li><strong>Grey 中性</strong>：次要操作（取消 / 返回 / 次要按钮）</li>
+    </ul>
+  </div>
+
+  <!-- 22 个变体 · 表格形式 -->
+  <table class="variants">
+    <thead>
+      <tr>
+        <th>Size</th>
+        <th>Color</th>
+        <th>Status</th>
+        <th>背景色</th>
+        <th>文字色</th>
+        <th>字号 / 字重</th>
+        <th>圆角</th>
+        <th>预览</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- Size 44 · H5 -->
+      <tr><td rowspan="4">44<br><small>H5</small></td><td rowspan="4">blue</td><td>default</td><td><span class="token-swatch" style="background:#0056FA"></span>#0056FA</td><td>#FFFFFF</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-blue status-default demo-343">Continuar</button></td></tr>
+      <tr><td>press</td><td><span class="token-swatch" style="background:#004EE4"></span>#004EE4</td><td>#FFFFFF</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-blue status-press demo-343">Continuar</button></td></tr>
+      <tr><td>disable</td><td><span class="token-swatch" style="background:#F1F1F1"></span>#F1F1F1</td><td>#999999</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-blue status-disable demo-343">Continuar</button></td></tr>
+      <tr><td>disable-2</td><td><span class="token-swatch" style="background:#0056FA"></span>#0056FA<br><small>+opacity 0.5</small></td><td>#FFFFFF</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-blue status-disable-2 demo-343">Continuar</button></td></tr>
+
+      <tr><td rowspan="4"></td><td rowspan="4">grey</td><td>default</td><td><span class="token-swatch" style="background:#F1F1F1"></span>#F1F1F1</td><td>#222222</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-grey status-default demo-343">Continuar</button></td></tr>
+      <tr><td>press</td><td><span class="token-swatch" style="background:#DDDDDD"></span>#DDDDDD</td><td>#222222</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-grey status-press demo-343">Continuar</button></td></tr>
+      <tr><td>disable</td><td><span class="token-swatch" style="background:#F1F1F1"></span>#F1F1F1</td><td>#999999</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-grey status-disable demo-343">Continuar</button></td></tr>
+      <tr><td colspan="7" style="font-size:12px;color:#999">（grey 没有 disable-2 变体）</td></tr>
+
+      <tr><td rowspan="4"></td><td rowspan="4">yellow</td><td>default</td><td><span class="token-swatch" style="background:#FFCF20"></span>#FFCF20</td><td>#222222</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-yellow status-default demo-343">Continuar</button></td></tr>
+      <tr><td>press</td><td><span class="token-swatch" style="background:#E0A504"></span>#E0A504</td><td>#222222</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-yellow status-press demo-343">Continuar</button></td></tr>
+      <tr><td>disable</td><td><span class="token-swatch" style="background:#F1F1F1"></span>#F1F1F1</td><td>#999999</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-yellow status-disable demo-343">Continuar</button></td></tr>
+      <tr><td>disable-2</td><td><span class="token-swatch" style="background:#FFCF20"></span>#FFCF20<br><small>+opacity 0.5</small></td><td>#222222</td><td>14 / 500</td><td>8px</td><td><button class="btn size-44 color-yellow status-disable-2 demo-343">Continuar</button></td></tr>
+
+      <!-- Size 48 · PC -->
+      <tr><td rowspan="4">48<br><small>PC</small></td><td rowspan="4">blue</td><td>default</td><td><span class="token-swatch" style="background:#0056FA"></span>#0056FA</td><td>#FFFFFF</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-blue status-default demo-343">Continuar</button></td></tr>
+      <tr><td>press</td><td><span class="token-swatch" style="background:#004EE4"></span>#004EE4</td><td>#FFFFFF</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-blue status-press demo-343">Continuar</button></td></tr>
+      <tr><td>disable</td><td><span class="token-swatch" style="background:#F1F1F1"></span>#F1F1F1</td><td>#999999</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-blue status-disable demo-343">Continuar</button></td></tr>
+      <tr><td>disable-2</td><td><span class="token-swatch" style="background:#0056FA"></span>#0056FA<br><small>+opacity 0.5</small></td><td>#FFFFFF</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-blue status-disable-2 demo-343">Continuar</button></td></tr>
+
+      <tr><td rowspan="4"></td><td rowspan="4">grey</td><td>default</td><td><span class="token-swatch" style="background:#F1F1F1"></span>#F1F1F1</td><td>#222222</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-grey status-default demo-343">Continuar</button></td></tr>
+      <tr><td>press</td><td><span class="token-swatch" style="background:#DDDDDD"></span>#DDDDDD</td><td>#222222</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-grey status-press demo-343">Continuar</button></td></tr>
+      <tr><td>disable</td><td><span class="token-swatch" style="background:#F1F1F1"></span>#F1F1F1</td><td>#999999</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-grey status-disable demo-343">Continuar</button></td></tr>
+      <tr><td colspan="7" style="font-size:12px;color:#999">（grey 没有 disable-2 变体）</td></tr>
+
+      <tr><td rowspan="4"></td><td rowspan="4">yellow</td><td>default</td><td><span class="token-swatch" style="background:#FFCF20"></span>#FFCF20</td><td>#222222</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-yellow status-default demo-343">Continuar</button></td></tr>
+      <tr><td>press</td><td><span class="token-swatch" style="background:#E0A504"></span>#E0A504</td><td>#222222</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-yellow status-press demo-343">Continuar</button></td></tr>
+      <tr><td>disable</td><td><span class="token-swatch" style="background:#F1F1F1"></span>#F1F1F1</td><td>#999999</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-yellow status-disable demo-343">Continuar</button></td></tr>
+      <tr><td>disable-2</td><td><span class="token-swatch" style="background:#FFCF20"></span>#FFCF20<br><small>+opacity 0.5</small></td><td>#222222</td><td>16 / 700</td><td>8px</td><td><button class="btn size-48 color-yellow status-disable-2 demo-343">Continuar</button></td></tr>
+    </tbody>
+  </table>
+
+  <!-- Spec 详情 -->
+  <div class="spec-section">
+    <h2>📐 Spec Details</h2>
+    <div class="spec-grid">
+      <div class="spec-item">
+        <div class="label">Height · Size 44 (H5)</div>
+        <div class="value">44px</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Height · Size 48 (PC)</div>
+        <div class="value">48px</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Border Radius</div>
+        <div class="value">8px（所有变体）</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Font Size · H5</div>
+        <div class="value">14px / 500</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Font Size · PC</div>
+        <div class="value">16px / 700</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Font Family</div>
+        <div class="value">Roboto</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Padding H · H5</div>
+        <div class="value">0 16px</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">Padding H · PC</div>
+        <div class="value">0 24px</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Token 引用 -->
+  <div class="spec-section">
+    <h2>🎨 对应 Design Tokens</h2>
+    <table class="variants">
+      <thead>
+        <tr><th>变体</th><th>用 Token</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Yellow default</td><td><code>Button-Yellow/button-500-默认</code> (#FFCF20) + <code>Text/color-900-重要</code> (#222222)</td></tr>
+        <tr><td>Yellow press</td><td><code>Button-Yellow/button-600-按压</code> (#E0A504) + <code>Text/color-900-重要</code> (#222222)</td></tr>
+        <tr><td>Blue default</td><td><code>Blue/blue-500</code> (#0056FA) + <code>#FFFFFF</code></td></tr>
+        <tr><td>Blue press</td><td><code>Blue/blue-600</code> (#004EE4) + <code>#FFFFFF</code></td></tr>
+        <tr><td>Grey default</td><td><code>Grey/grey-100</code> (#F1F1F1) + <code>Text/color-900-重要</code> (#222222)</td></tr>
+        <tr><td>Grey press</td><td><code>Grey/grey-200</code> (#DDDDDD) + <code>Text/color-900-重要</code> (#222222)</td></tr>
+        <tr><td>Disable (所有颜色)</td><td><code>Grey/grey-100</code> (#F1F1F1) + <code>Text/color-400-提示</code> (#999999)</td></tr>
+        <tr><td>Disable-2 (Yellow/Blue)</td><td>保持 default 色 + <code>opacity: 0.5</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 何时用 -->
+  <div class="spec-section">
+    <h2>🚦 何时用哪种 Button</h2>
+    <table class="variants">
+      <thead>
+        <tr><th>场景</th><th>推荐配置</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>购买 / 立即联系 / 订阅主 CTA</td><td><strong>Yellow</strong> · Size 按设备</td></tr>
+        <tr><td>申请贷款 / 信用评估 / 实名认证</td><td><strong>Blue</strong> · Size 按设备</td></tr>
+        <tr><td>取消 / 返回 / 次要操作</td><td><strong>Grey</strong> · Size 按设备</td></tr>
+        <tr><td>页面主行动（移动端）</td><td><strong>Yellow Size 44</strong> + width: 100%</td></tr>
+        <tr><td>页面主行动（PC）</td><td><strong>Yellow Size 48</strong> + width: auto</td></tr>
+        <tr><td>悬浮底部固定 CTA（移动端）</td><td><strong>Yellow Size 44</strong> + width: calc(100% - 32px)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 注意事项 -->
+  <div class="spec-section" style="background:#FFF8E1;border-left:4px solid #FFCF20">
+    <h2>⚠️ 注意事项</h2>
+    <ul style="list-style:none;padding:0;font-size:14px;line-height:1.8">
+      <li>✅ 所有按钮颜色 / 字号 / 圆角 <strong>必须用 token</strong>，禁止硬编码 hex</li>
+      <li>✅ <strong>Disable</strong> 用浅灰底 + 灰字（#F1F1F1 + #999999），保持可识别但不可点</li>
+      <li>✅ <strong>Disable-2</strong> 用品牌色 + opacity 0.5（区别于 disable，用于"已选 / 不可重复"等场景）</li>
+      <li>❌ <strong>禁止</strong>用 Yellow 按钮做金融 / 信用相关（金融场景必须用 Blue）</li>
+      <li>❌ <strong>禁止</strong>移动端用 Size 48（间距太大）或 PC 端用 Size 44（视觉太弱）</li>
+      <li>❌ <strong>禁止</strong>添加 box-shadow / 渐变 / outline（本组件设计就是纯静态）</li>
+    </ul>
+  </div>
+
+  <!-- ==================== Button Group / Single-select ==================== -->
+  <div class="spec-section">
+    <h2>🧩 Button Group · 按钮组 / 单选</h2>
+    <p class="section-desc">多个按钮组合使用：横向并排（工具栏）或互斥单选（套餐选择）。从 Figma 「按钮组」「按钮单选」共 63 次实例抽取。</p>
+
+    <h3>① 横向按钮组 · Yellow 主题</h3>
+    <div class="demo-grid">
+      <div class="btn-group btn-group-yellow" role="group" aria-label="Yellow button group">
+        <button class="group-btn">取消</button>
+        <button class="group-btn active">保存</button>
+        <button class="group-btn">下一步</button>
+      </div>
+    </div>
+
+    <h3>② 单选按钮组 · 套餐 / 利率档</h3>
+    <div class="demo-grid">
+      <div class="btn-group-single" role="radiogroup" aria-label="Plan select">
+        <label class="single-option"><input type="radio" name="plan" value="36"><span>36 个月</span></label>
+        <label class="single-option"><input type="radio" name="plan" value="48" checked><span>48 个月</span></label>
+        <label class="single-option"><input type="radio" name="plan" value="60"><span>60 个月</span></label>
+        <label class="single-option"><input type="radio" name="plan" value="72"><span>72 个月</span></label>
+      </div>
+    </div>
+
+    <h3>③ 操作栏 · 3 列等宽</h3>
+    <div class="demo-grid">
+      <div class="btn-group-row">
+        <button class="group-btn-grey">稍后再说</button>
+        <button class="group-btn-yellow">了解详情</button>
+        <button class="group-btn-blue">立即申请</button>
+      </div>
+    </div>
+
+    <h3>④ 浮动操作栏 · 移动端底部固定</h3>
+    <div class="demo-grid">
+      <div class="btn-dock">
+        <button class="dock-btn"><span class="iconify" data-icon="lucide:message-circle"></span><span>咨询</span></button>
+        <button class="dock-btn primary"><span class="iconify" data-icon="lucide:calendar-days"></span><span>预约试驾</span></button>
+        <button class="dock-btn"><span class="iconify" data-icon="lucide:share-2"></span><span>分享</span></button>
+      </div>
+    </div>
+
+    <h4>📐 规范</h4>
+    <div class="spec-list">
+      <div class="spec-item"><div class="label">间距</div><div class="value">按钮间 12px / 单选胶囊间 8px</div></div>
+      <div class="spec-item"><div class="label">最小高度</div><div class="value">44px（H5 标准触控目标）</div></div>
+      <div class="spec-item"><div class="label">单选默认态</div><div class="value">白底 + 灰边框</div></div>
+      <div class="spec-item"><div class="label">单选选中态</div><div class="value">黄底 + 深字 + Yellow-500 边框</div></div>
+      <div class="spec-item"><div class="label">禁用态</div><div class="value">Grey-200 底 + Text-Disabled 文字</div></div>
+    </div>
+
+    <h4>🎨 对应 Tokens</h4>
+    <table class="variants">
+      <thead><tr><th>状态</th><th>用 Token</th></tr></thead>
+      <tbody>
+        <tr><td>单选 default</td><td><code>BG-Card</code> (#FFFFFF) + <code>Border-Line</code> (#DDDDDD)</td></tr>
+        <tr><td>单选 selected</td><td><code>Yellow/50</code> (#FFFAED) + <code>Yellow/500</code> (#FFCF20) 边框</td></tr>
+        <tr><td>按钮组 active</td><td><code>Yellow/500</code> (#FFCF20) + <code>Text-Important</code></td></tr>
+        <tr><td>操作栏 Yellow</td><td><code>Button-Primary-Default</code> (#FFCF20)</td></tr>
+        <tr><td>操作栏 Blue</td><td><code>Blue/500</code> (#0056FA) + white 文字</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <style>
+  /* ===== Button Group styles (P1/P2 新增) ===== */
+  .btn-group {
+    display: inline-flex;
+    border-radius: var(--radius-md, 8px);
+    overflow: hidden;
+    border: 1px solid var(--grey-200, #DDDDDD);
+  }
+  .btn-group-yellow .group-btn {
+    background: var(--grey-100, #F1F1F1);
+    color: var(--text-important, #222222);
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-group-yellow .group-btn:hover { background: var(--grey-200, #DDDDDD); }
+  .btn-group-yellow .group-btn.active {
+    background: var(--yellow-500, #FFCF20);
+    color: var(--text-important, #222222);
+  }
+  .btn-group-yellow .group-btn + .group-btn { border-left: 1px solid var(--grey-200, #DDDDDD); }
+
+  .btn-group-single {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .single-option { cursor: pointer; }
+  .single-option input { display: none; }
+  .single-option span {
+    display: inline-block;
+    padding: 10px 18px;
+    background: #FFFFFF;
+    border: 1px solid var(--grey-200, #DDDDDD);
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--text-regular, #666666);
+    transition: all 0.15s;
+  }
+  .single-option input:checked + span {
+    background: var(--yellow-50, #FFFAED);
+    border-color: var(--yellow-500, #FFCF20);
+    color: var(--text-important, #222222);
+    font-weight: 600;
+  }
+
+  .btn-group-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+  .group-btn-grey, .group-btn-yellow, .group-btn-blue {
+    padding: 12px 16px;
+    border-radius: var(--radius-md, 8px);
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .group-btn-grey { background: var(--grey-100, #F1F1F1); color: var(--text-important, #222222); }
+  .group-btn-yellow { background: var(--yellow-500, #FFCF20); color: var(--text-important, #222222); }
+  .group-btn-blue { background: var(--blue-500, #0056FA); color: #FFFFFF; }
+
+  .btn-dock {
+    display: flex;
+    gap: 8px;
+    background: #FFFFFF;
+    padding: 12px;
+    border-radius: var(--radius-lg, 12px);
+    box-shadow: var(--shadow-card, 0 4px 16px rgba(10,25,41,0.06));
+    border: 1px solid var(--grey-100, #F1F1F1);
+  }
+  .dock-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px;
+    background: transparent;
+    border: none;
+    color: var(--text-regular, #666666);
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .dock-btn.primary {
+    background: var(--yellow-500, #FFCF20);
+    color: var(--text-important, #222222);
+    border-radius: var(--radius-md, 8px);
+    font-weight: 600;
+  }
+  .dock-btn .icon, .dock-btn .iconify { font-size: 18px; width: 18px; height: 18px; }
+  </style>
+
+</div>
+
+</body>
+</html>

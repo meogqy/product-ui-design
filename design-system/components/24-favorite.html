@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<!--
+  Favorite · 收藏 Toggle / Favorite Button
+  来源：Figma 「车系收藏 (47)」+「收藏车型卡片」+「collect=true/false」共 57+ 次实例抽取
+  通用化为"收藏切换"组件
+  共 4 个 view：图标按钮 / 卡片角标 / 收藏 Tab / 收藏列表行
+  适用：电商收藏、内容收藏、车型收藏、店铺关注
+-->
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Favorite Component · UI Design System</title>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+:root {
+  --yellow-50: #FFFAED;
+  --yellow-500: #FFCF20;
+  --red-500: #A8071A;
+  --red-50: #F6E6E8;
+  --blue-500: #0056FA;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-700: #555555;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 999px;
+  --shadow-card: 0 4px 16px rgba(10,25,41,0.06);
+  --font-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--grey-50);
+  color: var(--grey-900);
+  padding: 32px 16px;
+  line-height: 1.5;
+}
+.container {
+  max-width: 920px;
+  margin: 0 auto;
+  background: var(--white);
+  padding: 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+h1 {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.lead {
+  color: var(--grey-600);
+  font-size: 14px;
+  margin-bottom: 32px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--grey-100);
+}
+h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 32px 0 16px;
+}
+.demo-box {
+  background: var(--grey-50);
+  padding: 24px;
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.section-desc {
+  color: var(--grey-600);
+  font-size: 13px;
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--yellow-50);
+  border-left: 3px solid var(--yellow-500);
+  border-radius: 4px;
+}
+
+/* ========================================================
+   ① Icon Button · 收藏按钮（最常用）
+   ===================================================== */
+.fav-btn {
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--grey-400);
+  transition: all 0.2s;
+}
+.fav-btn:hover {
+  background: var(--yellow-50);
+  color: var(--yellow-500);
+}
+.fav-btn.active {
+  color: var(--red-500);
+}
+.fav-btn.active:hover {
+  color: var(--red-500);
+  background: var(--red-50);
+}
+
+/* 大尺寸 */
+.fav-btn.lg {
+  width: 48px;
+  height: 48px;
+  font-size: 24px;
+}
+
+/* 圆环边框 */
+.fav-btn.outline {
+  border: 1px solid var(--grey-200);
+}
+.fav-btn.outline.active {
+  border-color: var(--red-500);
+  background: var(--red-50);
+}
+
+/* 带文字 */
+.fav-btn-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--white);
+  border: 1px solid var(--grey-200);
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  color: var(--grey-700);
+  cursor: pointer;
+}
+.fav-btn-text.active {
+  background: var(--red-50);
+  border-color: var(--red-500);
+  color: var(--red-500);
+}
+.fav-btn-text .heart { font-size: 14px; }
+
+/* ========================================================
+   ② Card Corner · 卡片角标
+   ===================================================== */
+.fav-corner-wrap {
+  position: relative;
+  width: 200px;
+  height: 130px;
+  background: linear-gradient(135deg, var(--grey-100), var(--grey-200));
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}
+.fav-corner {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.9);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--grey-400);
+  backdrop-filter: blur(8px);
+  transition: all 0.2s;
+}
+.fav-corner:hover { color: var(--yellow-500); }
+.fav-corner.active {
+  color: var(--red-500);
+  background: var(--white);
+}
+
+/* ========================================================
+   ③ Favorite Tab · 收藏分类 Tab
+   ===================================================== */
+.fav-tabs {
+  display: flex;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 6px;
+  gap: 4px;
+  border: 1px solid var(--grey-100);
+  width: fit-content;
+}
+.fav-tab {
+  padding: 8px 16px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--grey-600);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.fav-tab:hover { background: var(--grey-50); }
+.fav-tab.active {
+  background: var(--yellow-500);
+  color: var(--grey-900);
+}
+.fav-tab .badge {
+  background: var(--red-500);
+  color: var(--white);
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 700;
+}
+.fav-tab.active .badge {
+  background: var(--grey-900);
+  color: var(--yellow-500);
+}
+
+/* ========================================================
+   ④ Favorite Row · 收藏列表行
+   ===================================================== */
+.fav-list {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--grey-100);
+}
+.fav-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--grey-100);
+  transition: background 0.15s;
+}
+.fav-row:last-child { border-bottom: none; }
+.fav-row:hover { background: var(--grey-50); }
+.fav-thumb {
+  width: 56px;
+  height: 56px;
+  background: var(--grey-100);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.fav-info { flex: 1; min-width: 0; }
+.fav-name { font-size: 14px; font-weight: 600; color: var(--grey-900); }
+.fav-meta { font-size: 12px; color: var(--grey-400); margin-top: 4px; }
+.fav-price {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--grey-900);
+  font-variant-numeric: tabular-nums;
+}
+.fav-actions {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.fav-row-btn {
+  background: transparent;
+  border: 1px solid var(--grey-200);
+  border-radius: var(--radius-full);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--grey-600);
+}
+.fav-row-btn:hover { background: var(--grey-50); }
+.fav-row-btn.heart-active { color: var(--red-500); border-color: var(--red-500); }
+
+table.variants {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+  font-size: 13px;
+}
+table.variants th, table.variants td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--grey-100);
+  text-align: left;
+}
+table.variants th {
+  background: var(--grey-50);
+  color: var(--grey-600);
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>❤️ Favorite · 收藏 Toggle</h1>
+  <p class="lead">
+    来源：Figma 「车系收藏 (47)」+「收藏车型卡片」+「collect=true/false」共 57+ 次实例抽取<br>
+    4 个 view · 图标按钮 / 卡片角标 / 收藏 Tab / 收藏列表行
+  </p>
+
+  <h2>① Icon Button · 收藏按钮</h2>
+  <p class="section-desc">最基础形式。3 种尺寸 + outline 边框 + 带文字 3 个变体。未收藏=灰色心 / 已收藏=红心。</p>
+
+  <h3>A. 圆形按钮 · 3 尺寸</h3>
+  <div class="demo-box">
+    <button class="fav-btn" title="未收藏"><span class="iconify" data-icon="lucide:heart"></span></button>
+    <button class="fav-btn active" title="已收藏"><span class="iconify" data-icon="lucide:heart"></span></button>
+    <button class="fav-btn lg"><span class="iconify" data-icon="lucide:heart"></span></button>
+    <button class="fav-btn lg active"><span class="iconify" data-icon="lucide:heart"></span></button>
+  </div>
+
+  <h3>B. Outline 圆环按钮</h3>
+  <div class="demo-box">
+    <button class="fav-btn outline"><span class="iconify" data-icon="lucide:heart"></span></button>
+    <button class="fav-btn outline active"><span class="iconify" data-icon="lucide:heart"></span></button>
+  </div>
+
+  <h3>C. 带文字按钮</h3>
+  <div class="demo-box">
+    <button class="fav-btn-text"><span class="heart"><span class="iconify" data-icon="lucide:heart"></span></span>收藏</button>
+    <button class="fav-btn-text active"><span class="heart"><span class="iconify" data-icon="lucide:heart"></span></span>已收藏</button>
+  </div>
+
+  <h2>② Card Corner · 卡片角标</h2>
+  <p class="section-desc">从 Figma 「车系收藏」「收藏车型卡片」直接抽取。半透明白底+模糊背景 + 右上角定位。</p>
+  <div class="demo-box">
+    <div class="fav-corner-wrap">
+      <span class="iconify" data-icon="lucide:car"></span>
+      <button class="fav-corner" title="收藏"><span class="iconify" data-icon="lucide:heart"></span></button>
+    </div>
+    <div class="fav-corner-wrap">
+      <span class="iconify" data-icon="lucide:car-front"></span>
+      <button class="fav-corner active" title="已收藏"><span class="iconify" data-icon="lucide:heart"></span></button>
+    </div>
+  </div>
+
+  <h2>③ Favorite Tab · 收藏分类 Tab</h2>
+  <p class="section-desc">"我的收藏"页面顶部 Tab 切换。激活态黄底+深字，带角标显示数量。</p>
+  <div class="demo-box">
+    <div class="fav-tabs">
+      <div class="fav-tab active">车系 <span class="badge">8</span></div>
+      <div class="fav-tab">车型 <span class="badge">12</span></div>
+      <div class="fav-tab">文章 <span class="badge">3</span></div>
+    </div>
+  </div>
+
+  <h2>④ Favorite Row · 收藏列表行</h2>
+  <p class="section-desc">从 Figma 「收藏车型卡片」抽取，含图片 + 名称 + 价格 + 操作按钮。</p>
+  <div class="demo-box" style="display: block; padding: 0;">
+    <div class="fav-list">
+      <div class="fav-row">
+        <div class="fav-thumb"><span class="iconify" data-icon="lucide:car"></span></div>
+        <div class="fav-info">
+          <div class="fav-name">Nissan Versa 2026 Exclusive</div>
+          <div class="fav-meta">紧凑型轿车 · 添加于 3 天前</div>
+        </div>
+        <div class="fav-price">$389,900</div>
+        <div class="fav-actions">
+          <button class="fav-row-btn" title="查看">→</button>
+          <button class="fav-row-btn heart-active" title="取消收藏"><span class="iconify" data-icon="lucide:heart"></span></button>
+        </div>
+      </div>
+      <div class="fav-row">
+        <div class="fav-thumb"><span class="iconify" data-icon="lucide:car-front"></span></div>
+        <div class="fav-info">
+          <div class="fav-name">MG ZS 2025 Luxury</div>
+          <div class="fav-meta">紧凑型 SUV · 添加于 1 周前</div>
+        </div>
+        <div class="fav-price">$429,900</div>
+        <div class="fav-actions">
+          <button class="fav-row-btn" title="查看">→</button>
+          <button class="fav-row-btn heart-active" title="取消收藏"><span class="iconify" data-icon="lucide:heart"></span></button>
+        </div>
+      </div>
+      <div class="fav-row">
+        <div class="fav-thumb"><span class="iconify" data-icon="lucide:car"></span></div>
+        <div class="fav-info">
+          <div class="fav-name">Kia Rio 2025 LX</div>
+          <div class="fav-meta">紧凑型轿车 · 添加于 2 周前</div>
+        </div>
+        <div class="fav-price">$329,900</div>
+        <div class="fav-actions">
+          <button class="fav-row-btn" title="查看">→</button>
+          <button class="fav-row-btn heart-active" title="取消收藏"><span class="iconify" data-icon="lucide:heart"></span></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>🎨 对应 Design Tokens</h2>
+  <table class="variants">
+    <thead><tr><th>元素</th><th>用 Token</th></tr></thead>
+    <tbody>
+      <tr><td>未收藏图标</td><td><code>--grey-400</code> <span class="iconify" data-icon="lucide:heart"></span></td></tr>
+      <tr><td>已收藏图标</td><td><code>--red-500</code> <span class="iconify" data-icon="lucide:heart"></span></td></tr>
+      <tr><td>hover 背景</td><td><code>--yellow-50</code></td></tr>
+      <tr><td>active 背景</td><td><code>--red-50</code> + <code>--red-500</code> 边框</td></tr>
+      <tr><td>角标模糊</td><td><code>rgba(255,255,255,0.9)</code> + <code>backdrop-filter: blur(8px)</code></td></tr>
+      <tr><td>Tab 激活态</td><td><code>--yellow-500</code> 背景 + <code>--grey-900</code> 文字</td></tr>
+      <tr><td>Badge 角标</td><td><code>--red-500</code> 背景 / Tab 激活时 <code>--grey-900</code> 背景</td></tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>

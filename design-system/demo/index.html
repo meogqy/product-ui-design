@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<!--
+  ════════════════════════════════════════════════════════════════════════
+  Demo 索引页 · 6 个页面级 demo 的总览入口
+  ════════════════════════════════════════════════════════════════════════
+  定位：把 demo/ 下 6 个页面 demo 串成一个可浏览的索引，
+        便于对比不同页面类型的真实样式效果。
+
+  预览实现：<iframe> 实时加载真实 demo（非截图），390×844 手机视口。
+            原因：① 看到的就是真页面，不会与实际不符
+                  ② 390px 视口下大部分图片走 lazy，请求量远小于 1280px
+                  ③ 不做 transform 缩放，避免与媒体查询断点打架
+            <iframe loading="lazy"> 让离开视口的卡片不发起请求。
+
+  数据：6 个 demo 的数据规模 / 溯源 / 组件清单均来自各 demo 文件头注释
+        （全部为 autocava.com.mx stable 环境，2026-09-30 抓取）
+  断点：1024px · 单文件自适应 · 与其余 demo 同源 token
+  ════════════════════════════════════════════════════════════════════════
+-->
+<html lang="es-MX">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Demo 索引 · Autocava UI Design System</title>
+<meta name="description" content="6 个页面级 demo 索引：首页、车系页、CAVI 报告留资页、车型列表页、排行榜页。数据全部抓取 autocava.com.mx 生产环境。">
+<style>
+:root{
+  --yellow-50:#FFFAED; --yellow-100:#FFF6DC; --yellow-400:#FFD04E;
+  --yellow-500:#FFCF20; --yellow-600:#E0A504; --yellow-700:#B59317;
+  --yellow-800:#8C7212; --yellow-900:#744500;
+  --blue-500:#0056FA; --red-500:#A8071A; --green-500:#7CB305;
+  --grey-900:#222; --grey-800:#444; --grey-700:#555; --grey-600:#666;
+  --grey-500:#888; --grey-400:#999; --grey-300:#BBB; --grey-200:#DDD;
+  --grey-100:#EEE; --grey-50:#F8F8F8;
+  --color-f1:#f1f1f1;
+  --bg-page:#fff; --bg-card:#fff; --bg-soft:var(--grey-50);
+  --text-important:var(--grey-900); --text-regular:var(--grey-600);
+  --text-hint:var(--grey-400);
+  --border-line:var(--grey-200); --border-divider:var(--grey-100);
+  --font-sans:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --r-sm:4px; --r-md:6px; --r-lg:8px; --r-xl:12px; --r-full:9999px;
+  --shadow-card:0 1px 3px rgba(0,0,0,.08);
+  --shadow-news:0 4px 12px rgba(255,207,32,.16);
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px; --sp-5:20px; --sp-6:24px; --sp-8:32px;
+  --header-h:56px;
+  --pv-w:390px; --pv-h:844px; --pv-h-crop:430px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--font-sans);background:var(--bg-soft);color:var(--text-important);
+  line-height:1.5;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+:focus-visible{outline:2px solid var(--blue-500);outline-offset:2px;border-radius:var(--r-sm)}
+.container{width:100%;max-width:1280px;margin:0 auto;padding:0 var(--sp-4)}
+
+/* ==========================================================================
+   06-topnav
+   ========================================================================== */
+.topnav{position:sticky;top:0;z-index:80;background:var(--yellow-500);
+  border-bottom:1px solid var(--yellow-600)}
+.topnav-inner{display:flex;align-items:center;gap:var(--sp-3);
+  max-width:1280px;margin:0 auto;padding:0 var(--sp-4);min-height:var(--header-h)}
+.logo{height:20px}
+.topnav-tag{font-size:12px;font-weight:800;color:#0a1929;margin-left:var(--sp-2);
+  padding-left:var(--sp-3);border-left:1px solid rgba(10,25,41,.25)}
+.topnav-actions{margin-left:auto;display:flex;align-items:center;gap:var(--sp-2)}
+.topnav-cta{display:flex;align-items:center;height:34px;padding:0 var(--sp-4);
+  border-radius:var(--r-md);background:var(--grey-900);color:#fff;font-size:13px;font-weight:700}
+.topnav-cta:hover{background:var(--grey-800)}
+
+/* ==========================================================================
+   页头
+   ========================================================================== */
+.hero{padding:var(--sp-6) 0 var(--sp-5)}
+.hero h1{font-size:28px;font-weight:800;letter-spacing:-.02em;margin-bottom:var(--sp-2)}
+.hero p{font-size:14px;color:var(--text-regular);max-width:640px;line-height:1.65}
+.hero-meta{display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-4)}
+.pill{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 var(--sp-3);
+  border-radius:var(--r-full);font-size:12px;font-weight:600;
+  background:var(--yellow-50);color:var(--yellow-800);border:1px solid var(--yellow-100)}
+.pill.plain{background:var(--bg-card);color:var(--text-regular);border-color:var(--grey-200)}
+
+/* ==========================================================================
+   21-filter · 分类筛选
+   ========================================================================== */
+.filters{display:flex;gap:var(--sp-2);flex-wrap:wrap;margin-bottom:var(--sp-5)}
+.fchip{height:34px;padding:0 var(--sp-4);border-radius:var(--r-full);
+  border:1px solid var(--grey-200);background:var(--bg-card);
+  font-size:13px;font-weight:600;color:var(--text-regular);
+  display:inline-flex;align-items:center;gap:6px}
+.fchip:hover{border-color:var(--yellow-500);background:var(--yellow-50)}
+.fchip[aria-pressed="true"]{background:var(--yellow-500);border-color:var(--yellow-500);color:#222;font-weight:800}
+.fchip small{font-size:11px;opacity:.7;font-weight:500}
+
+/* ==========================================================================
+   Demo 卡片网格
+   ========================================================================== */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--sp-5)}
+.card{
+  background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-xl);overflow:hidden;display:flex;flex-direction:column;
+  transition:border-color .2s,box-shadow .2s;
+}
+.card:hover{border-color:var(--yellow-500);box-shadow:var(--shadow-news)}
+.card[hidden]{display:none}
+
+/* 实时预览（iframe，非截图）
+   注意：必须写死 height —— .pv 是列 flex 子项，只用 aspect-ratio 会被
+   flex-shrink 压扁（844px 被压到 ~400px，行为不可控）。
+   这里显式裁切手机视口顶部 430px：header + 首个内容块，信息量最高。 */
+.pv{position:relative;flex:none;width:var(--pv-w);max-width:100%;height:var(--pv-h-crop);
+  margin:0 auto;background:var(--grey-50);border-bottom:1px solid var(--border-divider);
+  overflow:hidden}
+.pv iframe{width:var(--pv-w);height:var(--pv-h);border:0;display:block}
+.pv-tag{position:absolute;left:8px;top:8px;z-index:2;
+  font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  padding:3px 8px;border-radius:var(--r-sm);
+  background:rgba(34,34,34,.82);color:#fff}
+.pv-tag.real{background:var(--green-500);color:#06331a}
+.pv-tag.mock{background:var(--grey-700)}
+
+/* 卡片正文 */
+.card-body{padding:var(--sp-4);display:flex;flex-direction:column;gap:var(--sp-2);flex:1}
+.card-top{display:flex;align-items:baseline;justify-content:space-between;gap:var(--sp-2)}
+.card-no{font-size:12px;font-weight:800;color:var(--yellow-700);font-variant-numeric:tabular-nums}
+.card-kind{font-size:11px;font-weight:600;color:var(--text-hint);white-space:nowrap}
+.card-title{font-size:17px;font-weight:800;letter-spacing:-.01em;line-height:1.3}
+.card:hover .card-title{color:var(--yellow-800)}
+.card-desc{font-size:13px;color:var(--text-regular);line-height:1.6}
+
+/* 溯源 */
+.src{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-hint);
+  padding:var(--sp-2) 0;border-top:1px dashed var(--border-divider);
+  border-bottom:1px dashed var(--border-divider)}
+.src a{color:var(--blue-500);text-decoration:underline;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.src a:hover{color:var(--blue-500);text-decoration:none}
+
+/* 数据规模 */
+.counts{display:flex;flex-wrap:wrap;gap:6px}
+.count{font-size:11px;font-weight:600;color:var(--text-regular);
+  background:var(--bg-soft);border:1px solid var(--border-divider);
+  border-radius:var(--r-sm);padding:2px 8px;font-variant-numeric:tabular-nums}
+
+/* 复用组件 */
+.comps{font-size:11px;color:var(--text-hint);line-height:1.7}
+.comps b{color:var(--text-regular);font-weight:600}
+
+/* 操作 */
+.acts{display:flex;gap:var(--sp-2);margin-top:auto;padding-top:var(--sp-3)}
+.btn-open{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  height:40px;border-radius:var(--r-md);background:var(--yellow-500);color:#222;
+  font-size:13px;font-weight:800}
+.btn-open:hover{background:var(--yellow-400)}
+.btn-src{display:flex;align-items:center;justify-content:center;height:40px;
+  padding:0 var(--sp-3);border:1px solid var(--grey-200);border-radius:var(--r-md);
+  font-size:13px;font-weight:700;color:var(--text-important)}
+.btn-src:hover{border-color:var(--yellow-500);background:var(--yellow-50)}
+
+/* ==========================================================================
+   合规说明
+   ========================================================================== */
+.note{background:var(--bg-card);border:1px solid var(--border-divider);
+  border-radius:var(--r-lg);padding:var(--sp-5);margin:var(--sp-6) 0}
+.note h2{font-size:16px;font-weight:800;margin-bottom:var(--sp-3)}
+.note ul{list-style:none;display:grid;gap:var(--sp-2)}
+.note li{display:flex;gap:8px;font-size:13px;color:var(--text-regular);line-height:1.6}
+.note li .iconify{color:var(--green-500);flex-shrink:0;margin-top:2px}
+.note a{color:var(--blue-500);text-decoration:underline}
+
+/* ==========================================================================
+   25-footer
+   ========================================================================== */
+.footer{background:var(--grey-900);color:var(--grey-300);padding:var(--sp-6) 0;margin-top:var(--sp-8)}
+.footer-in{display:flex;justify-content:space-between;gap:var(--sp-4);flex-wrap:wrap;
+  align-items:center}
+.footer-logo{height:18px;filter:brightness(0) invert(1)}
+.footer p{font-size:12px;color:var(--grey-400);line-height:1.7}
+.footer a{color:var(--grey-300);text-decoration:underline}
+.footer a:hover{color:var(--yellow-500)}
+
+/* ==========================================================================
+   响应式
+   ========================================================================== */
+@media (max-width:1023px){
+  .grid{grid-template-columns:repeat(2,1fr);gap:var(--sp-4)}
+  .hero h1{font-size:24px}
+}
+/* 窄屏：不做任何缩放，直接让 iframe 视口跟随卡片宽度。
+   卡片宽度仍 <1024px，demo 内部照样走 H5 布局；
+   用 zoom/transform 反而会与 max-width 冲突导致裁切。 */
+@media (max-width:430px){
+  .grid{grid-template-columns:1fr}
+  .pv{width:100%;max-width:100%;height:400px}
+  .pv iframe{width:100%}
+  .hero h1{font-size:20px}
+}
+@media (max-width:360px){
+  .container{padding:0 12px}
+  .pv{height:360px}
+  .card-body{padding:12px}
+  .card-title{font-size:16px}
+  .acts{flex-direction:column}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== 06-topnav ==================== -->
+<header class="topnav">
+  <div class="topnav-inner">
+    <img class="logo" src="https://cdn.autocava.com.mx/_nuxt/asset/logo.v3.mLItLIXo.svg" alt="Autocava">
+    <span class="topnav-tag">UI Design System</span>
+    <div class="topnav-actions">
+      <a class="topnav-cta" href="../index.html">返回总览</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ==================== 页头 ==================== -->
+  <section class="hero">
+    <div class="container">
+      <h1>页面级 Demo 索引</h1>
+      <p>
+        6 个完整页面 demo，全部以 <b>autocava.com.mx 生产环境 stable</b> 的真实渲染
+        DOM 为准重建 —— 价格、销量、车系参数、联系方式均为抓取所得，无编造数据。
+        下方预览为实时 iframe 加载，点击卡片标题即可打开完整页面。
+      </p>
+      <div class="hero-meta">
+        <span class="pill">
+          <span class="iconify" data-icon="lucide:database" style="font-size:14px"></span>
+          抓取日期 2026-09-30
+        </span>
+        <span class="pill plain">
+          <span class="iconify" data-icon="lucide:git-branch" style="font-size:14px"></span>
+          env = stable
+        </span>
+        <span class="pill plain">
+          <span class="iconify" data-icon="lucide:monitor-smartphone" style="font-size:14px"></span>
+          断点 1024px · 单文件自适应
+        </span>
+        <span class="pill plain">
+          <span class="iconify" data-icon="lucide:shield-check" style="font-size:14px"></span>
+          触达仅 WhatsApp
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 筛选 ==================== -->
+  <div class="container">
+    <div class="filters" role="group" aria-label="按数据来源筛选">
+      <button class="fchip" aria-pressed="true" data-f="all">全部 <small>6</small></button>
+      <button class="fchip" aria-pressed="false" data-f="real">生产真数据 <small>5</small></button>
+      <button class="fchip" aria-pressed="false" data-f="mock">组件沙盘 <small>1</small></button>
+    </div>
+
+    <!-- ==================== 卡片网格 ==================== -->
+    <div class="grid" id="grid">
+
+      <!-- ---- 01 首页 ---- -->
+      <article class="card" data-kind="real">
+        <div class="pv">
+          <span class="pv-tag real">live preview</span>
+          <iframe src="01-autocava-news-home.html" loading="lazy" title="Preview: 首页"
+                  referrerpolicy="no-referrer"></iframe>
+        </div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="card-no">01</span>
+            <span class="card-kind">首页 · 新闻资讯</span>
+          </div>
+          <h2 class="card-title"><a href="01-autocava-news-home.html">Autocava 新闻资讯首页</a></h2>
+          <p class="card-desc">
+            品牌网格 + 销量榜 + 产品卡 + 筛选 + 收藏 + 资讯区，完整首页骨架。
+            资讯卡按生产站 Reseñas destacadas 的 4/2 列网格与黄色 hover 复刻。
+          </p>
+          <div class="src">
+            <span class="iconify" data-icon="lucide:link" style="font-size:13px"></span>
+            <a href="https://www.autocava.com.mx/?ac_ab=stable" target="_blank" rel="noopener">autocava.com.mx/?ac_ab=stable</a>
+          </div>
+          <div class="counts">
+            <span class="count">32 车系</span>
+            <span class="count">72 品牌</span>
+            <span class="count">5 篇真实资讯</span>
+          </div>
+          <p class="comps">
+            <b>复用：</b>06-topnav · 17-banner · 22-brand-grid · 23-ranking ·
+            24-favorite · 25-footer · cards/05-product-card
+          </p>
+          <div class="acts">
+            <a class="btn-open" href="01-autocava-news-home.html">
+              打开 demo <span class="iconify" data-icon="lucide:arrow-right" style="font-size:14px"></span>
+            </a>
+            <a class="btn-src" href="https://www.autocava.com.mx/?ac_ab=stable" target="_blank" rel="noopener"
+               aria-label="打开生产源页面">生产源 ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ---- 03 车系页 ---- -->
+      <article class="card" data-kind="real">
+        <div class="pv">
+          <span class="pv-tag real">live preview</span>
+          <iframe src="03-series-detail-captiva.html" loading="lazy" title="Preview: 车系页"
+                  referrerpolicy="no-referrer"></iframe>
+        </div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="card-no">03</span>
+            <span class="card-kind">车系详情 · 转化主战场</span>
+          </div>
+          <h2 class="card-title"><a href="03-series-detail-captiva.html">Chevrolet Captiva 车系页</a></h2>
+          <p class="card-desc">
+            价格三段（当前/指导价/优惠）、月供、评分与 INEGI 分榜、4 版本选择、
+            19 项规格表、持有成本、5 条真实用户评价。
+          </p>
+          <div class="src">
+            <span class="iconify" data-icon="lucide:link" style="font-size:13px"></span>
+            <a href="https://www.autocava.com.mx/auto/series/107" target="_blank" rel="noopener">autocava.com.mx/auto/series/107</a>
+          </div>
+          <div class="counts">
+            <span class="count">4 版本逐版价格</span>
+            <span class="count">19 项规格</span>
+            <span class="count">5 条真实评价</span>
+          </div>
+          <p class="comps">
+            <b>复用：</b>06-topnav · 17-banner · 20-steps · 24-favorite · 25-footer ·
+            cards/04-article-card
+          </p>
+          <div class="acts">
+            <a class="btn-open" href="03-series-detail-captiva.html">
+              打开 demo <span class="iconify" data-icon="lucide:arrow-right" style="font-size:14px"></span>
+            </a>
+            <a class="btn-src" href="https://www.autocava.com.mx/auto/series/107" target="_blank" rel="noopener"
+               aria-label="打开生产源页面">生产源 ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ---- 04 留资页 ---- -->
+      <article class="card" data-kind="real">
+        <div class="pv">
+          <span class="pv-tag real">live preview</span>
+          <iframe src="04-cavi-lead-report.html" loading="lazy" title="Preview: CAVI 留资页"
+                  referrerpolicy="no-referrer"></iframe>
+        </div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="card-no">04</span>
+            <span class="card-kind">线索转化 · CAVI 报告</span>
+          </div>
+          <h2 class="card-title"><a href="04-cavi-lead-report.html">CAVI 报告留资页</a></h2>
+          <p class="card-desc">
+            手机号留资表单（+52 前缀、10 位校验、按需转 WhatsApp），
+            CTA 下含 Aviso de Privacidad 与中介免责，官方联系方式为生产真值。
+          </p>
+          <div class="src">
+            <span class="iconify" data-icon="lucide:link" style="font-size:13px"></span>
+            <a href="https://www.autocava.com.mx/finance/draft" target="_blank" rel="noopener">autocava.com.mx/finance/draft</a>
+          </div>
+          <div class="counts">
+            <span class="count">真实 WhatsApp</span>
+            <span class="count">真实地址/主体</span>
+            <span class="count">前端校验可用</span>
+          </div>
+          <p class="comps">
+            <b>复用：</b>02-input · 06-mx-lead-privacy · 17-banner · 20-steps · 25-footer
+          </p>
+          <div class="acts">
+            <a class="btn-open" href="04-cavi-lead-report.html">
+              打开 demo <span class="iconify" data-icon="lucide:arrow-right" style="font-size:14px"></span>
+            </a>
+            <a class="btn-src" href="https://www.autocava.com.mx/finance/draft" target="_blank" rel="noopener"
+               aria-label="打开生产源页面">生产源 ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ---- 05 列表页 ---- -->
+      <article class="card" data-kind="real">
+        <div class="pv">
+          <span class="pv-tag real">live preview</span>
+          <iframe src="05-car-list-filter.html" loading="lazy" title="Preview: 车型列表页"
+                  referrerpolicy="no-referrer"></iframe>
+        </div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="card-no">05</span>
+            <span class="card-kind">列表 · 筛选密度</span>
+          </div>
+          <h2 class="card-title"><a href="05-car-list-filter.html">车型列表 / 筛选页</a></h2>
+          <p class="card-desc">
+            PC 侧栏筛选 + H5 抽屉筛选，价格区间 5 档、三种排序、空状态全部可交互。
+            20 台车系的价格与分榜排名逐条核对自各自车系页。
+          </p>
+          <div class="src">
+            <span class="iconify" data-icon="lucide:link" style="font-size:13px"></span>
+            <a href="https://www.autocava.com.mx/auto/library" target="_blank" rel="noopener">autocava.com.mx/auto/library</a>
+          </div>
+          <div class="counts">
+            <span class="count">20 台真实车系</span>
+            <span class="count">20 张专属车图</span>
+            <span class="count">5 档价格 + 3 排序</span>
+          </div>
+          <p class="comps">
+            <b>复用：</b>06-topnav · 09-modal · 11-search · 21-filter · 24-favorite ·
+            25-footer · cards/05-product-card
+          </p>
+          <div class="acts">
+            <a class="btn-open" href="05-car-list-filter.html">
+              打开 demo <span class="iconify" data-icon="lucide:arrow-right" style="font-size:14px"></span>
+            </a>
+            <a class="btn-src" href="https://www.autocava.com.mx/auto/library" target="_blank" rel="noopener"
+               aria-label="打开生产源页面">生产源 ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ---- 06 排行榜 ---- -->
+      <article class="card" data-kind="real">
+        <div class="pv">
+          <span class="pv-tag real">live preview</span>
+          <iframe src="06-rank-ventas.html" loading="lazy" title="Preview: 排行榜页"
+                  referrerpolicy="no-referrer"></iframe>
+        </div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="card-no">06</span>
+            <span class="card-kind">榜单 · INEGI 销量</span>
+          </div>
+          <h2 class="card-title"><a href="06-rank-ventas.html">Autos más vendidos 排行榜</a></h2>
+          <p class="card-desc">
+            INEGI 全国销量 Top 20（金/银/铜牌 + 比例条），口径与期间均按生产页标注。
+            分榜 Tab 只有 General 有真实数据，其余置 disabled —— 不填示例数据。
+          </p>
+          <div class="src">
+            <span class="iconify" data-icon="lucide:link" style="font-size:13px"></span>
+            <a href="https://www.autocava.com.mx/rank" target="_blank" rel="noopener">autocava.com.mx/rank</a>
+          </div>
+          <div class="counts">
+            <span class="count">Top 20 真实销量</span>
+            <span class="count">2026-08 · INEGI</span>
+            <span class="count">20 张专属车图</span>
+          </div>
+          <p class="comps">
+            <b>复用：</b>06-topnav · 17-banner · 20-steps · 21-filter · 23-ranking · 25-footer
+          </p>
+          <div class="acts">
+            <a class="btn-open" href="06-rank-ventas.html">
+              打开 demo <span class="iconify" data-icon="lucide:arrow-right" style="font-size:14px"></span>
+            </a>
+            <a class="btn-src" href="https://www.autocava.com.mx/rank" target="_blank" rel="noopener"
+               aria-label="打开生产源页面">生产源 ↗</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- ---- 组件沙盘 ---- -->
+      <article class="card" data-kind="mock">
+        <div class="pv">
+          <span class="pv-tag mock">mock 文案</span>
+          <iframe src="product-detail-page.html" loading="lazy" title="Preview: 组件集成沙盘"
+                  referrerpolicy="no-referrer"></iframe>
+        </div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="card-no">—</span>
+            <span class="card-kind">组件沙盘 · 非生产页</span>
+          </div>
+          <h2 class="card-title"><a href="product-detail-page.html">组件集成沙盘</a></h2>
+          <p class="card-desc">
+            把 25 个组件 + 5 张卡堆进一页的演练场，用来一眼看全组件形态。
+            <b>文案为 mock（英文 + 假价格），不是生产页面</b>，别当真实样式基准。
+          </p>
+          <div class="src">
+            <span class="iconify" data-icon="lucide:info" style="font-size:13px"></span>
+            <span>无生产源 · 演示用 mock 数据</span>
+          </div>
+          <div class="counts">
+            <span class="count">17+ 组件集成</span>
+            <span class="count">全量 token 驱动</span>
+          </div>
+          <p class="comps">
+            <b>复用：</b>01~25 几乎全部组件
+          </p>
+          <div class="acts">
+            <a class="btn-open" href="product-detail-page.html">
+              打开 demo <span class="iconify" data-icon="lucide:arrow-right" style="font-size:14px"></span>
+            </a>
+            <span class="btn-src" aria-disabled="true" style="opacity:.45;cursor:not-allowed">无源</span>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+    <!-- ==================== 合规说明 ==================== -->
+    <div class="note">
+      <h2>这些 demo 遵守的硬约束</h2>
+      <ul>
+        <li>
+          <span class="iconify" data-icon="lucide:check-circle-2" style="font-size:15px"></span>
+          <span><b>数据真实性</b>：价格、销量、车系参数、评价、联系方式全部抓取自生产站，
+            无编造。拿不到真数据的字段一律留空并显式标注，不用示例值填充。</span>
+        </li>
+        <li>
+          <span class="iconify" data-icon="lucide:check-circle-2" style="font-size:15px"></span>
+          <span><b>品牌色以真实渲染为准</b>：主色 <code>#FFCF20</code> 取自生产 DOM 的
+            <code>bg-ffcf20</code>，不是框架预置色板。详见 AGENTS.md Step 2.5。</span>
+        </li>
+        <li>
+          <span class="iconify" data-icon="lucide:check-circle-2" style="font-size:15px"></span>
+          <span><b>不画假曲线</b>：车系页「Tendencia precio promedio」在 stable 只有 1 个真实点位
+            （其余 0 次咨询），因此只渲染该点并显式标注缺口，不补示意曲线。</span>
+        </li>
+        <li>
+          <span class="iconify" data-icon="lucide:check-circle-2" style="font-size:15px"></span>
+          <span><b>MX 合规</b>：触达仅 WhatsApp（页面内无「微信」），留资表单 CTA 下必带
+            <a href="https://www.autocava.com.mx/legal/privacy" target="_blank" rel="noopener">Aviso de Privacidad</a> 与中介免责。</span>
+        </li>
+        <li>
+          <span class="iconify" data-icon="lucide:check-circle-2" style="font-size:15px"></span>
+          <span><b>无后端</b>：只有单文件 HTML + CSS 变量 + Iconify CDN；
+            表单与筛选均为前端模拟，不真提交、不写任何 API。</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</main>
+
+<!-- ==================== 25-footer ==================== -->
+<footer class="footer">
+  <div class="container footer-in">
+    <img class="footer-logo" src="https://cdn.autocava.com.mx/_nuxt/asset/logo.v3.mLItLIXo.svg" alt="Autocava" loading="lazy">
+    <p>
+      UI Design System · 6 个页面级 demo · 数据抓取 2026-09-30（entorno stable）<br>
+      组件 <a href="../components/README.md">components/</a> ·
+      映射表 <a href="../FIGMA_MAP.md">FIGMA_MAP.md</a> ·
+      总览 <a href="../index.html">index.html</a>
+    </p>
+  </div>
+</footer>
+
+<script src="https://code.iconify.design/iconify-icon/3.0.0/iconify-icon.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  document.documentElement.setAttribute('data-js','on');
+  var cards=Array.prototype.slice.call(document.querySelectorAll('.card'));
+  Array.prototype.forEach.call(document.querySelectorAll('.fchip'),function(b){
+    b.addEventListener('click',function(){
+      var f=b.getAttribute('data-f');
+      Array.prototype.forEach.call(document.querySelectorAll('.fchip'),function(x){
+        x.setAttribute('aria-pressed',String(x===b));
+      });
+      cards.forEach(function(c){
+        c.hidden = (f!=='all' && c.getAttribute('data-kind')!==f);
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<!--
+  Select · 下拉选择组件 reference
+  来源：参考组件库（3 个 variant：基本 / 带搜索 / 多选）
+  同步：2026-09-29
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Select Component · UI Design System</title>
+<style>
+:root {
+  --yellow-500: #FFCF20;
+  --yellow-600: #E0A504;
+  --grey-50: #F8F8F8;
+  --grey-100: #F1F1F1;
+  --grey-200: #DDDDDD;
+  --grey-300: #BBBBBB;
+  --grey-400: #999999;
+  --grey-600: #666666;
+  --grey-900: #222222;
+  --white: #FFFFFF;
+  --blue-500: #0056FA;
+
+  --font-sans: ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --fs-h3: 18px; --fs-body: 14px; --fs-small: 12px;
+  --space-2: 8px; --space-3: 12px; --space-4: 16px;
+
+  --radius-md: 8px;
+  --radius-pill: 9999px;
+  --shadow-card: 0 4px 16px rgba(10, 25, 41, 0.06);
+  --shadow-popover: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-sans);
+  background: var(--grey-50);
+  color: var(--grey-900);
+  padding: 24px 16px;
+  line-height: 1.5;
+}
+.header { max-width: 800px; margin: 0 auto 24px; padding-bottom: 16px; border-bottom: 2px solid var(--yellow-500); }
+.header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+.header .meta { font-size: var(--fs-body); color: var(--grey-600); }
+.header .meta code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: var(--fs-small); }
+.container { max-width: 800px; margin: 0 auto; }
+
+/* === Select 触发器 === */
+.select-trigger {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1px solid var(--grey-200);
+  border-radius: var(--radius-md);
+  padding: 0 var(--space-3) 0 var(--space-4);
+  height: 48px;
+  font-size: var(--fs-body);
+  color: var(--grey-900);
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  user-select: none;
+}
+.select-trigger:hover { border-color: var(--grey-300); }
+.select-trigger.open {
+  border-color: var(--yellow-500);
+  box-shadow: 0 0 0 4px rgba(255, 207, 32, 0.15);
+}
+.select-trigger .label { flex: 1; }
+.select-trigger .label.placeholder { color: var(--grey-400); }
+.select-trigger .iconify { color: var(--grey-400); }
+
+/* === Dropdown 弹出 === */
+.select-dropdown {
+  background: #fff;
+  border: 1px solid var(--grey-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-popover);
+  margin-top: 4px;
+  max-height: 280px;
+  overflow-y: auto;
+  position: relative;
+  z-index: 100;
+}
+.select-search {
+  padding: 8px var(--space-3);
+  border-bottom: 1px solid var(--grey-100);
+}
+.select-search input {
+  width: 100%;
+  border: none;
+  background: var(--grey-50);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  font-family: inherit;
+  font-size: var(--fs-body);
+  outline: none;
+}
+.select-option {
+  padding: 10px var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+  font-size: var(--fs-body);
+}
+.select-option:hover, .select-option.highlighted { background: var(--grey-50); }
+.select-option.selected { color: var(--blue-500); font-weight: 600; }
+.select-option .check { width: 16px; flex-shrink: 0; }
+
+/* === 多选 chip === */
+.multi-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  flex: 1;
+  align-items: center;
+}
+.multi-chip {
+  background: var(--grey-100);
+  color: var(--grey-900);
+  padding: 2px 8px;
+  border-radius: var(--radius-md);
+  font-size: var(--fs-small);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.multi-chip .remove { background: none; border: none; cursor: pointer; color: var(--grey-600); padding: 0; }
+
+.demo-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-card); }
+.demo-section h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+.demo-label { font-size: var(--fs-small); color: #888; margin-bottom: 12px; }
+
+.demo-stack { position: relative; }
+.select-dropdown { width: 343px; }
+
+.spec-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: var(--shadow-card); }
+.spec-section h2 { font-size: 20px; font-weight: 600; margin-bottom: 16px; }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.spec-item { padding: 12px; background: var(--grey-50); border-radius: var(--radius-md); }
+.spec-item .label { font-size: var(--fs-small); color: var(--grey-600); margin-bottom: 4px; }
+.spec-item .value { font-size: var(--fs-body); font-weight: 600; }
+
+.usage-rules { background: #FFF8E1; border-left: 4px solid var(--yellow-500); padding: 16px 20px; border-radius: var(--radius-md); }
+.usage-rules h3 { font-size: var(--fs-h3); margin-bottom: 8px; }
+.usage-rules ul { list-style: none; padding: 0; font-size: var(--fs-body); }
+.usage-rules li { padding: 4px 0; }
+.usage-rules li::before { content: "→ "; color: var(--yellow-500); font-weight: 700; }
+</style>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+</head>
+<body>
+
+<div class="header">
+  <h1>Select · 下拉选择</h1>
+  <p class="meta">
+    来源：参考组件库（3 个 variant：基本 / 带搜索 / 多选）· 同步 2026-09-29 ·
+    用于表单中的下拉选择（选项 ≤ 20 个用 Select，&gt; 20 用 Combobox）
+  </p>
+</div>
+
+<div class="container">
+
+  <div class="demo-section">
+    <h2>🎨 3 个 variant</h2>
+
+    <!-- 基本 -->
+    <div style="margin-bottom:32px">
+      <div class="demo-label">Variant 1 · 基本（5 个选项）</div>
+      <div class="demo-stack">
+        <div class="select-trigger">
+          <span class="label placeholder">Choose a brand...</span>
+          <span class="iconify" data-icon="lucide:chevron-down"></span>
+        </div>
+        <div class="select-dropdown">
+          <div class="select-option"><span class="check"></span>Brand A</div>
+          <div class="select-option highlighted"><span class="check"></span>Brand B</div>
+          <div class="select-option selected"><span class="check iconify" data-icon="lucide:check"></span>Brand C</div>
+          <div class="select-option"><span class="check"></span>Brand D</div>
+          <div class="select-option"><span class="check"></span>Brand E</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 带搜索 -->
+    <div style="margin-bottom:32px">
+      <div class="demo-label">Variant 2 · 带搜索（选项 ≥ 10 个时使用）</div>
+      <div class="demo-stack">
+        <div class="select-trigger open">
+          <span class="label">Mexico City</span>
+          <span class="iconify" data-icon="lucide:chevron-down"></span>
+        </div>
+        <div class="select-dropdown">
+          <div class="select-search">
+            <input type="text" placeholder="Search cities...">
+          </div>
+          <div class="select-option"><span class="check"></span>Guadalajara</div>
+          <div class="select-option highlighted"><span class="check"></span>Mexico City</div>
+          <div class="select-option"><span class="check"></span>Monterrey</div>
+          <div class="select-option"><span class="check"></span>Puebla</div>
+          <div class="select-option"><span class="check"></span>Tijuana</div>
+          <div class="select-option"><span class="check"></span>Cancún</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 多选 -->
+    <div>
+      <div class="demo-label">Variant 3 · 多选（chips 形式）</div>
+      <div class="demo-stack">
+        <div class="select-trigger">
+          <div class="multi-chips">
+            <span class="multi-chip">SUV <button class="remove iconify" data-icon="lucide:x"></button></span>
+            <span class="multi-chip">Electric <button class="remove iconify" data-icon="lucide:x"></button></span>
+            <span class="multi-chip">2024 <button class="remove iconify" data-icon="lucide:x"></button></span>
+          </div>
+          <span class="iconify" data-icon="lucide:chevron-down"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-section">
+    <h2>📐 Spec Details</h2>
+    <div class="spec-grid">
+      <div class="spec-item"><div class="label">Trigger 高度</div><div class="value">48px</div></div>
+      <div class="spec-item"><div class="label">圆角</div><div class="value">8px</div></div>
+      <div class="spec-item"><div class="label">Border</div><div class="value">1px --grey-200</div></div>
+      <div class="spec-item"><div class="label">Focus 光晕</div><div class="value">--yellow-500 + 15% opacity</div></div>
+      <div class="spec-item"><div class="label">下拉最大高度</div><div class="value">280px</div></div>
+      <div class="spec-item"><div class="label">下拉阴影</div><div class="value">0 8px 24px rgba(0,0,0,0.12)</div></div>
+      <div class="spec-item"><div class="label">选项 padding</div><div class="value">10px 16px</div></div>
+      <div class="spec-item"><div class="label">hover 背景</div><div class="value">--grey-50</div></div>
+      <div class="spec-item"><div class="label">selected 色</div><div class="value">--blue-500 + Bold</div></div>
+      <div class="spec-item"><div class="label">多选 chip</div><div class="value">--grey-100 底 + × 按钮</div></div>
+    </div>
+  </div>
+
+  <div class="usage-rules">
+    <h3>🎯 使用规则</h3>
+    <ul>
+      <li><strong>基本款</strong>：选项 ≤ 10 个（不滚动）</li>
+      <li><strong>带搜索</strong>：选项 ≥ 10 个（用户难以一眼看完）</li>
+      <li><strong>多选</strong>：用户需要选多个值（如筛选条件）</li>
+      <li><strong>键盘导航</strong>：↑↓ 切换选项 · Enter 选中 · Esc 关闭</li>
+      <li><strong>click outside</strong>：点击下拉外关闭</li>
+      <li><strong>ARIA</strong>：<code>role="listbox"</code> + <code>aria-expanded</code></li>
+      <li><strong>选项 ≤ 5</strong>：用 Radio 替代（用户更易看清所有选项）</li>
+      <li><strong>选项 &gt; 20</strong>：用 Combobox（输入 + 联想）</li>
+    </ul>
+  </div>
+
+</div>
+
+</body>
+</html>

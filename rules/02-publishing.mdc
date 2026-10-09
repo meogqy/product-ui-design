@@ -1,0 +1,83 @@
+---
+alwaysApply: true
+---
+
+<!-- ⚠️ 来源说明：本文件含项目特定示例（品牌名 / 市场 / 平台专有参数）。
+     作为通用方法论可用，但**其中的具体值（品牌色、市场法规、平台域名、埋点参数）
+     是示例性质的，用到别的项目/市场时必须按SITE-CONFIG.md 替换**。
+     原路径：Mstar 工作区 .cursor/rules/ · 随包分发于 product-ui-design v2.0 -->
+
+
+# 发布渠道协议（强制）
+
+## 1. 产品原型 HTML 的唯一发布渠道 = Cloudflare Pages
+
+任何**产品原型 / 报告 / H5 / 营销页**的 HTML 成品，**只发布到 Cloudflare Pages**，**不**使用 GitHub Pages / Gitee Pages 作为发布渠道。
+
+**为什么**：
+- Cloudflare Pages 国内 / 国外访问都快，且免维护
+- `*.pages.dev` 自带 CDN + HTTPS + 自动部署
+- 不需要在多个平台重复创建仓库 / 项目
+
+## 2. 历史决定（必须遵守）
+
+- **2026-09-03 起**：Mstar 工作区下的产品原型 HTML **只**发布到 Cloudflare Pages
+- **GitHub / Gitee**：只用于**代码托管**（git remote），不再用于发布
+- **本地预览**：用 `python3 -m http.server` 起临时 server，仅供本地预览
+
+> 历史遗留：`车辆解读报告/` 曾作为 `qigang2026/cavi-reports` GitHub Pages 站点发布，该用法自 2026-09-03 起作废，仅保留 git 托管。
+
+## 3. 部署命令（标准流程）
+
+任何子项目需要发布 HTML 时：
+
+```bash
+cd <项目根目录>
+wrangler pages deploy . --project-name=<项目名> --commit-dirty=true
+```
+
+- `项目名` = 驼峰或短横线均可（如 `whatsapp-agent`、`cavi-report`），但**必须先在 Cloudflare Dashboard 手动创建一次** pages project
+- `--commit-dirty=true` 允许有未 commit 的修改
+- 部署完成后 URL = `https://<项目名>.pages.dev/`
+
+**`WhatsApp Agent/` 例外（白名单发布 · 2026-09-04）**
+
+线上只放：① 原型页面 ② 需求 PRD ③ 业务流程 / 数据流程。**过程文档不发布**（决策梳理、架构笔记、SOP 草稿、`docs.html` 全量文档中心、`decisions-pmvp1-*.html` 等）。
+
+```bash
+cd "WhatsApp Agent"
+bash scripts/deploy-pages.sh          # 默认项目名 whatsapp-agent
+# 脚本会把白名单文件拷到 publish/ 再 wrangler deploy，避免根目录过程文档上线
+```
+
+## 4. 标准项目结构（发布前必备）
+
+```
+项目根目录/
+├── index.html          ← 入口 Hero 页（必做）
+├── 404.html            ← 404 页（建议用对应品牌色）
+├── .nojekyll           ← 空文件
+└── ... 其他 HTML 交付物
+```
+
+## 5. 入口页（index.html）最低要求
+
+- **Hero 区块**：项目名 + 一句话简介 + 品牌 logo（用 inline SVG 或 Iconify，禁止 emoji）
+- **卡片网格**：用 `<a>` 列出所有交付物 HTML，每个卡片含 icon + 标题 + 描述 + 「访问页面 →」
+- **底部 footer**：项目链接（可选）
+- **响应式**：3 列网格（PC）→ 1 列（H5），断点 1024px
+
+## 6. 部署前自检清单
+
+- [ ] Cloudflare Dashboard 已创建对应 pages project（名称需与 wrangler 命令一致）
+- [ ] `wrangler whoami` 验证登录状态正常
+- [ ] 项目根目录有 `index.html` + `404.html` + `.nojekyll`
+- [ ] 所有 HTML 内部链接使用**相对路径**，不写死域名
+- [ ] 用 `python3 -m http.server` 在本地起 server 自查，确认所有跳转可点击
+
+## 7. 违规信号（立即打断）
+
+- 输出里出现 `git push` 用于**发布**目的（推到 GitHub Pages / Gitee Pages）→ 立即打断
+- 输出里出现 `用户名.github.io` / `gitee.io` 字样作为发布 URL → 立即打断
+- 项目缺 `index.html` 或 `.nojekyll` 而尝试发布 → 立即打断
+

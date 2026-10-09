@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<!--
+  Tag · 标签 / 评分 chip 组件 reference
+  来源：参考组件库（2 个 variant：评分 / 排行）
+  同步：2026-09-29
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tag Component · UI Design System</title>
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+:root {
+  --white: #FFFFFF;
+  --black: #000000;
+  --yellow-500: #FFCF20;
+  --text-important: #222222;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  background: #F8F8F8;
+  color: #222222;
+  padding: 24px 16px;
+  line-height: 1.5;
+}
+.header { max-width: 800px; margin: 0 auto 24px; padding-bottom: 16px; border-bottom: 2px solid #FFCF20; }
+.header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+.header .meta { font-size: 14px; color: #666; }
+.header .meta code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
+.container { max-width: 800px; margin: 0 auto; }
+
+.demo-grid {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.demo-grid h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #222; }
+
+.demo-row {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #F1F1F1;
+}
+.demo-row:last-child { border-bottom: 0; margin-bottom: 0; padding-bottom: 0; }
+
+.demo-label { width: 110px; font-size: 12px; color: #888; }
+
+/* === CAVA 评分 chip === */
+.cava-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 20px;
+  padding: 0 8px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #222;
+}
+.cava-score .dot { width: 6px; height: 6px; border-radius: 50%; background: #FFCF20; }
+
+/* === CAVA 榜单 chip === */
+.cava-rank {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  background: #FFFFFF;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #000;
+}
+
+.spec-section { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.spec-section h2 { font-size: 18px; font-weight: 600; margin-bottom: 16px; }
+.spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+.spec-item { padding: 12px; background: #F8F8F8; border-radius: 8px; }
+.spec-item .label { font-size: 12px; color: #666; margin-bottom: 4px; }
+.spec-item .value { font-size: 14px; font-weight: 600; }
+
+.usage-rules { background: #FFF8E1; border-left: 4px solid #FFCF20; padding: 16px 20px; border-radius: 8px; }
+.usage-rules h3 { font-size: 16px; margin-bottom: 8px; }
+.usage-rules ul { list-style: none; padding: 0; font-size: 14px; }
+.usage-rules li { padding: 4px 0; }
+.usage-rules li::before { content: "→ "; color: #FFCF20; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Tag · 标签 / 评分 chip 组件</h1>
+  <p class="meta">
+    来源：参考组件库（2 个 variant）· 同步 2026-09-29 ·
+    共 <strong>2 个 variant</strong>（评分 / 排行）
+  </p>
+</div>
+
+<div class="container">
+
+  <div class="demo-grid">
+    <h2>🎨 2 个 variant</h2>
+
+    <div class="demo-row">
+      <div class="demo-label">类型=评分<br><small>(Score Chip)</small></div>
+      <div class="cava-score">
+        <span class="dot"></span>
+        <span>Score 8.5</span>
+      </div>
+      <div class="cava-score">
+        <span class="dot" style="background:#7CB305"></span>
+        <span>Score 7.2</span>
+      </div>
+      <div class="cava-score">
+        <span class="dot" style="background:#A8071A"></span>
+        <span>Score 5.8</span>
+      </div>
+    </div>
+
+    <div class="demo-row">
+      <div class="demo-label">类型=排行<br><small>(Ranking Chip)</small></div>
+      <div class="cava-rank">
+        <span style="color:#FFCF20">★</span>
+        <span>Ranking #1</span>
+      </div>
+      <div class="cava-rank">
+        <span style="color:#FFCF20">★</span>
+        <span>Ranking #2</span>
+      </div>
+      <div class="cava-rank">
+        <span style="color:#FFCF20">★</span>
+        <span>Ranking #3</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="spec-section">
+    <h2>📐 Spec Details</h2>
+    <div class="spec-grid">
+      <div class="spec-item">
+        <div class="label">评分 chip 尺寸</div>
+        <div class="value">96×20 / 圆角 10px</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">榜单 chip 尺寸</div>
+        <div class="value">130×24 / 圆角 12px</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">背景</div>
+        <div class="value">#FFFFFF（白底）</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">评分 chip 字号</div>
+        <div class="value">11px / 600</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">榜单 chip 字号</div>
+        <div class="value">12px / 700</div>
+      </div>
+      <div class="spec-item">
+        <div class="label">dot 评分点</div>
+        <div class="value">6×6 圆点</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="usage-rules">
+    <h3>🎯 何时用哪种</h3>
+    <ul>
+      <li><strong>Score Chip</strong>：展示某项目的综合分（0-10）</li>
+      <li><strong>Ranking Chip</strong>：展示排名（#1 / #2 / #3 等）</li>
+      <li><strong>Dot 颜色</strong>：根据分数档位配 — 黄（≥8）/ 绿（6-7.9）/ 红（&lt;6）</li>
+      <li><strong>位置</strong>：通常贴在标题旁 / 卡片左上角 / 强调位置</li>
+    </ul>
+  </div>
+
+  <!-- ==================== Category Tag / Pill ==================== -->
+  <div class="usage-rules">
+    <h2>🏷️ Category Tag / Pill · 分类标签</h2>
+    <p class="section-desc">从 Figma 「分类」「分类标签」共 29 次实例抽取。比 Score Chip 更语义化，强调"分组"或"筛选条件"。支持可关闭、可计数、可单选 3 种行为。</p>
+
+    <h3>① 基础分类标签 · 静态展示</h3>
+    <div class="demo-grid">
+      <div class="category-row">
+        <span class="cat-tag">SUV</span>
+        <span class="cat-tag">轿车</span>
+        <span class="cat-tag">电动车</span>
+        <span class="cat-tag">混合动力</span>
+        <span class="cat-tag">皮卡</span>
+        <span class="cat-tag">MPV</span>
+      </div>
+    </div>
+
+    <h3>② 可关闭 · 选中筛选项</h3>
+    <div class="demo-grid">
+      <div class="category-row">
+        <span class="cat-tag closable">SUV <button class="cat-close" aria-label="remove">×</button></span>
+        <span class="cat-tag closable">2024 年款 <button class="cat-close" aria-label="remove">×</button></span>
+        <span class="cat-tag closable">月供 ≤ $8,000 <button class="cat-close" aria-label="remove">×</button></span>
+      </div>
+    </div>
+
+    <h3>③ 可计数 · 带 N 项</h3>
+    <div class="demo-grid">
+      <div class="category-row">
+        <span class="cat-tag count">SUV <em>(24)</em></span>
+        <span class="cat-tag count">电动车 <em>(18)</em></span>
+        <span class="cat-tag count">本月新款 <em>(7)</em></span>
+      </div>
+    </div>
+
+    <h3>④ 可点击选中 · Yellow 主题</h3>
+    <div class="demo-grid">
+      <div class="category-row">
+        <button class="cat-tag-btn active">全部</button>
+        <button class="cat-tag-btn">SUV</button>
+        <button class="cat-tag-btn">轿车</button>
+        <button class="cat-tag-btn">电动车</button>
+      </div>
+    </div>
+
+    <h3>⑤ 大尺寸 · 模块级</h3>
+    <div class="demo-grid">
+      <div class="category-row">
+        <button class="cat-tag-btn lg"><span class="ico"><span class="iconify" data-icon="lucide:car" style="font-size:15px"></span></span> 新车上市</button>
+        <button class="cat-tag-btn lg"><span class="ico">⭐</span> 编辑推荐</button>
+        <button class="cat-tag-btn lg"><span class="ico"><span class="iconify" data-icon="lucide:trophy" style="font-size:15px"></span></span> 销量排行</button>
+      </div>
+    </div>
+
+    <h4>📐 规范</h4>
+    <div class="spec-list">
+      <div class="spec-item"><div class="label">基础尺寸</div><div class="value">高度 24px / 圆角 12px</div></div>
+      <div class="spec-item"><div class="label">大尺寸</div><div class="value">高度 36px / 圆角 18px</div></div>
+      <div class="spec-item"><div class="label">内边距 H</div><div class="value">基础 8px / 大尺寸 14px</div></div>
+      <div class="spec-item"><div class="label">字号</div><div class="value">基础 12px / 大尺寸 14px</div></div>
+    </div>
+  </div>
+
+  <style>
+  /* ===== Category Tag / Pill styles (P1 新增) ===== */
+  .category-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  .cat-tag {
+    display: inline-flex;
+    align-items: center;
+    height: 24px;
+    padding: 0 10px;
+    background: var(--grey-100, #F1F1F1);
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--text-regular, #666666);
+  }
+  .cat-tag.closable {
+    background: var(--yellow-50, #FFFAED);
+    color: var(--text-important, #222222);
+    padding-right: 4px;
+  }
+  .cat-close {
+    border: none;
+    background: transparent;
+    color: var(--text-hint, #999999);
+    cursor: pointer;
+    margin-left: 4px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    font-size: 14px;
+    line-height: 1;
+  }
+  .cat-close:hover { background: var(--grey-200, #DDDDDD); }
+
+  .cat-tag.count em {
+    font-style: normal;
+    margin-left: 4px;
+    color: var(--text-hint, #999999);
+    font-size: 11px;
+  }
+
+  .cat-tag-btn {
+    display: inline-flex;
+    align-items: center;
+    height: 32px;
+    padding: 0 14px;
+    background: var(--grey-100, #F1F1F1);
+    border: 1px solid transparent;
+    border-radius: 16px;
+    font-size: 13px;
+    color: var(--text-regular, #666666);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .cat-tag-btn:hover {
+    background: var(--grey-200, #DDDDDD);
+  }
+  .cat-tag-btn.active {
+    background: var(--yellow-500, #FFCF20);
+    color: var(--text-important, #222222);
+    font-weight: 600;
+  }
+
+  .cat-tag-btn.lg {
+    height: 36px;
+    padding: 0 16px;
+    font-size: 14px;
+  }
+  .cat-tag-btn.lg .ico { margin-right: 6px; }
+  </style>
+
+</div>
+
+</body>
+</html>

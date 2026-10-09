@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card 03 · 品牌入口卡 · UI Design System</title>
+<!--
+  Card 03 · 品牌入口卡（横版 logo + 品牌名 + 副标 + CTA）
+  适用场景：按品牌浏览入口 · 留资引导
+  Iconify CDN: https://code.iconify.design/3/3.1.0/iconify.min.js
+  单文件自适应：PC ≥1024px / Mobile <1024px
+
+  ⚠️ 当前数据是 Mstar / AutoCava 平台示例，请按 cards/README.md 的指南替换为你自己的：
+  - 品牌名 / logo URL / 副标 / CTA 文案
+
+  数据示例：
+  - 品牌：MG / Toyota / BYD
+  - Logo：autocava.com.mx/brand/logo/{id}.jpg
+  - 副标：「Discover your ideal product」
+  3. 本卡型可能对应未上线的 CAVI 内嵌品牌聚合场景，需 PM 确认具体入口页面
+
+  Iconify CDN: https://code.iconify.design/3/3.1.0/iconify.min.js
+  单文件自适应：PC ≥1024px / Mobile <1024px（AGENTS.md §368）
+-->
+<script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+<style>
+  :root {
+    --card-bg: #ffffff;
+    --card-border: rgba(0, 0, 0, 0.06);
+    --card-shadow: 0 4px 16px rgba(10, 25, 41, 0.06);
+    --text-primary: #0a1929;
+    --text-secondary: #6b7280;
+    --gradient-brand: linear-gradient(135.81deg,
+      #65c9ec 0%, #825aff 24.21%,
+      #d750e8 48.42%, #f25ec7 72.63%);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background: #f5f6f8;
+    color: var(--text-primary);
+    padding: 40px 20px;
+    min-height: 100vh;
+  }
+
+  /* Demo stack · PC 与移动各一份 */
+  .demo-stack {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* === Brand Card · 横向布局 === */
+  .brand-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: box-shadow .2s ease, transform .2s ease;
+  }
+  .brand-card:hover {
+    box-shadow: 0 8px 24px rgba(10, 25, 41, 0.10);
+    transform: translateY(-1px);
+  }
+
+  /* Logo · 48x48 · 灰底圆角 8px */
+  .brand-logo {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .brand-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  /* Body · 品牌名 + 副标 */
+  .brand-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .brand-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+  .brand-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.3;
+  }
+
+  /* Right side · "Ver" 按钮 */
+  .brand-action {
+    flex-shrink: 0;
+  }
+  .btn-ver {
+    min-width: 96px;
+    height: 40px;
+    padding: 0 24px;
+    background: var(--card-bg);
+    color: var(--text-primary);          /* 实心深色文字 · 保证可见 */
+    border: 1.5px solid transparent;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    position: relative;
+    transition: opacity .15s ease;
+    font-family: inherit;
+    z-index: 0;
+  }
+  .btn-ver:hover { opacity: .85; }
+  .btn-ver::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    padding: 1.5px;
+    background: var(--gradient-brand);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  .demo-title {
+    max-width: 720px;
+    margin: 0 auto 24px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .demo-title strong {
+    color: var(--text-primary);
+    font-weight: 700;
+  }
+
+  /* === Mobile <1024px === */
+  @media (max-width: 1023px) {
+    .brand-card { padding: 14px 16px; gap: 12px; }
+    .brand-logo { width: 44px; height: 44px; }
+    .btn-ver { min-width: 80px; height: 36px; padding: 0 18px; font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+
+<p class="demo-title">
+  <strong>Card 03 · Brand card</strong> · 品牌入口卡 · logo + 品牌名 + 副标 + 「Ver」按钮 · PC ≥1024px
+</p>
+
+<div class="demo-stack">
+
+  <!-- Brand · MG -->
+  <!-- source: __NUXT_DATA__ brandId=46, logoUrl · autocava.com.mx/?ac_ab=stable「Explora por marca」· 2026-09-21 -->
+  <!-- source: [待PM确认] · 副标题「Descubre tu auto ideal」+「Ver」按钮为设计探索变体，线上真实文案为「13 series」无按钮 -->
+  <div class="brand-card">
+    <div class="brand-logo">
+      <img src="https://cdn.autocava.com.mx/brand/logo/046.jpg" alt="MG">
+    </div>
+    <div class="brand-body">
+      <div class="brand-name">MG</div>
+      <div class="brand-sub">Descubre tu auto ideal</div>
+    </div>
+    <div class="brand-action">
+      <button class="btn-ver">Ver</button>
+    </div>
+  </div>
+
+  <!-- Brand · 示例 · Toyota（仅用于展示 layout 同款可复用）-->
+  <!-- source: __NUXT_DATA__ brandId=79, logoUrl · autocava.com.mx/?ac_ab=stable「Explora por marca」· 2026-09-21 -->
+  <div class="brand-card">
+    <div class="brand-logo">
+      <img src="https://cdn.autocava.com.mx/brand/logo/065.jpg" alt="Toyota">
+    </div>
+    <div class="brand-body">
+      <div class="brand-name">Toyota</div>
+      <div class="brand-sub">Descubre tu auto ideal</div>
+    </div>
+    <div class="brand-action">
+      <button class="btn-ver">Ver</button>
+    </div>
+  </div>
+
+  <!-- Brand · 示例 · BYD（仅用于展示 layout 同款可复用）-->
+  <!-- source: __NUXT_DATA__ brandId=11, logoUrl · autocava.com.mx/?ac_ab=stable「Explora por marca」· 2026-09-21 -->
+  <div class="brand-card">
+    <div class="brand-logo">
+      <img src="https://cdn.autocava.com.mx/brand/logo/011.jpg" alt="BYD">
+    </div>
+    <div class="brand-body">
+      <div class="brand-name">BYD</div>
+      <div class="brand-sub">Descubre tu auto ideal</div>
+    </div>
+    <div class="brand-action">
+      <button class="btn-ver">Ver</button>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
